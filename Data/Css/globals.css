@@ -1,0 +1,41 @@
+*
+{
+	margin:			0;
+	padding:		0;
+}
+
+@font-face
+{
+	font-family: 	Friction-Regular;
+	src: 			url("../Fonts/Friction-Regular.otf") format("opentype");
+}
+
+body
+{
+	background-color:			#222;
+	font-family:				Friction-Regular;
+	color:						#FFF;
+	overflow:					hidden;
+}
+
+#toolBar
+{
+	position:			absolute;
+}
+
+#toolBar .toolItem
+{
+	color:				#FFF;
+	text-align:			center;
+	background-color:	#222;
+	user-select: 		none;
+}
+
+#toolBar .toolItem.selected
+{
+	background-color:	#000;
+}
+
+
+
+

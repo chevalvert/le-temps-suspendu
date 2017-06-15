@@ -1,0 +1,41 @@
+<html charset="utf-8">
+<head>
+	<link rel="stylesheet" type="text/css" href="Data/Css/globals.css" />
+	<link rel="stylesheet" type="text/css" href="Data/Css/indexPupitre.css" />
+	
+	<script type="text/javascript" src="Data/Js/common.js"></script>
+	<script type="text/javascript" src="Data/Js/p5.min.js"></script>
+	<script type="text/javascript" src="Data/Js/three.min.js"></script>
+	<script type="text/javascript" src="Data/Js/gridImages.js"></script>
+	<script type="text/javascript" src="Data/Js/gridView.js"></script>
+	<script type="text/javascript" src="Data/Js/etincellesView.js"></script>
+	<script type="text/javascript" src="Data/Js/keyboardView.js"></script>
+	<script type="text/javascript" src="Data/Js/indexPupitre.js"></script>
+</head>
+<body>
+
+<div id="gridView">
+	<canvas id="drawing-canvas" width="1024" height="1024" ></canvas>
+</div>
+<div id="rightColumnView">
+	<div id="title">le temps suspendu</div>
+	<div id="content">
+		<div id="view-recherche" class="view">
+			<div id="view-input-code">
+				<label for="code">Entrez votre code</label>
+				<div><input id="code" type="text" /></div>
+			</div>
+			<div id="view-keyboard">
+			</div>
+		</div>
+		<div id="view-etincelles" class="view"></div>
+	</div>
+	<div id="toolBar">
+		<div id="recherche" 	class="toolItem selected">recherche</div>
+		<div id="etincelles" 	class="toolItem">étincelles</div>
+	</div>
+</div>
+
+</body>
+</html>
+

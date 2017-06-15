@@ -1,0 +1,21 @@
+{
+	"db_rq" :
+	{
+  		"host"     	: "localhost",
+		"port"	 	: "8889",
+  		"user"     	: "root",
+  		"password" 	: "root",
+  		"database" 	: "LeTempsSuspendu"
+	},
+	
+	"artnet" :
+	{
+		"host"		: "192.168.0.112"
+	},
+	
+	"tool" :
+	{
+		"enable"	: true
+	}
+	
+}

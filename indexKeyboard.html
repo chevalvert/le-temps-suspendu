@@ -1,0 +1,37 @@
+<html charset="utf-8">
+<head>
+	<link rel="stylesheet" type="text/css" href="Data/Css/globals.css" />
+	<link rel="stylesheet" type="text/css" href="Data/Css/indexPupitre.css" />
+	<script type="text/javascript" src="Data/Js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="Data/Js/keyboardView.js"></script>
+</head>
+<body>
+
+<div id="gridView">
+	<canvas id="drawing-canvas" width="1024" height="1024" ></canvas>
+</div>
+<div id="rightColumnView">
+	<div id="title">le temps suspendu</div>
+	<div id="content">
+		<div id="view-recherche" class="view">
+			<div id="view-input-code">
+				<label for="code">Entrez votre code</label>
+				<div><input id="code" type="text" /></div>
+			</div>
+			<div id="view-keyboard">
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	console.log( keyboardView );
+	keyboardView.init("#view-keyboard");
+
+
+});
+</script>
+</body>
+</html>
+

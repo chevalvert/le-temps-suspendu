@@ -1,0 +1,51 @@
+#toolBar
+{
+	height:				30px;
+	border-bottom:		2px solid #000;
+}
+
+#toolBar .toolItem
+{
+	float:				left;
+	height:				30px;
+	width:				100px;
+	line-height:		30px;
+}
+
+#toolBar .toolItem.selected
+{
+	background-color:	#000;
+}
+
+#mainView
+{
+	position:			absolute;
+	background-color:	#222;
+}
+
+.toolView
+{
+	position:			absolute;
+	top:				0;
+	left:				0;
+	display:			none;
+}
+
+.close-button
+{
+	display:			none;
+}
+
+.dg
+{
+	font-family: 	Friction-Regular;
+}
+
+#animation
+{
+	width:				120px;
+	height:				180px;
+	background-color:	#F00;
+}
+
+
