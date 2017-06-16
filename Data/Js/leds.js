@@ -1,19 +1,21 @@
 var leds = function(){}
 
+//--------------------------------------------------------
 leds.prototype.init = function(configuration)
 {
 	console.log( "leds.init()" );
 	console.log( " - host="+configuration.artnet.host );
 
+	//--------------------------------------------------------
 	this.artnet = require('artnet')({host: configuration.artnet.host});
-	
 
+	//--------------------------------------------------------
 	this.set = function(a)
 	{
 		this.artnet.set(a);
 	}
 
-
+	//--------------------------------------------------------
 	this.reset = function()
 	{
 		var a = [];
@@ -22,8 +24,14 @@ leds.prototype.init = function(configuration)
 		this.set(a);
 	}
 	
+	//--------------------------------------------------------
+	this.close = function()
+	{
+		this.artnet.close();
+	}
 
 	return this;
 }
 
+//--------------------------------------------------------
 module.exports = new leds();

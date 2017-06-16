@@ -15,7 +15,19 @@
 	
 	"tool" :
 	{
-		"enable"	: true
-	}
+		"enable"	: true,
+		"devtools"	: true,
+		"x"			: 0,
+		"y"			: 0,
+		"w"			: 800,
+		"h"			: 600
+	},
 	
+	"pupitre" :
+	{
+		"devtools"	: false,
+		"w"			: 1280,
+		"h"			: 1024
+	}
+
 }

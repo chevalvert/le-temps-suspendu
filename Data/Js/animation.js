@@ -5,7 +5,6 @@ function animation(){}
 animation.prototype.fs = require("fs");
 animation.prototype.pathShaders = __dirname + "/Data/Shaders/";
 
-
 animation.prototype.container = null;
 
 animation.prototype.sceneRTT = null;
@@ -16,22 +15,22 @@ animation.prototype.rendererRTT = null;
 animation.prototype.wRTT = 0;
 animation.prototype.hRTT = 0;
 
-animation.prototype.scene = null;
-animation.prototype.camera = null;
-animation.prototype.quad = null;
-animation.prototype.material = null;
-animation.prototype.renderer = null;
-
 animation.prototype.ipcRenderer = require('electron').ipcRenderer;
 animation.prototype.ledValues = [];
-animation.prototype.read = null;//new Float32Array( 4 * 120 * 180 );
+animation.prototype.read = null;
 animation.prototype.readValues = [];
 
-animation.prototype.fragmentShaderId = "plasma"; // TEMP
+animation.prototype.timer = new timer();
 
-animation.prototype.bExit = false;
 
-animation.prototype.requestFrameId = 0;
+//--------------------------------------------------------
+animation.prototype.resetLedValues = function()
+{
+	for (var i=0; i<18*12; i++)
+		this.ledValues[i] = 0.0;
+}
+
+
 //--------------------------------------------------------
 animation.prototype.setup = function(options)
 {
@@ -44,14 +43,8 @@ animation.prototype.setup = function(options)
 	this.hRTT = parseInt(this.wRTT / ratio);
 	this.read = new Float32Array( 4 * this.wRTT * this.hRTT  );
 	
-	this.fragmentShaderId = options.fragmentShaderId || "plasma";
-	
-	this.timer = new timer();
-
-	for (var i=0; i<18*12; i++)
-	{
-		this.ledValues[i] = 0.0;
-	}
+	this.timer.reset();
+	this.resetLedValues();
 
 
 	// Offscreen rendering
@@ -62,59 +55,35 @@ animation.prototype.setup = function(options)
 	this.rendererRTT = new THREE.WebGLRenderTarget( this.wRTT, this.hRTT, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
 	this.materialRTT = new THREE.ShaderMaterial(
 	{
-		uniforms: {
-					time: { value: 0.0 },
-					w: { value: this.wRTT },
-					h: { value: this.hRTT },
-					freqSin : { value : 8.0}
-				   },
-		vertexShader: document.getElementById( "vertexShader" ).textContent, // TEMP
-		fragmentShader: document.getElementById( this.fragmentShaderId ).textContent // TEMP
+		uniforms: this.getUniforms(),
+		vertexShader: this.getShaderString("basic.vert"),
+		fragmentShader: this.getShaderString(options.fragmentShaderName)
 	});
 	this.quadRTT = new THREE.Mesh( planeRTT, this.materialRTT );
 
 	this.sceneRTT.add( this.cameraRTT );
 	this.sceneRTT.add( this.quadRTT );
-
-
-	// screen rendering (preview)
-	var plane = new THREE.PlaneBufferGeometry( w, h );
-
-	this.scene = new THREE.Scene();
-	this.camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, - 1000, 1000 );
-	this.material = new THREE.MeshBasicMaterial(
-	   {map:this.rendererRTT.texture, depthWrite: false}
-	);
-	this.quad = new THREE.Mesh( plane, this.material );
-	this.scene.add( this.camera );
-	this.scene.add( this.quad );
-	
-	this.renderer = new THREE.WebGLRenderer();
-	this.renderer.setPixelRatio( window.devicePixelRatio );
-	this.renderer.setSize( w, h );
-	this.renderer.autoClear = true;
 }
 
 //--------------------------------------------------------
-animation.prototype.enter = function()
+animation.prototype.getShaderString = function(name)
 {
-	this.container[0].appendChild( this.renderer.domElement );
-	this.requestFrameId = window.requestAnimationFrame(this.render.bind(this));
-	this.bExit = false;
+	return this.fs.readFileSync(this.pathShaders+name).toString();
 }
 
-
 //--------------------------------------------------------
-animation.prototype.exit = function()
+animation.prototype.getUniforms = function()
 {
-	window.cancelAnimationFrame(this.requestFrameId);
-//	this.container[0].removeChild( this.renderer.domElement );
-	this.renderer.domElement.style.display = "none";
-	this.bExit = true;
+return{
+		  time: { value: 0.0 },
+		  w: { value: this.wRTT },
+		  h: { value: this.hRTT },
+		  freqSin : { value : 8.0}
+	}
 }
 
 //--------------------------------------------------------
-animation.prototype.sampleAndSendValues = function()
+animation.prototype.sampleAndSendValues = function(renderer_)
 {
 	var i,j,offset;
 	var x = 0;
@@ -122,8 +91,7 @@ animation.prototype.sampleAndSendValues = function()
 	var stepx = this.wRTT / 17.0;
 	var stepy = this.hRTT / 11.0;
 
-	this.renderer.readRenderTargetPixels( this.rendererRTT, 0, 0, this.wRTT, this.hRTT, this.read );
-
+	renderer_.readRenderTargetPixels( this.rendererRTT, 0, 0, this.wRTT, this.hRTT, this.read );
 	
 	for (j=0;j<12;j++)
 	{
@@ -139,22 +107,16 @@ animation.prototype.sampleAndSendValues = function()
 }
 
 //--------------------------------------------------------
-animation.prototype.render = function()
+animation.prototype.setUniforms = function()
+{
+	this.materialRTT.uniforms.time.value = this.timer.time;
+}
+
+//--------------------------------------------------------
+animation.prototype.render = function(renderer_)
 {
 	this.timer.update();
-	var time = this.timer.time;
-
-	this.materialRTT.uniforms.time.value = time;
- 
-	this.renderer.render( this.sceneRTT, this.cameraRTT, this.rendererRTT, true );
-	this.renderer.render( this.scene, this.camera );
-
-	this.sampleAndSendValues();
-
-	if (this.bExit == false)
-		window.requestAnimationFrame(this.render.bind(this));
-	else
-	{
-		this.bExit == false;
-	}
+	this.setUniforms();
+	renderer_.render( this.sceneRTT, this.cameraRTT, this.rendererRTT, true );
+	this.sampleAndSendValues(renderer_);
 }

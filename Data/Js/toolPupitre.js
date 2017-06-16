@@ -8,12 +8,12 @@ function toolPupitre()
 	// DOM
 	this.container = null;
 	this.gui = null;
-	
+	this.animView = null;
+
 	// --------------------------------------------
 	// Properties
 	this.properties.gridTouchControl = false;
-//	this.properties.animations = ["plasma", "sine"];
-	this.properties.animations = ["sine"];
+	this.properties.animations = ["plasma", "sine"];
 	this.properties.radiusInfluence = 70;
 	this.properties.radiusHeight = 100;
 	this.properties.ledGreyOut = 100;
@@ -33,6 +33,9 @@ function toolPupitre()
 		
 		});
 
+		this.animView = new animationView();
+		this.animView.init();
+	
 		// UI
 		this.gui = new dat.GUI({ autoPlace: false , width : 300});
 		
@@ -44,10 +47,7 @@ function toolPupitre()
   		var sliderLedGreyOut = this.gui.add(this.properties, 'ledGreyOut', 0, 100).listen();
 
 		listAnimations.onChange(function(value){
-//			toolPupitre.ipcRenderer.send('toolPupitre-listAnimations', value);
-			if (value == "plasma")
-				toolPupitre.setAnimation(value)
-
+			toolPupitre.setAnimation(value)
 		});
 
 		chkGridTouchControl.onChange(function(value)
@@ -82,28 +82,20 @@ function toolPupitre()
 		// Animations (temp)
 
 		var animation01 = new animation();
-		animation01.setup({wRTT : 120/3, fragmentShaderId : "sine"});
+		animation01.setup({wRTT : 120/3, fragmentShaderName : "sine.frag"});
 		this.animations["sine"] =  animation01;
 
-/*		var animation02 = new animation();
-		animation02.setup({wRTT : 120/3, fragmentShaderId : "plasma"});
+		var animation02 = new animation();
+		animation02.setup({wRTT : 120/3, fragmentShaderName : "plasma.frag"});
 		this.animations["plasma"] = animation02 ;
-*/
 
-		this.setAnimation("sine");
+		this.setAnimation("plasma");
 	}
 
 	// --------------------------------------------
 	this.setAnimation = function(id)
 	{
-//		if (index < this.animations.length)
-		{
-			if (this.animation)
-				this.animation.exit();
-		
-			this.animation = this.animations[id];
-			this.animation.enter();
-		}
+		this.animView.setAnimation( this.animations[id] );
 	}
 
 	// --------------------------------------------

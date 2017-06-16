@@ -9,60 +9,15 @@
 	<script type="text/javascript" src="Data/Js/loaders/OBJLoader.js"></script>
 	<script type="text/javascript" src="Data/Js/timer.js"></script>
 	<script type="text/javascript" src="Data/Js/animation.js"></script>
+	<script type="text/javascript" src="Data/Js/animationView.js"></script>
 	<script type="text/javascript" src="Data/Js/tool.js"></script>
 	<script type="text/javascript" src="Data/Js/tool3D.js"></script>
 	<script type="text/javascript" src="Data/Js/toolPupitre.js"></script>
-	<script type="text/javascript" src="Data/Js/indexTool.js"></script>
 	<script type="text/javascript" src="Data/Js/dat.gui.min.js"></script>
+	<script type="text/javascript" src="Data/Js/indexTool.js"></script>
 </head>
 
 <body>
-
-	<script id="vertexShader" type="x-shader/x-vertex">
-			void main()
-			{
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-			}
-	</script>
-
-	<script id="sine" type="x-shader/x-fragment">
-			uniform float time;
-			uniform float w;
-			uniform float h;
-			uniform float freqSin;
-			void main()
-			{
-   				float d = 0.5+0.5*sin( -time + freqSin*distance(gl_FragCoord.xy, vec2(0.5*w,0.5*h))/(0.5*w) );
-				gl_FragColor = vec4(d,d,d,1.0);
-			}
-	</script>
-	
-	<script id="plasma" type="x-shader/x-fragment">
-			uniform float time;
-			uniform float w;
-			uniform float h;
-			uniform float freqSin;
-			
-			void main()
-			{
-			float freqSin2 = 1.0; // 0.2 et 4
-			float divSin2 = 60.0;
-
-		   float x = gl_FragCoord.x;
-		   float y = gl_FragCoord.y;
-   			float mov0 = x+y+cos(sin(time)*2.)*100.+sin(x/100.)*1000.;
-   			float mov1 = y / w / 0.2 + time;
-   			float mov2 = x / h / 0.2;
-   			float c1 = abs(sin(mov1+time)/2.+mov2/2.-mov1-mov2+time);
-		    float c2 = abs(sin(c1+/*sin(mov0/100.+time)*/+sin(y/40.+time)+sin((x+y)/divSin2)*freqSin2));
-		    float c3 = abs(sin(c2+cos(mov1+mov2+c2)+cos(mov2)+sin(x/1000.)));
-   			gl_FragColor = vec4( 1.0-c2,1.0-c2,1.0-c2,1.0);
-			}
-
-
-	</script>
-
-
 	<div id="toolBar">
 		<div id="pupitre" 	class="toolItem">Pupitre</div>
 		<div id="3d" 		class="toolItem">Simulation</div>
