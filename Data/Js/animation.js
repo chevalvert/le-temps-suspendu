@@ -12,7 +12,7 @@ animation.prototype.cameraRTT = null;
 animation.prototype.quadRTT = null;
 animation.prototype.materialRTT = null;
 animation.prototype.rendererRTT = null;
-animation.prototype.wRTT = 0;
+animation.prototype.wRTT = 120;
 animation.prototype.hRTT = 0;
 
 animation.prototype.ipcRenderer = require('electron').ipcRenderer;
@@ -22,6 +22,8 @@ animation.prototype.readValues = [];
 
 animation.prototype.timer = new timer();
 
+animation.prototype.properties = {}
+animation.prototype.fragmentShaderName = "";
 
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()
@@ -30,6 +32,31 @@ animation.prototype.resetLedValues = function()
 		this.ledValues[i] = 0.0;
 }
 
+//--------------------------------------------------------
+animation.prototype.loadProperties = function()
+{
+}
+
+//--------------------------------------------------------
+animation.prototype.saveProperties = function()
+{
+}
+
+//--------------------------------------------------------
+animation.prototype.showControls = function(is)
+{
+	this.gui.domElement.style.display = is ? "block" : "none";
+}
+
+
+//--------------------------------------------------------
+animation.prototype.createControls = function()
+{
+	this.gui = new dat.GUI({ autoPlace: false , width : 300});
+	this.addControls();
+	$("#properties-animation").append( this.gui.domElement );
+	this.gui.domElement.style.display = "none";
+}
 
 //--------------------------------------------------------
 animation.prototype.setup = function(options)
@@ -39,13 +66,13 @@ animation.prototype.setup = function(options)
 	var h = this.container.height();
 
 	var ratio = w/h;
-	this.wRTT = parseInt(options.wRTT); // mandatory
+	this.wRTT = this.wRTT > 0 ? this.wRTT : parseInt(options.wRTT); // mandatory
 	this.hRTT = parseInt(this.wRTT / ratio);
 	this.read = new Float32Array( 4 * this.wRTT * this.hRTT  );
 	
 	this.timer.reset();
 	this.resetLedValues();
-
+	this.loadProperties();
 
 	// Offscreen rendering
 	var planeRTT = new THREE.PlaneBufferGeometry( this.wRTT, this.hRTT );
@@ -57,12 +84,14 @@ animation.prototype.setup = function(options)
 	{
 		uniforms: this.getUniforms(),
 		vertexShader: this.getShaderString("basic.vert"),
-		fragmentShader: this.getShaderString(options.fragmentShaderName)
+		fragmentShader: this.getShaderString(this.fragmentShaderName)
 	});
 	this.quadRTT = new THREE.Mesh( planeRTT, this.materialRTT );
 
 	this.sceneRTT.add( this.cameraRTT );
 	this.sceneRTT.add( this.quadRTT );
+	
+	this.createControls();
 }
 
 //--------------------------------------------------------
@@ -74,12 +103,7 @@ animation.prototype.getShaderString = function(name)
 //--------------------------------------------------------
 animation.prototype.getUniforms = function()
 {
-return{
-		  time: { value: 0.0 },
-		  w: { value: this.wRTT },
-		  h: { value: this.hRTT },
-		  freqSin : { value : 8.0}
-	}
+	return {};
 }
 
 //--------------------------------------------------------
@@ -109,7 +133,8 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 //--------------------------------------------------------
 animation.prototype.setUniforms = function()
 {
-	this.materialRTT.uniforms.time.value = this.timer.time;
+//	this.materialRTT.uniforms.time.value = this.timer.time;
+//	this.materialRTT.uniforms.freqSin.value = this.properties.freqSin;
 }
 
 //--------------------------------------------------------
