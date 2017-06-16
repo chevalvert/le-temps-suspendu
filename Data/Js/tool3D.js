@@ -108,6 +108,26 @@ function tool3D()
 	
 	this.onModelLoaded = function( object )
 	{
+	
+	
+// console.log(object);
+object.traverse(function(obj)
+{
+	if (obj.name == "object_611")
+	{
+	}
+})
+
+console.log(typeof object);
+
+    // wireframe - new way
+//    var geo = new THREE.EdgesGeometry( object.geometry ); // or WireframeGeometry
+  //  var mat = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 2 } );
+    //var wireframe = new THREE.LineSegments( geo, mat );
+
+//object.add(wireframe);
+	
+	
 		tool3D.scene.add( object );
 		tool3D.objPoudriere = object;
 		

@@ -10,14 +10,15 @@ var leds									= require(__dirname+'/Data/Js/leds.js')
 // Configuration
 let configuration;
 let configurationName = "configuration.json";
+
 // Displays
 let externalDisplay;
+
 // Windows
 let mainWindow, toolWindow;
+
 // mySQL
 let connection;
-// Artnet
-//let leds;
 
 // --------------------------------------------------
 app.on('ready', () =>
@@ -28,6 +29,9 @@ app.on('ready', () =>
 // --------------------------------------------------
 app.on('window-all-closed', function()
 {
+	if (leds)
+		leds.close();
+
 	if (connection)
 		connection.end();
 });
@@ -68,12 +72,12 @@ function onConfigLoaded()
 	// Main window
 	mainWindow = windowManager.open('home', 'Le temps suspendu : pupitre', getFile('indexPupitre.html'), {},
 	{
-		'width' : 1280,
-		'height' : 1024,
-		'x' : 0/*externalDisplay.bounds.x*/,
-		'y' : 0/*externalDisplay.bounds.y*/,
+		'width' : configuration.pupitre.w,
+		'height' : configuration.pupitre.h,
+		'x' : externalDisplay ? externalDisplay.bounds.x : 0,
+		'y' : externalDisplay ? externalDisplay.bounds.y : 0,
 		'frame' : false
-	}, true);
+	}, configuration.pupitre.devtools);
 
 	// Artnet
 	leds.init( configuration );
@@ -132,9 +136,11 @@ function onConfigLoaded()
 		{
 			toolWindow = windowManager.open('tool', 'Le temps suspendu : outil de simulation', getFile('indexTool.html'),{},
 			{
-				'x' : 0,
-				'y' : 0
-				},true);
+				'x' : configuration.tool.x,
+				'y' : configuration.tool.y,
+				'w' : configuration.tool.w,
+				'h' : configuration.tool.h,
+				}, configuration.tool.devtools);
 		}
 
 	})
