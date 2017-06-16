@@ -13,15 +13,16 @@ function toolPupitre()
 	// --------------------------------------------
 	// Properties
 	this.properties.gridTouchControl = false;
-	this.properties.animations = ["plasma", "sine"];
+	this.properties.animations = [];
 	this.properties.radiusInfluence = 70;
 	this.properties.radiusHeight = 100;
 	this.properties.ledGreyOut = 100;
 
 	// --------------------------------------------
 	// Animation
-	this.animation 	= null;
-	this.animations = [];
+	this.animManager = new animationManager();
+//	this.animation 	= null;
+//	this.animations = [];
 	
 	// --------------------------------------------
 	this.init = function(containerId)
@@ -33,10 +34,16 @@ function toolPupitre()
 		
 		});
 
-		this.animView = new animationView();
-		this.animView.init();
+		// Animations
+		this.animManager = new animationManager();
+		this.animManager.setup();
+
+		this.properties.animations = Object.keys(this.animManager.animations);
 	
 		// UI
+		this.animView = new animationView();
+		this.animView.init();
+
 		this.gui = new dat.GUI({ autoPlace: false , width : 300});
 		
 		// Properties
@@ -76,18 +83,8 @@ function toolPupitre()
 		});
 
 		// Apply our own style :)
-		this.container.append( this.gui.domElement );
+		this.container.find("#properties-globals").append( this.gui.domElement );
 		$(".dg").css( {"font-family" : "Friction-Regular", "font-size" : "13px"} );
-		
-		// Animations (temp)
-
-		var animation01 = new animation();
-		animation01.setup({wRTT : 120/3, fragmentShaderName : "sine.frag"});
-		this.animations["sine"] =  animation01;
-
-		var animation02 = new animation();
-		animation02.setup({wRTT : 120/3, fragmentShaderName : "plasma.frag"});
-		this.animations["plasma"] = animation02 ;
 
 		this.setAnimation("plasma");
 	}
@@ -95,7 +92,16 @@ function toolPupitre()
 	// --------------------------------------------
 	this.setAnimation = function(id)
 	{
-		this.animView.setAnimation( this.animations[id] );
+		with(this.animManager)
+		{
+			if (animation)
+				animation.showControls(false);
+
+			animation = animations[id];
+			animation.showControls(true);
+		}
+
+		this.animView.setAnimation( this.animManager.animation );
 	}
 
 	// --------------------------------------------

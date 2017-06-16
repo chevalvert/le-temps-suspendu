@@ -28,6 +28,7 @@
 	position:			absolute;
 	top:				0;
 	left:				0;
+	width:				800px;
 	display:			none;
 }
 
@@ -36,16 +37,16 @@
 	display:			none;
 }
 
-.dg
+#properties-globals
 {
-	font-family: 	Friction-Regular;
+}
+
+#properties-animation
+{
 }
 
 #animation
 {
 	width:				120px;
 	height:				180px;
-	background-color:	#F00;
 }
-
-

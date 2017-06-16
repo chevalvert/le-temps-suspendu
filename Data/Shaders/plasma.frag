@@ -2,11 +2,13 @@ uniform float time;
 uniform float w;
 uniform float h;
 uniform float freqSin;
+uniform float freqSin2;
+uniform float divSin2;
 
 void main()
 {
-	float freqSin2 = 1.0; // 0.2 et 4
-	float divSin2 = 60.0;
+//	float freqSin2 = 1.0; // 0.2 et 4
+//	float divSin2 = 60.0;
 
 	float x = gl_FragCoord.x;
 	float y = gl_FragCoord.y;
