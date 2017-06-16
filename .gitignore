@@ -1,2 +1,3 @@
 # exclude everything
-Data/Db/*
+Data/Db/
+*node_modules
