@@ -6,17 +6,17 @@ function tool3D()
 
 	this.container = null;
 	this.renderer = null;
-	
+
 	this.mouseX = 0;
 	this.mouseY = 0;
-	
-	this.objModelName = "Data/3D/poudriere-meters-leds_only.obj";
+
+  this.objModelNames = ["Data/3D/poudriere-structure.obj", "Data/3D/poudriere-leds.obj"];
 
 
 	this.init = function(containerId)
 	{
 		this.container = $(containerId);
-	
+
 		this.camera = new THREE.PerspectiveCamera( 45, this.container.width()/ this.container.height(), 1, 2000 );
 		this.camera.position.z = 25;
 
@@ -56,15 +56,19 @@ function tool3D()
 		};
 
 		var loader = new THREE.OBJLoader( manager );
-		loader.load( this.objModelName, this.onModelLoaded, this.onProgress, this.onError);
+
+    for (var i = 0; i < this.objModelNames.length; i++) {
+      var objModelName = this.objModelNames[i]
+      loader.load( objModelName, this.onModelLoaded, this.onProgress, this.onError);
+    }
 
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 		this.renderer.setSize( this.container.width(), this.container.height() );
 
 		this.container.append( this.renderer.domElement );
-	
-	
+
+
 		this.container.mousemove(function(event){
 			tool3D.mouseX = event.pageX;
 			tool3D.mouseY = event.pageY;
@@ -72,7 +76,7 @@ function tool3D()
 
 		});
 	}
-	
+
 	this.resize = function()
 	{
 		if (this.container)
@@ -82,34 +86,35 @@ function tool3D()
 			this.renderer.setSize( this.container.width(), this.container.height() );
 		}
 	}
-	
+
 	this.animate = function()
 	{
 		window.requestAnimationFrame( tool3D.animate );
 		tool3D.render();
 	}
-	
+
 	this.render = function()
 	{
 		if (this.objPoudriere)
 		{
 			this.objPoudriere.position.x = 0;
 			this.objPoudriere.position.y = 0;
-		
+
 			this.objPoudriere.rotation.z = THREE.Math.degToRad( -90 ) ;
 		}
 
-		this.camera.position.x = -0.5*(this.mouseX-this.container.width())*0.1;
+    this.camera.position.x = -0.5*(this.mouseX-this.container.width())*0.1;
+		this.camera.position.y = -0.5*(this.mouseY-this.container.width())*0.1;
 //		this.camera.position.y += ( - 0.5*(this.mouseY-this.container.height()) - this.camera.position.y ) * .05;
 
 		this.camera.lookAt( this.scene.position );
 		this.renderer.render( this.scene, this.camera );
 	}
-	
+
 	this.onModelLoaded = function( object )
 	{
-	
-	
+
+
 // console.log(object);
 object.traverse(function(obj)
 {
@@ -126,11 +131,11 @@ console.log(typeof object);
     //var wireframe = new THREE.LineSegments( geo, mat );
 
 //object.add(wireframe);
-	
-	
+
+
 		tool3D.scene.add( object );
 		tool3D.objPoudriere = object;
-		
+
 		tool3D.animate();
 	}
 }
