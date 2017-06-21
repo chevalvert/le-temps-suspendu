@@ -8,7 +8,10 @@ animationSine.prototype = Object.create(animationShader.prototype);
 animationSine.prototype.loadProperties = function()
 {
 	this.fragmentShaderName = "sine.frag";
+	this.properties = {}
 	this.properties.freqSin = 8;
+	
+	this.readPropertiesFile();
 }
 
 //--------------------------------------------------------

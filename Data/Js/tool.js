@@ -3,6 +3,7 @@ function tool(){}
 
 //--------------------------------------------------------
 tool.prototype.id = "tool";
+tool.prototype.fs = require("fs");
 tool.prototype.pathConfigs = __dirname + "/Data/Configs/";
 tool.prototype.properties = {};
 tool.prototype.ipcRenderer = require('electron').ipcRenderer;

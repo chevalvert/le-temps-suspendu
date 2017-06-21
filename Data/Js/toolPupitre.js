@@ -22,8 +22,6 @@ function toolPupitre()
 	// --------------------------------------------
 	// Animation
 	this.animManager = new animationManager();
-//	this.animation 	= null;
-//	this.animations = [];
 	
 	// --------------------------------------------
 	this.init = function(containerId)
@@ -38,6 +36,7 @@ function toolPupitre()
 		// Animations
 		this.animManager = new animationManager();
 		this.animManager.setup();
+//		this.animManager.loadProperties();
 
 		this.properties.animations = Object.keys(this.animManager.animations);
 	
@@ -120,12 +119,21 @@ function toolPupitre()
 	}
 
 	// --------------------------------------------
-	this.createUI = function(containerId)
+	this.resize = function()
 	{
+	}
 
-//			toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', this.properties.radiusInfluence);
 
-	
+	// --------------------------------------------
+	this.saveProperties = function()
+	{
+		// not sure how to call parent
+		var fs 	= require('fs');
+		fs.writeFile(this.getPathFileProperties(), JSON.stringify( this.properties ), function (err)
+		{
+		});
+
+		this.animManager.saveProperties();
 	}
 
 }

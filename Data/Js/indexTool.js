@@ -7,8 +7,8 @@ $(document).ready( function()
 {
 	initToolBar();
 	resizeViews();
-
 	initTools();
+	initSaveButton();
 
 	selectToolBarItem("pupitre");
 });
@@ -40,6 +40,11 @@ function resizeViews()
 	$(".toolView")
 	.width( $(window).width() )
 	.height( $(window).height() - hToolBar )
+
+	$("#save-button")
+	.offset({left : $(window).width()-74	,top : $(window).height()-34});
+	
+	console.log( $("#save-button").offset() );
 }
 
 //--------------------------------------------------------
@@ -73,9 +78,24 @@ function initTools()
 }
 
 //--------------------------------------------------------
+function initSaveButton()
+{
+	$("#save-button")
+	.css({"cursor" : "pointer"})
+	.click( function()
+	{
+		toolPupitre.saveProperties();
+		tool3D.saveProperties();
+	} )
+}
+
+
+
+//--------------------------------------------------------
 function resizeTools()
 {
 	tool3D.resize();
+	toolPupitre.resize();
 }
 
 

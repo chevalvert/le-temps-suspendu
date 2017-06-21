@@ -50,3 +50,14 @@
 	width:				120px;
 	height:				180px;
 }
+
+#save-button
+{
+	position:			absolute;
+	text-align:			center;
+	background-color:	#222;
+	width:				70px;
+	height:				30px
+	top:				40px;
+	line-height:		30px;
+}

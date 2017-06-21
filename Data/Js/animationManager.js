@@ -2,25 +2,39 @@
 function animationManager()
 {
 	this.animation 	= null;
-	this.animations = [];
+	this.animations = {};
 }
-
 
 //--------------------------------------------------------
 animationManager.prototype.setup = function()
 {
-   var animation01 = new animationSine();
-   var animation02 = new animationPlasma();
-   var animation03 = new animationRectRotate();
+   this.animations["sine"] 			= new animationSine();
+   this.animations["sine2"] 		= new animationSine();
+   this.animations["plasma"] 		= new animationPlasma();
+   this.animations["plasma2"] 		= new animationPlasma();
+   this.animations["rectRotate"] 	= new animationRectRotate();
 
-   animation01.setup();
-   animation02.setup();
-   animation03.setup();
-
-   this.animations["sine"] =  animation01;
-   this.animations["plasma"] = animation02;
-   this.animations["rectRotate"] = animation03;
+   for (var id_ in this.animations)
+   {
+   		with(this.animations[id_])
+		{
+			id = id_;
+			setup();
+		}
+   }
 }
 
 
+//--------------------------------------------------------
+animationManager.prototype.loadProperties = function()
+{
+   for (var id in this.animations)
+		this.animations[id].loadProperties();
+}
 
+//--------------------------------------------------------
+animationManager.prototype.saveProperties = function()
+{
+   for (var id in this.animations)
+		this.animations[id].saveProperties();
+}

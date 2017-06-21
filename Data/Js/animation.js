@@ -2,6 +2,8 @@
 function animation(){}
 
 animation.prototype.fs = require("fs");
+animation.prototype.id = "__animation__";
+animation.prototype.pathConfigs = __dirname + "/Data/Configs/";
 
 animation.prototype.container = null;
 
@@ -29,6 +31,22 @@ animation.prototype.resetLedValues = function()
 		this.ledValues[i] = 0.0;
 }
 
+
+//--------------------------------------------------------
+animation.prototype.readPropertiesFile = function()
+{
+	var p = this.getPathFileProperties();
+	if (this.fs.existsSync(p))
+	{
+		this.properties = JSON.parse( this.fs.readFileSync(this.getPathFileProperties()).toString() );
+		console.log( this.properties )
+	}
+	else
+	{
+		console.log("cannot find \""+p+"\"");
+	}
+}
+
 //--------------------------------------------------------
 animation.prototype.loadProperties = function()
 {
@@ -37,7 +55,17 @@ animation.prototype.loadProperties = function()
 //--------------------------------------------------------
 animation.prototype.saveProperties = function()
 {
+	this.fs.writeFile(this.getPathFileProperties(), JSON.stringify( this.properties ), function (err)
+	{
+	});
 }
+
+//--------------------------------------------------------
+animation.prototype.getPathFileProperties = function()
+{
+	return this.pathConfigs+"animation_"+this.id+".json";
+}
+
 
 //--------------------------------------------------------
 animation.prototype.showControls = function(is)
@@ -83,7 +111,7 @@ animation.prototype.setup = function(options)
 	this.quadRTT = new THREE.Mesh( planeRTT, this.materialRTT );
 	this.sceneRTT.add( this.cameraRTT );
 	this.sceneRTT.add( this.quadRTT );
-	
+
 	this.createControls();
 }
 

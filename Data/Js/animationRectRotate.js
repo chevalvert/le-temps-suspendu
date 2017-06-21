@@ -8,8 +8,11 @@ animationRectRotate.prototype.angle = 0;
 //--------------------------------------------------------
 animationRectRotate.prototype.loadProperties = function()
 {
+	this.properties = {}
 	this.properties.rotSpeed = 30.0;
 	this.properties.size = 0.5;
+
+	this.readPropertiesFile();
 }
 
 //--------------------------------------------------------

@@ -1,5 +1,7 @@
 function tool3D()
 {
+	this.id = "tool3D";
+
 	this.camera = null;
 	this.scene = null;
 	this.objPoudriere = null;
@@ -409,6 +411,7 @@ wireframe.material.transparent = true;
 
 }
 
+tool3D.prototype = Object.create(tool.prototype);
 var tool3D 	= new tool3D();
 
 
