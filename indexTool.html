@@ -9,9 +9,12 @@
 	<script type="text/javascript" src="Data/Js/loaders/OBJLoader.js"></script>
 	<script type="text/javascript" src="Data/Js/timer.js"></script>
 	<script type="text/javascript" src="Data/Js/animation.js"></script>
+	<script type="text/javascript" src="Data/Js/animationShader.js"></script>
+	<script type="text/javascript" src="Data/Js/animationCanvas.js"></script>
 	<script type="text/javascript" src="Data/Js/animationManager.js"></script>
 	<script type="text/javascript" src="Data/Js/animationSine.js"></script>
 	<script type="text/javascript" src="Data/Js/animationPlasma.js"></script>
+	<script type="text/javascript" src="Data/Js/animationRectRotate.js"></script>
 	<script type="text/javascript" src="Data/Js/animationView.js"></script>
 	<script type="text/javascript" src="Data/Js/tool.js"></script>
 	<script type="text/javascript" src="Data/Js/tool3D.js"></script>
@@ -26,12 +29,15 @@
 		<div id="3d" 		class="toolItem">Simulation</div>
 	</div>
 	<div id="mainView">
-		<div id="tool-pupitre" 	class="toolView">
+		<div id="tool-pupitre" class="toolView">
 			<div id="properties-globals"></div>
 			<div id="properties-animation"></div>
 			<div id="animation"></div>
+			<canvas id="animation-canvas" width="128" height="128" ></canvas>
 		</div>
-		<div id="tool-3d" 		class="toolView"></div>
+		<div id="tool-3d" class="toolView">
+		<div id="debug"></div>
+		</div>
 	</div>
 </body>
 </html>

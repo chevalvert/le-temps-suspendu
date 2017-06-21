@@ -1,9 +1,7 @@
 //--------------------------------------------------------
 function animation(){}
 
-//--------------------------------------------------------
 animation.prototype.fs = require("fs");
-animation.prototype.pathShaders = __dirname + "/Data/Shaders/";
 
 animation.prototype.container = null;
 
@@ -23,7 +21,6 @@ animation.prototype.readValues = [];
 animation.prototype.timer = new timer();
 
 animation.prototype.properties = {}
-animation.prototype.fragmentShaderName = "";
 
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()
@@ -80,14 +77,10 @@ animation.prototype.setup = function(options)
 	this.sceneRTT = new THREE.Scene();
 	this.cameraRTT = new THREE.OrthographicCamera( this.wRTT / - 2, this.wRTT / 2, this.hRTT / 2, this.hRTT / - 2, - 1000, 1000 );
 	this.rendererRTT = new THREE.WebGLRenderTarget( this.wRTT, this.hRTT, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
-	this.materialRTT = new THREE.ShaderMaterial(
-	{
-		uniforms: this.getUniforms(),
-		vertexShader: this.getShaderString("basic.vert"),
-		fragmentShader: this.getShaderString(this.fragmentShaderName)
-	});
-	this.quadRTT = new THREE.Mesh( planeRTT, this.materialRTT );
 
+	this.createMaterial();
+
+	this.quadRTT = new THREE.Mesh( planeRTT, this.materialRTT );
 	this.sceneRTT.add( this.cameraRTT );
 	this.sceneRTT.add( this.quadRTT );
 	
@@ -95,15 +88,8 @@ animation.prototype.setup = function(options)
 }
 
 //--------------------------------------------------------
-animation.prototype.getShaderString = function(name)
+animation.prototype.render = function(renderer_)
 {
-	return this.fs.readFileSync(this.pathShaders+name).toString();
-}
-
-//--------------------------------------------------------
-animation.prototype.getUniforms = function()
-{
-	return {};
 }
 
 //--------------------------------------------------------
@@ -130,18 +116,8 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	this.ipcRenderer.send("animation-leds", this.readValues);
 }
 
-//--------------------------------------------------------
-animation.prototype.setUniforms = function()
-{
-//	this.materialRTT.uniforms.time.value = this.timer.time;
-//	this.materialRTT.uniforms.freqSin.value = this.properties.freqSin;
-}
 
 //--------------------------------------------------------
 animation.prototype.render = function(renderer_)
 {
-	this.timer.update();
-	this.setUniforms();
-	renderer_.render( this.sceneRTT, this.cameraRTT, this.rendererRTT, true );
-	this.sampleAndSendValues(renderer_);
 }

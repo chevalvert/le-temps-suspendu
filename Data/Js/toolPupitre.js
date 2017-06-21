@@ -12,6 +12,7 @@ function toolPupitre()
 
 	// --------------------------------------------
 	// Properties
+	this.properties.gridTouchDebug = false;
 	this.properties.gridTouchControl = false;
 	this.properties.animations = [];
 	this.properties.radiusInfluence = 70;
@@ -47,15 +48,28 @@ function toolPupitre()
 		this.gui = new dat.GUI({ autoPlace: false , width : 300});
 		
 		// Properties
-  		var chkGridTouchControl = this.gui.add(this.properties, 'gridTouchControl', true).listen();
-  		var listAnimations = this.gui.add(this.properties, 'animations', this.properties.animations).listen();
-  		var sliderRadiusInfluence = this.gui.add(this.properties, 'radiusInfluence', 60, 100).listen();
-  		var sliderRadiusHeight = this.gui.add(this.properties, 'radiusHeight', 0, 100).listen();
+		var gridViewFolder = this.gui.addFolder("Grid view");
+
+  		var chkGridTouchDebug = gridViewFolder.add(this.properties, 'gridTouchDebug', false);
+  		var chkGridTouchControl = gridViewFolder.add(this.properties, 'gridTouchControl', true);
+  		var sliderRadiusInfluence = gridViewFolder.add(this.properties, 'radiusInfluence', 60, 100);
+
+
+  		var listAnimations = this.gui.add(this.properties, 'animations', this.properties.animations);
+/*  		var sliderRadiusHeight = this.gui.add(this.properties, 'radiusHeight', 0, 100).listen();
   		var sliderLedGreyOut = this.gui.add(this.properties, 'ledGreyOut', 0, 100).listen();
+*/
 
 		listAnimations.onChange(function(value){
 			toolPupitre.setAnimation(value)
 		});
+
+		chkGridTouchDebug.onChange(function(value)
+		{
+			toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', value);
+		});
+
+
 
 		chkGridTouchControl.onChange(function(value)
 		{
@@ -67,7 +81,7 @@ function toolPupitre()
 			toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', value);
 		});
 
-		sliderRadiusHeight.onChange(function(value)
+/*		sliderRadiusHeight.onChange(function(value)
 		{
 			toolPupitre.ipcRenderer.send('toolPupitre-radiusHeight', value);
 		});
@@ -76,6 +90,7 @@ function toolPupitre()
 		{
 			toolPupitre.ipcRenderer.send('toolPupitre-ledGreyOut', value);
 		});
+*/
 
 
 		this.loadProperties(function(){

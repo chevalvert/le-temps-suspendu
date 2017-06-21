@@ -110,7 +110,7 @@ function gridview()
 		this.container.append( this.renderer.domElement );
 		
 	 
-		this.createGridImages(0,128,128);
+		this.createGridImages(0,128,128); // TODO : parameters ? 
 
 		this.animate();
 	}

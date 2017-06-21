@@ -5,9 +5,10 @@ var ledGreyOut = 100;
 //var bTouchControl = false;
 
 //--------------------------------------------------------
-function LED(sketch,w,h)
+function LED(sketch,id,w,h)
 {
    this.sketch = sketch;
+   this.id = ""+id;
    this.x = 0;
    this.y = 0;
    this.w = w;
@@ -29,7 +30,15 @@ function LED(sketch,w,h)
 	
 		sketch.fill(255,255,255,this.value);
 		sketch.rect(this.x,this.y,this.w,this.h);
+	
    }
+
+   this.drawDebug = function()
+   {
+		sketch.fill(255,0,0,255);
+		sketch.text(""+this.id, this.x-sketch.textWidth(id)/2,this.y+this.h/2);
+   }
+
 }
 
 //--------------------------------------------------------
@@ -46,10 +55,17 @@ function sketchEtincelles( sketch )
   sketch.wLed = 5;
   sketch.hLed = 50;
   sketch.bTouchControl = false;
+  sketch.bDebug = false;
 
   sketch.leds 		= [];
   sketch.ledValues 	= []; // to be sent to artnet
 
+
+  //--------------------------------------------------------
+  sketch.setDebug = function(is)
+  {
+	sketch.bDebug = is;
+  }
 
   //--------------------------------------------------------
   sketch.setTouchControl = function(is)
@@ -75,7 +91,7 @@ function sketchEtincelles( sketch )
 		  for (var j=0;j<12;j++)
 		  {
 			offset = i+j*sketch.nbColumns;
-	  		sketch.leds[offset] = new LED(sketch, sketch.wLed, sketch.hLed);
+	  		sketch.leds[offset] = new LED(sketch, offset, sketch.wLed, sketch.hLed);
 			sketch.leds[offset].setPosition(x,y);
 
 			sketch.ledValues[offset] = 0;
@@ -124,13 +140,21 @@ function sketchEtincelles( sketch )
 		sketch.leds[i].draw();
 		sketch.ledValues[i] = sketch.leds[i].value; // set value for artnet
 	}
-
-	if (sketch.bTouchControl)
+	
+	if (sketch.bDebug)
 	{
-		sketch.stroke(255,0,0);
-		sketch.noFill();
-		sketch.ellipse(sketch.mouseX, sketch.mouseY, 2*this.radiusInfluence,2*this.radiusInfluence);
-  	}
+		for (var i=0; i<sketch.leds.length; i++)
+			sketch.leds[i].drawDebug();
+
+
+		if (sketch.bTouchControl)
+		{
+			sketch.stroke(255,0,0);
+			sketch.noFill();
+			sketch.ellipse(sketch.mouseX, sketch.mouseY, 2*this.radiusInfluence,2*this.radiusInfluence);
+  		}
+	}
+	
   };
  
   //--------------------------------------------------------

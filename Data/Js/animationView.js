@@ -1,9 +1,11 @@
 function animationView(){}
 
+//--------------------------------------------------------
 animationView.prototype.animationCurrent = null;
 animationView.prototype.container = null;
 
 
+//--------------------------------------------------------
 animationView.prototype.init = function()
 {
 		this.container = $("#animation");
@@ -35,16 +37,19 @@ animationView.prototype.init = function()
 }
 
 
+//--------------------------------------------------------
 animationView.prototype.setAnimation = function(animation)
 {
 	this.animationCurrent = animation;
 	this.material.map = animation.rendererRTT.texture;
 }
 
+//--------------------------------------------------------
 animationView.prototype.render = function()
 {
    if (this.animationCurrent)
 	   this.animationCurrent.render(this.renderer);
    this.renderer.render( this.scene, this.camera );
+
    window.requestAnimationFrame(this.render.bind(this));
 }

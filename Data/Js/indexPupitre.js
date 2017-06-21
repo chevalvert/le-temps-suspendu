@@ -71,6 +71,14 @@ function createViewKeyboard()
 
 //--------------------------------------------------------
 // Events
+
+ipcRenderer.on('gridTouchDebug', function (event, value)
+{
+	if (p5Sketch)
+		p5Sketch.setDebug(value);
+});
+
+
 ipcRenderer.on('gridTouchControl', function (event, value)
 {
 	if (p5Sketch)

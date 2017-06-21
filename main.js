@@ -89,6 +89,12 @@ function onConfigLoaded()
 	global.rqcv.leds = leds;
 	
 	// events from windows
+	ipcMain.on('toolPupitre-gridTouchDebug', (event, value) =>
+	{
+		if (mainWindow.content())
+			mainWindow.content().send('gridTouchDebug', value);
+	})
+	
 	ipcMain.on('toolPupitre-gridTouchControl', (event, value) =>
 	{
 		if (mainWindow.content())

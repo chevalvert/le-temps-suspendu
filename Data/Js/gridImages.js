@@ -6,7 +6,7 @@ function gridImages(wImage, hImage)
 	//--------------------------------------------------------
 	this.loader = new THREE.ImageLoader();
 	this.promiseArray = [];
-	this.geometry = new THREE.PlaneGeometry( 768, 1024 ); // TEMP, pass dimensions as arguments
+	this.geometry = new THREE.PlaneGeometry( 1024, 1024 ); // TEMP, pass dimensions as arguments
 	this.texture = null;
 	this.mesh = null;
 
@@ -79,7 +79,6 @@ function gridImages(wImage, hImage)
 				var w = pThis.wImage;
 				var h = pThis.hImage;
 				var nbImages = images.length;
-//				console.log("------------------");
 
 				images.forEach(function(img)
 				{

@@ -2,7 +2,7 @@
 function animationPlasma(){}
 
 //--------------------------------------------------------
-animationPlasma.prototype = Object.create(animation.prototype);
+animationPlasma.prototype = Object.create(animationShader.prototype);
 
 //--------------------------------------------------------
 animationPlasma.prototype.loadProperties = function()

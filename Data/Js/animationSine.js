@@ -2,7 +2,7 @@
 function animationSine(){}
 
 //--------------------------------------------------------
-animationSine.prototype = Object.create(animation.prototype);
+animationSine.prototype = Object.create(animationShader.prototype);
 
 //--------------------------------------------------------
 animationSine.prototype.loadProperties = function()
@@ -20,7 +20,7 @@ animationSine.prototype.addControls = function()
 //--------------------------------------------------------
 animationSine.prototype.getUniforms = function()
 {
-return{
+	return {
 		  time: { value: 0.0 },
 		  w: { value: this.wRTT },
 		  h: { value: this.hRTT },
