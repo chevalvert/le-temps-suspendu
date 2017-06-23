@@ -15,13 +15,16 @@ function toolPupitre()
 	this.properties.gridTouchDebug = false;
 	this.properties.gridTouchControl = false;
 	this.properties.animations = [];
+	this.properties.timeline = false;
 	this.properties.radiusInfluence = 70;
-	this.properties.radiusHeight = 100;
-	this.properties.ledGreyOut = 100;
 
 	// --------------------------------------------
 	// Animation
 	this.animManager = new animationManager();
+
+	// --------------------------------------------
+	// Timer
+	this.timer = new timer();
 	
 	// --------------------------------------------
 	this.init = function(containerId)
@@ -32,6 +35,8 @@ function toolPupitre()
 			console.log(event);
 		
 		});
+
+		this.timer.reset();
 
 		// Animations
 		this.animManager = new animationManager();
@@ -54,20 +59,16 @@ function toolPupitre()
 
 
   		var listAnimations = this.gui.add(this.properties, 'animations', this.properties.animations);
-/*  		var sliderRadiusHeight = this.gui.add(this.properties, 'radiusHeight', 0, 100).listen();
-  		var sliderLedGreyOut = this.gui.add(this.properties, 'ledGreyOut', 0, 100).listen();
-*/
+
 
 		listAnimations.onChange(function(value){
 			toolPupitre.setAnimation(value)
 		});
-
+		
 		chkGridTouchDebug.onChange(function(value)
 		{
 			toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', value);
 		});
-
-
 
 		chkGridTouchControl.onChange(function(value)
 		{
@@ -79,17 +80,6 @@ function toolPupitre()
 			toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', value);
 		});
 
-/*		sliderRadiusHeight.onChange(function(value)
-		{
-			toolPupitre.ipcRenderer.send('toolPupitre-radiusHeight', value);
-		});
-
-		sliderLedGreyOut.onChange(function(value)
-		{
-			toolPupitre.ipcRenderer.send('toolPupitre-ledGreyOut', value);
-		});
-*/
-
 
 		this.loadProperties(function(){
 //			toolPupitre.createUI(containerId);
@@ -99,7 +89,9 @@ function toolPupitre()
 		this.container.find("#properties-globals").append( this.gui.domElement );
 		$(".dg").css( {"font-family" : "Friction-Regular", "font-size" : "13px"} );
 
-		this.setAnimation("plasma");
+		this.setAnimation("timeline");
+
+	   window.requestAnimationFrame(this.update.bind(this));
 	}
 
 	// --------------------------------------------
@@ -115,6 +107,15 @@ function toolPupitre()
 		}
 
 		this.animView.setAnimation( this.animManager.animation );
+	}
+
+	// --------------------------------------------
+	this.update = function()
+	{
+		var dt = this.timer.update();
+		this.animManager.update(dt);
+
+	   window.requestAnimationFrame(this.update.bind(this));
 	}
 
 	// --------------------------------------------

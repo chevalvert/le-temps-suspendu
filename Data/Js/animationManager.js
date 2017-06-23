@@ -8,12 +8,16 @@ function animationManager()
 //--------------------------------------------------------
 animationManager.prototype.setup = function()
 {
+   this.animations["blank"] 		= new animationBlank();
    this.animations["sine"] 			= new animationSine();
    this.animations["sine2"] 		= new animationSine();
    this.animations["plasma"] 		= new animationPlasma();
    this.animations["plasma2"] 		= new animationPlasma();
    this.animations["rectRotate"] 	= new animationRectRotate();
-   this.animations["mix"] 			= new animationMix();
+ 
+   this.animations["timeline"] 		= new animationMix();
+   this.animations["timeline"].setAnimationManager(this);
+   this.animations["timeline"].createTimeline();
 
    for (var id_ in this.animations)
    {
@@ -23,11 +27,12 @@ animationManager.prototype.setup = function()
 			setup();
 		}
    }
- 
-   this.animations["mix"].setAnim0( this.animations["sine"]  );
-   this.animations["mix"].setAnim1( this.animations["plasma2"]  );
 }
 
+//--------------------------------------------------------
+animationManager.prototype.update = function(dt)
+{
+}
 
 //--------------------------------------------------------
 animationManager.prototype.loadProperties = function()

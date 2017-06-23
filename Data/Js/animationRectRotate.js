@@ -8,6 +8,7 @@ animationRectRotate.prototype.angle = 0;
 //--------------------------------------------------------
 animationRectRotate.prototype.loadProperties = function()
 {
+
 	this.properties = {}
 	this.properties.rotSpeed = 30.0;
 	this.properties.size = 0.5;
@@ -32,19 +33,16 @@ animationRectRotate.prototype.render = function(renderer_, bSample)
 	if (this.angle >= 360.0) this.angle -= 360.0;
 
 	var rectSize = this.properties.size * this.drawingCanvas.width;
-//	var scaleX = 128 / 120; // TEMP
-//	var scaleY = 128 / 180; // TEMP
-// Scale proble to fix
 
 	// Draw on canvas
 	this.drawingContext.fillStyle = "#000000";
 	this.drawingContext.fillRect( 0, 0, this.drawingCanvas.width, this.drawingCanvas.height );
 
 	this.drawingContext.save();
-
+	
 	this.drawingContext.translate(this.drawingCanvas.width/2, this.drawingCanvas.height/2);
+	this.drawingContext.scale(128.0 / 120.0, 128.0 / 180.0);
 	this.drawingContext.rotate(this.angle * Math.PI/180);
-//	this.drawingContext.scale(scaleX, scaleY);
 	this.drawingContext.translate(-rectSize/2, -rectSize/2);
 
 	this.drawingContext.fillStyle = "#FFFFFF";
