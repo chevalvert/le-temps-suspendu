@@ -146,6 +146,12 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 
 
 //--------------------------------------------------------
+animation.prototype.renderOffscreen = function(renderer_)
+{
+	renderer_.render( this.sceneRTT, this.cameraRTT, this.rendererRTT, true );
+}
+
+//--------------------------------------------------------
 animation.prototype.render = function(renderer_)
 {
 }

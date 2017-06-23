@@ -36,7 +36,6 @@ function toolPupitre()
 		// Animations
 		this.animManager = new animationManager();
 		this.animManager.setup();
-//		this.animManager.loadProperties();
 
 		this.properties.animations = Object.keys(this.animManager.animations);
 	

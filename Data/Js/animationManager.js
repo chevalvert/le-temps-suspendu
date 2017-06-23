@@ -13,6 +13,7 @@ animationManager.prototype.setup = function()
    this.animations["plasma"] 		= new animationPlasma();
    this.animations["plasma2"] 		= new animationPlasma();
    this.animations["rectRotate"] 	= new animationRectRotate();
+   this.animations["mix"] 			= new animationMix();
 
    for (var id_ in this.animations)
    {
@@ -22,6 +23,9 @@ animationManager.prototype.setup = function()
 			setup();
 		}
    }
+ 
+   this.animations["mix"].setAnim0( this.animations["sine"]  );
+   this.animations["mix"].setAnim1( this.animations["plasma2"]  );
 }
 
 

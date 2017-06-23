@@ -23,7 +23,7 @@ animationRectRotate.prototype.addControls = function()
 }
 
 //--------------------------------------------------------
-animationRectRotate.prototype.render = function(renderer_)
+animationRectRotate.prototype.render = function(renderer_, bSample)
 {
 	var dt = this.timer.update();
 
@@ -31,7 +31,7 @@ animationRectRotate.prototype.render = function(renderer_)
 	this.angle  += this.properties.rotSpeed*dt;
 	if (this.angle >= 360.0) this.angle -= 360.0;
 
-	var rectSize = /*0.5*(1.0+Math.sin( this.angle * Math.PI/180 ))*/this.properties.size * this.drawingCanvas.width;
+	var rectSize = this.properties.size * this.drawingCanvas.width;
 //	var scaleX = 128 / 120; // TEMP
 //	var scaleY = 128 / 180; // TEMP
 // Scale proble to fix
@@ -51,9 +51,9 @@ animationRectRotate.prototype.render = function(renderer_)
 	this.drawingContext.fillRect(0, 0, rectSize, rectSize );
 
 	this.drawingContext.restore();
-
 	this.texture.needsUpdate = true;
 
-	renderer_.render( this.sceneRTT, this.cameraRTT, this.rendererRTT, true );
-	this.sampleAndSendValues(renderer_);
+	this.renderOffscreen(renderer_);
+	if (bSample)
+		this.sampleAndSendValues(renderer_);
 }
