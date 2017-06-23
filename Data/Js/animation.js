@@ -20,7 +20,7 @@ animation.prototype.ledValues = [];
 animation.prototype.read = null;
 animation.prototype.readValues = [];
 
-animation.prototype.timer = new timer();
+animation.prototype.timer = null;
 
 animation.prototype.properties = {}
 
@@ -86,6 +86,9 @@ animation.prototype.createControls = function()
 //--------------------------------------------------------
 animation.prototype.setup = function(options)
 {
+	this.timer = new timer();
+	this.timer.reset();
+
 	this.container = $("#animation");
 	var w = this.container.width();
 	var h = this.container.height();
@@ -95,7 +98,6 @@ animation.prototype.setup = function(options)
 	this.hRTT = parseInt(this.wRTT / ratio);
 	this.read = new Float32Array( 4 * this.wRTT * this.hRTT  );
 	
-	this.timer.reset();
 	this.resetLedValues();
 	this.loadProperties();
 

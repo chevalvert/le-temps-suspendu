@@ -7,6 +7,7 @@ animationPlasma.prototype = Object.create(animationShader.prototype);
 //--------------------------------------------------------
 animationPlasma.prototype.loadProperties = function()
 {
+
 	this.fragmentShaderName = "plasma.frag";
 	this.properties = {}
 	this.properties.freqSin2 = 4;
