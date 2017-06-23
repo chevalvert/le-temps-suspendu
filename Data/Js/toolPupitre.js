@@ -89,7 +89,7 @@ function toolPupitre()
 		this.container.find("#properties-globals").append( this.gui.domElement );
 		$(".dg").css( {"font-family" : "Friction-Regular", "font-size" : "13px"} );
 
-		this.setAnimation("mix");
+		this.setAnimation("timeline");
 
 	   window.requestAnimationFrame(this.update.bind(this));
 	}

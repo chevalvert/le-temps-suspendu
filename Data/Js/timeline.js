@@ -6,16 +6,19 @@ function timeline()
 	this.callbackDefault = null;
 
 
+	//--------------------------------------------------------
 	this.setCallbackDefault = function(callback)
 	{
 		this.callbackDefault = callback;
 	}
 
+	//--------------------------------------------------------
 	this.add = function(event)
 	{
 		this.events.push( event );
 	}
 
+	//--------------------------------------------------------
 	this.reset = function()
 	{
 		this.indexCurrent = 0;
@@ -23,6 +26,7 @@ function timeline()
 	}
 
 
+	//--------------------------------------------------------
 	this.update = function(dt)
 	{
 		this.time += dt;
