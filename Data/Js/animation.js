@@ -128,8 +128,8 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	var i,j,offset;
 	var x = 0;
 	var y = 0;
-	var stepx = this.wRTT / 17.0;
-	var stepy = this.hRTT / 11.0;
+	var stepx = this.wRTT / 18.0;
+	var stepy = this.hRTT / 12.0;
 
 	renderer_.readRenderTargetPixels( this.rendererRTT, 0, 0, this.wRTT, this.hRTT, this.read );
 	
@@ -144,6 +144,9 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 
 	// Send the values !
 	this.ipcRenderer.send("animation-leds", this.readValues);
+	
+	// Set in the tool3D
+	tool3D.setLedValues(this.readValues);
 }
 
 

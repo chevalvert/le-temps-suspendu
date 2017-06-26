@@ -143,7 +143,4 @@ function toolPupitre()
 toolPupitre.prototype = Object.create(tool.prototype);
 var toolPupitre = new toolPupitre();
 
-//toolPupitre.saveProperties();
-//toolPupitre.loadProperties();
-
 

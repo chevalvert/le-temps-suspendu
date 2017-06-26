@@ -102,10 +102,10 @@ ipcRenderer.on('radiusHeight', function (event, value)
 	radiusHeight = value; // defined in etincellesView.js
 });
 
-ipcRenderer.on('leds', function (event, value)
+ipcRenderer.on('leds', function (event, values)
 {
-	if (p5Sketch && value)
-		p5Sketch.setLedValues(value);
+	if (p5Sketch && values)
+		p5Sketch.setLedValues(values);
 });
 
 
