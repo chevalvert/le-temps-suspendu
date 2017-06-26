@@ -162,15 +162,11 @@ function tool3D()
 	this.render = function()
 	{
 
-		this.camera.position.x = 15;//-0.5*(this.mouseY-this.container.height())*0.1;
+		this.camera.position.x = 10-0.5*(this.mouseY-this.container.height())*0.1;
 		this.camera.position.y = 8;
 		this.camera.position.z = 12;
 
-//		var angle = Math.PI / 2.1; //(this.mouseX-0.5*this.container.width()) / this.container.width() * Math.PI * 0.2;
 
-//		this.camera.position.y = 8;
-//		this.camera.position.x = 10 * Math.sin( angle );
-//		this.camera.position.z = 10 * Math.cos( angle );
 
 
 		this.camera.lookAt( new THREE.Vector3(7,0,2.0) );
