@@ -37,20 +37,6 @@
 	display:			none;
 }
 
-#properties-globals
-{
-}
-
-#properties-animation
-{
-}
-
-#animation
-{
-	width:				120px;
-	height:				180px;
-}
-
 #save-button
 {
 	position:			absolute;
@@ -61,3 +47,58 @@
 	top:				40px;
 	line-height:		30px;
 }
+
+
+#properties-globals
+{
+}
+
+
+/*
+
+Tool Animations
+
+*/
+
+#tool-pupitre #column1
+{
+	position:			absolute;
+	top:				0px;
+	left:				0px;
+	width:				200px;
+}
+
+#tool-pupitre #column2
+{
+	position:			absolute;
+	top:				0px;
+	left:				300px;
+	width:				300px;
+}
+
+#tool-pupitre #column3
+{
+	position:			absolute;
+	top:				0px;
+	left:				600px;
+	width:				300px;
+}
+
+
+#tool-pupitre #column1 #properties-animation
+{
+}
+
+
+#tool-pupitre #column2 #animation
+{
+	width:				120px;
+	height:				180px;
+}
+
+#tool-pupitre #column3  #animationGround
+{
+	width:				60px;
+	height:				90px;
+}
+

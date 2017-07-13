@@ -47,6 +47,13 @@ function tool3D()
 		this.scene.add( gridHelper );
 
 
+/*		var geometry = new THREE.PlaneGeometry( 5, 20, 32 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+		var plane = new THREE.Mesh( geometry, material );
+		plane.rotation.z = 3.14/2;
+		this.scene.add( plane );
+*/
+
 
 		// https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
 //		this.controls = new THREE.PointerLockControls( this.camera );
@@ -165,9 +172,6 @@ function tool3D()
 		this.camera.position.x = 10-0.5*(this.mouseY-this.container.height())*0.1;
 		this.camera.position.y = 8;
 		this.camera.position.z = 12;
-
-
-
 
 		this.camera.lookAt( new THREE.Vector3(7,0,2.0) );
 

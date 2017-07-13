@@ -6,17 +6,75 @@
 	<script type="text/javascript" src="Data/Js/common.js"></script>
 	<script type="text/javascript" src="Data/Js/p5.min.js"></script>
 	<script type="text/javascript" src="Data/Js/three.min.js"></script>
+	<script type="text/javascript" src="Data/Js/timer.js"></script>
 	<script type="text/javascript" src="Data/Js/gridImages.js"></script>
+	<script type="text/javascript" src="Data/Js/gridImagesCache.js"></script>
+	<script type="text/javascript" src="Data/Js/gridViewMeshImageCache.js"></script>
 	<script type="text/javascript" src="Data/Js/gridView.js"></script>
-	<script type="text/javascript" src="Data/Js/etincellesView.js"></script>
+	<script type="text/javascript" src="Data/Js/interagirView.js"></script>
 	<script type="text/javascript" src="Data/Js/keyboardView.js"></script>
 	<script type="text/javascript" src="Data/Js/indexPupitre.js"></script>
 </head>
 <body>
 
-<div id="gridView">
+<div id="view-grid">
 	<canvas id="drawing-canvas" width="1024" height="1024" ></canvas>
 </div>
+
+<div id="views">
+
+	<!-- INTERAGIR -->
+	<div id="view-interagir" class="view-panel">
+		<div id="view-p5"></div>
+	</div>
+
+	<!-- RECHERCHER -->
+	<div id="view-rechercher" class="view-panel">
+	   <div id="view-recherche">
+		 <div id="view-input-code">
+			 <div><input id="code" type="text" /></div>
+		 </div>
+		 <div id="view-keyboard">
+		 </div>
+		</div>
+	</div>
+
+</div>
+
+	<!-- MENU -->
+<div id="menu">
+	<div class="menu-item" id="interagir">
+		<div class="arrow"></div>
+		<div class="title"><p class="center-vertical">interagir<br />avec l'installation</p></div>
+	</div>
+
+	<div class="menu-item" id="back-rechercher">
+		<div class="arrow"></div>
+		<div class="title"><p class="center-vertical">retour</div>
+	</div>
+
+
+	<div class="menu-item" id="center"><p class="center-vertical center-horizontal">LE TEMPS<br >SUSPENDU</p></div>
+
+	<div class="menu-item" id="rechercher">
+		<div class="arrow"></div>
+		<div class="title"><p class="center-vertical">rechercher<br />par code</p></div>
+	</div>
+
+	<div class="menu-item" id="back-interagir">
+		<div class="arrow"></div>
+		<div class="title"><p class="center-vertical">retour</div>
+	</div>
+
+
+
+</div>
+
+
+<div id="view-debug">
+</div>
+
+<!--
 <div id="rightColumnView">
 	<div id="title">le temps suspendu</div>
 	<div id="content">
@@ -35,6 +93,8 @@
 		<div id="etincelles" 	class="toolItem">étincelles</div>
 	</div>
 </div>
+-->
+
 
 </body>
 </html>

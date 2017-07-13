@@ -3,6 +3,7 @@ function animation(){}
 
 animation.prototype.fs = require("fs");
 animation.prototype.id = "__animation__";
+animation.prototype.type = "ceil";
 animation.prototype.pathConfigs = __dirname + "/Data/Configs/";
 
 animation.prototype.container = null;
@@ -19,6 +20,12 @@ animation.prototype.ipcRenderer = require('electron').ipcRenderer;
 animation.prototype.ledValues = [];
 animation.prototype.read = null;
 animation.prototype.readValues = [];
+animation.prototype.ipcLedsKey = "animation-leds";
+animation.prototype.propertiesAnimName = "properties-animation";
+
+
+animation.prototype.nbColumns = 18;
+animation.prototype.nbRows = 12;
 
 animation.prototype.timer = null;
 
@@ -27,7 +34,7 @@ animation.prototype.properties = {}
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()
 {
-	for (var i=0; i<18*12; i++)
+	for (var i=0; i<this.nbColumns * this.nbRows; i++)
 		this.ledValues[i] = 0.0;
 }
 
@@ -86,6 +93,12 @@ animation.prototype.createControls = function()
 //--------------------------------------------------------
 animation.prototype.setup = function(options)
 {
+	if (this.type == "floor"/* || options.type == "floor"*/)
+	{
+		this.ipcLedsKey = "animation-floor-leds";
+		this.propertiesAnimName = "#properties-animationGround";
+	}
+
 	this.timer = new timer();
 	this.timer.reset();
 
@@ -128,22 +141,22 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	var i,j,offset;
 	var x = 0;
 	var y = 0;
-	var stepx = this.wRTT / 18.0;
-	var stepy = this.hRTT / 12.0;
+	var stepx = this.wRTT / this.nbColumns;
+	var stepy = this.hRTT / this.nbRows;
 
 	renderer_.readRenderTargetPixels( this.rendererRTT, 0, 0, this.wRTT, this.hRTT, this.read );
 	
-	for (j=0;j<12;j++)
+	for (j=0;j<this.nbRows;j++)
 	{
-		for (i=0;i<18;i++)
+		for (i=0;i<this.nbColumns;i++)
 		{
-			offset = i+18*j;
+			offset = i + this.nbColumns * j;
 			this.readValues[offset] = 255.0*this.read[4*(parseInt(stepx*i) + this.wRTT * parseInt(stepy*j))];
 		}
 	}
 
 	// Send the values !
-	this.ipcRenderer.send("animation-leds", this.readValues);
+	this.ipcRenderer.send(this.ipcLedsKey, this.readValues);
 	
 	// Set in the tool3D
 	tool3D.setLedValues(this.readValues);

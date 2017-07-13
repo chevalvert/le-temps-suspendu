@@ -18,8 +18,10 @@
 	<script type="text/javascript" src="Data/Js/animationSine.js"></script>
 	<script type="text/javascript" src="Data/Js/animationPlasma.js"></script>
 	<script type="text/javascript" src="Data/Js/animationRectRotate.js"></script>
+	<script type="text/javascript" src="Data/Js/animationManual.js"></script>
 	<script type="text/javascript" src="Data/Js/animationMix.js"></script>
 	<script type="text/javascript" src="Data/Js/animationView.js"></script>
+	<script type="text/javascript" src="Data/Js/animationGroundView.js"></script>
 	<script type="text/javascript" src="Data/Js/tool.js"></script>
 	<script type="text/javascript" src="Data/Js/tool3D.js"></script>
 	<script type="text/javascript" src="Data/Js/toolPupitre.js"></script>
@@ -29,21 +31,41 @@
 </head>
 
 <body>
+
 	<div id="toolBar">
 		<div id="pupitre" 	class="toolItem">Pupitre</div>
 		<div id="3d" 		class="toolItem">Simulation</div>
 	</div>
+	
 	<div id="mainView">
+
 		<div id="tool-pupitre" class="toolView">
-			<div id="properties-globals"></div>
-			<div id="properties-animation"></div>
-			<div id="animation"></div>
-			<canvas id="animation-canvas" width="128" height="128" ></canvas>
+			<div id="column1">
+				<div id="properties-globals"></div>
+			</div>
+
+			<div id="column2">
+				<div id="properties-animation-list"></div>
+				<div id="properties-animation"></div>
+				<div id="animation"></div>
+				<canvas id="animation-canvas" width="128" height="128" ></canvas>
+			</div>
+
+			<div id="column3">
+				<div id="properties-animationGround-list"></div>
+				<div id="properties-animationGround"></div>
+				<div id="animationGround"></div>
+			</div>
+			
 		</div>
+
 		<div id="tool-3d" class="toolView">
+
 		<div id="debug"></div>
 		</div>
 	</div>
+
 	<div id="save-button">save</div>
+
 </body>
 </html>

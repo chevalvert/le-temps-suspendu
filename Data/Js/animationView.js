@@ -3,13 +3,12 @@ function animationView(){}
 //--------------------------------------------------------
 animationView.prototype.animationCurrent = null;
 animationView.prototype.container = null;
-
+animationView.prototype.containerName = "#animation";
 
 //--------------------------------------------------------
 animationView.prototype.init = function()
 {
-   this.container = $("#animation");
-
+   this.container = $(this.containerName);
 
    var w = this.container.width();
    var h = this.container.height();
@@ -19,9 +18,7 @@ animationView.prototype.init = function()
 
    this.scene = new THREE.Scene();
    this.camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, - 1000, 1000 );
-   this.material = new THREE.MeshBasicMaterial(
-   {map:null, depthWrite: false}
-   );
+   this.material = new THREE.MeshBasicMaterial( {map:null, depthWrite: false} );
    this.quad = new THREE.Mesh( plane, this.material );
    this.scene.add( this.camera );
    this.scene.add( this.quad );
@@ -33,9 +30,8 @@ animationView.prototype.init = function()
 
    this.container[0].appendChild( this.renderer.domElement );
 
-   window.requestAnimationFrame(this.render.bind(this));
+   window.requestAnimationFrame( this.render.bind(this) );
 }
-
 
 //--------------------------------------------------------
 animationView.prototype.setAnimation = function(animation)
@@ -47,9 +43,14 @@ animationView.prototype.setAnimation = function(animation)
 //--------------------------------------------------------
 animationView.prototype.render = function()
 {
+   // Offscreen rendering
+   // TODO : may be move this elsewhere (view is not responsible for rendering an animation, just display it)
    if (this.animationCurrent)
 	   this.animationCurrent.render(this.renderer, true);
+
+   // View rendering
    this.renderer.render( this.scene, this.camera );
 
+   // Update
    window.requestAnimationFrame(this.render.bind(this));
 }

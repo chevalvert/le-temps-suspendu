@@ -7,8 +7,11 @@ function toolPupitre()
 	// --------------------------------------------
 	// DOM
 	this.container = null;
-	this.gui = null;
+	this.guiGlobals = null;
+	this.guiAnimationList = null;
+	this.guiAnimationGroundList = null;
 	this.animView = null;
+	this.animGroundView = null;
 
 	// --------------------------------------------
 	// Properties
@@ -30,39 +33,48 @@ function toolPupitre()
 	this.init = function(containerId)
 	{
 		this.container = $(containerId);
-		this.container.keydown(function(event){
-		
-			console.log(event);
-		
-		});
 
+		// Timer
 		this.timer.reset();
 
 		// Animations
 		this.animManager = new animationManager();
 		this.animManager.setup();
 
-		this.properties.animations = Object.keys(this.animManager.animations);
+		this.properties.animations 			= Object.keys(this.animManager.animations);
+		this.properties.animationsGround 	= Object.keys(this.animManager.animationsGround);
 	
 		// UI
 		this.animView = new animationView();
 		this.animView.init();
 
-		this.gui = new dat.GUI({ autoPlace: false , width : 300});
+		this.animGroundView = new animationGroundView();
+		this.animGroundView.init();
+
+		this.guiGlobals 			= new dat.GUI({ autoPlace: false , width : 300});
+		this.guiAnimationList 		= new dat.GUI({ autoPlace: false , width : 300});
+		this.guiAnimationGroundList = new dat.GUI({ autoPlace: false , width : 300});
 		
 		// Properties
-		var gridViewFolder = this.gui.addFolder("Grid view");
+		var gridViewFolder = this.guiGlobals.addFolder("Grid view");
 
   		var chkGridTouchDebug = gridViewFolder.add(this.properties, 'gridTouchDebug', false);
   		var chkGridTouchControl = gridViewFolder.add(this.properties, 'gridTouchControl', true);
   		var sliderRadiusInfluence = gridViewFolder.add(this.properties, 'radiusInfluence', 60, 100);
 
 
-  		var listAnimations = this.gui.add(this.properties, 'animations', this.properties.animations);
+  		var listAnimations 			= this.guiAnimationList.add(this.properties, 'animations', 				this.properties.animations);
+  		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 'animationsGround', 	this.properties.animationsGround);
 
 
-		listAnimations.onChange(function(value){
+		listAnimations.onChange(function(value)
+		{
 			toolPupitre.setAnimation(value)
+		});
+
+		listAnimationsGround.onChange(function(value)
+		{
+			toolPupitre.setAnimationGround(value)
 		});
 		
 		chkGridTouchDebug.onChange(function(value)
@@ -81,17 +93,32 @@ function toolPupitre()
 		});
 
 
-		this.loadProperties(function(){
-//			toolPupitre.createUI(containerId);
-		});
-
 		// Apply our own style :)
-		this.container.find("#properties-globals").append( this.gui.domElement );
+		this.container.find("#properties-globals").append( this.guiGlobals.domElement );
+		this.container.find("#properties-animation-list").append( this.guiAnimationList.domElement );
+		this.container.find("#properties-animationGround-list").append( this.guiAnimationGroundList.domElement );
+
+
 		$(".dg").css( {"font-family" : "Friction-Regular", "font-size" : "13px"} );
 
 		this.setAnimation("timeline");
+		this.setAnimationGround("sine_ground");
+
+//	   this.animGroundView.setAnimation( this.animManager.animations["sine_ground"] );
 
 	   window.requestAnimationFrame(this.update.bind(this));
+	}
+	
+	
+	// --------------------------------------------
+	this.setGridViewCamPos = function(value)
+	{
+		if (this.animManager.animation && this.animManager.animation.id == "manual")
+		{
+			this.animManager.animation.gridx = value.x;
+			this.animManager.animation.gridy = value.y;
+
+		}
 	}
 
 	// --------------------------------------------
@@ -109,12 +136,25 @@ function toolPupitre()
 		this.animView.setAnimation( this.animManager.animation );
 	}
 
+
+	// --------------------------------------------
+	this.setAnimationGround = function(id)
+	{
+		with(this.animManager)
+		{
+			if (animationGround)
+				animationGround.showControls(false);
+
+			animationGround = animationsGround[id];
+			animationGround.showControls(true);
+		}
+
+		this.animGroundView.setAnimation( this.animManager.animationGround );
+	}
+
 	// --------------------------------------------
 	this.update = function()
 	{
-		var dt = this.timer.update();
-		this.animManager.update(dt);
-
 	   window.requestAnimationFrame(this.update.bind(this));
 	}
 

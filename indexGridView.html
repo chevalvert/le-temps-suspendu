@@ -1,0 +1,110 @@
+<html charset="utf-8">
+<head>
+	<link rel="stylesheet" type="text/css" href="Data/Css/globals.css" />
+	<script type="text/javascript" src="Data/Js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="Data/Js/timer.js"></script>
+	<style type="text/css">
+	#gridView
+	{
+		position : absolute;
+		transform: translateZ(0);
+	}
+
+	.grid-item
+	{
+		position:absolute;
+	}
+	</style>
+</head>
+<body>
+
+<div id="gridView">
+
+
+</div>
+<script type="text/javascript">
+var bMouseDrag = false;
+var mouse = {x:0, y:0};
+var mouseDown = {x:0, y:0};
+var gridOffset = {x:0, y:0};
+var gridOffsetTarget = {x:0, y:0};
+var gridOffsetStart = {x:0, y:0};
+var t = new timer();
+
+$(document).ready(function()
+{
+
+
+	var i,j,offset,x,y;
+	var grid = "";
+	for (i=0; i<9 ; i++)
+	{
+		x = 4096*i;
+		for (j=0; j<12 ; j++)
+		{
+		   offset = i+9*j;
+		   y = 4096*j;
+		   grid += "<div class=\"grid-item\" style=\"top:"+y+"px;left:"+x+"px;width:4096px;height:4096px;background:url('Data/Img/temp/"+getName(offset)+".jpg')\"></div>";
+		}
+	}
+	
+	$("#gridView").append( grid );
+	$(document).mousedown(function(event){
+		mouseDown.x = event.pageX;
+		mouseDown.y = event.pageY;
+		bMouseDrag = true;
+		gridOffsetStart.x = gridOffset.x;
+		gridOffsetStart.y = gridOffset.y;
+	});
+
+	$(document).mousemove(function(event){
+		mouse.x = event.pageX;
+		mouse.y = event.pageY;
+
+		if (bMouseDrag)
+		{
+		
+			gridOffsetTarget.x = gridOffsetStart.x - 4*(mouseDown.x-mouse.x);
+			gridOffsetTarget.y = gridOffsetStart.y + 4*(mouseDown.y-mouse.y);
+
+//			console.log(gridOffset);
+
+
+		}
+
+	
+	});
+
+	$(document).mouseup(function(){
+		bMouseDrag = false;
+	});
+
+
+	window.requestAnimationFrame( animate );
+
+	
+
+
+});
+
+function getName(id)
+{
+	if (id<10) return "00"+id;
+	if (id<100) return "0"+id;
+	return id;
+}
+
+function animate()
+{
+	gridOffset.x += (gridOffsetTarget.x - gridOffset.x) * 0.05;
+	gridOffset.y += (gridOffsetTarget.y - gridOffset.y) * 0.05;
+
+
+	$("#gridView").css({"transform" : "translateX("+gridOffset.x+")"} );
+	window.requestAnimationFrame( animate );
+}
+
+</script>
+</body>
+</html>
+

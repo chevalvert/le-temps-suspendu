@@ -10,7 +10,7 @@
 	
 	"artnet" :
 	{
-		"host"		: "192.168.0.112"
+		"host"		: "192.168.1.16"
 	},
 	
 	"tool" :
@@ -19,13 +19,13 @@
 		"devtools"	: true,
 		"x"			: 0,
 		"y"			: 0,
-		"w"			: 800,
+		"w"			: 900,
 		"h"			: 600
 	},
 	
 	"pupitre" :
 	{
-		"devtools"	: false,
+		"devtools"	: true,
 		"w"			: 1280,
 		"h"			: 1024
 	}

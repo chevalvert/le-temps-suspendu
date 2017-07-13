@@ -1,11 +1,14 @@
-	//--------------------------------------------------------
 function keyboardView()
 {
 	//--------------------------------------------------------
 
 	this.container = null;
 	this.valEffacer = "effacer";
+	this.valDefault = "RECHERCHER";
 	this.nbCharsMax = 5;
+	this.bUserKey = false;
+
+	this.cbCodeEntered = null;
 
 	//--------------------------------------------------------
 	this.keys =
@@ -15,6 +18,14 @@ function keyboardView()
 		["Q","S","D","F","G","H","J","K","L","M"],
 		["W","X","C","V","B","N","#",this.valEffacer]
 	];
+
+
+	//--------------------------------------------------------
+	this.reset = function()
+	{
+		$("#code").val( this.valDefault );
+		this.bUserKey = false;
+	}
 	
 	//--------------------------------------------------------
 	this.init = function(containerId)
@@ -23,6 +34,7 @@ function keyboardView()
 		var pThis = this;
 	
 		this.container = $(containerId);
+		var keysIndex = 0;
 		this.keys.forEach( function(element)
 		{
 			var nbKeys = element.length;
@@ -31,13 +43,28 @@ function keyboardView()
 				ligne+="<div class=\"key\" id=\""+element[i]+"\">"+element[i]+"</div>"
 			}
 			ligne+="</div>";
+			if (keysIndex < pThis.keys.length-1)
+				ligne+="<div class=\"ligne-separator\"></div>";
 			pThis.container.append(ligne);
+		
+			keysIndex++;
+		});
+		
+		$("#code").focus( function()
+		{
+			if ( $(this).val() == pThis.valDefault)
+				$(this).val("");
 		});
 
 		this.container.find(".key")
 		.css("cursor", "pointer")
 		.click(function()
 		{
+			if ( $("#code").val() == pThis.valDefault)
+				$("#code").val("");
+				
+			pThis.bUserKey = true;
+		
 			var k = $(this).attr("id");
 			var code = $("#code").val();
 			if (k == pThis.valEffacer)
@@ -49,10 +76,20 @@ function keyboardView()
 			{
 				if(code.length < pThis.nbCharsMax)
 					$("#code").val( code + k  )
+
+				if ($("#code").val().length == pThis.nbCharsMax)
+				{
+					if (typeof pThis.cbCodeEntered === "function")
+						pThis.cbCodeEntered( $("#code").val() );
+				}
 			}
+
+			activity();
 		
 		});
-
+		
+		
+		this.reset();
 
 	}
 }

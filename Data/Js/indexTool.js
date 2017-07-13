@@ -98,4 +98,19 @@ function resizeTools()
 	toolPupitre.resize();
 }
 
+//--------------------------------------------------------
+// Events
+ipcRenderer.on('setAnimation', function (event, value)
+{
+	toolPupitre.setAnimation(value);
+});
+
+ipcRenderer.on('setGridViewCamPos', function (event, value)
+{
+	toolPupitre.setGridViewCamPos(value);
+});
+
+
+
+
 

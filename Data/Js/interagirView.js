@@ -30,7 +30,6 @@ function LED(sketch,id,w,h)
 	
 		sketch.fill(255,255,255,this.value);
 		sketch.rect(this.x,this.y,this.w,this.h);
-	
    }
 
    this.drawDebug = function()
@@ -42,13 +41,13 @@ function LED(sketch,id,w,h)
 }
 
 //--------------------------------------------------------
-function sketchEtincelles( sketch )
+function sketchInteragir( sketch )
 {
-  sketch.parentId = "view-etincelles";
+  sketch.parentId = "view-p5";
   sketch.theCanvas = null;
   sketch.w = $("#"+sketch.parentId).width();
   sketch.h = $("#"+sketch.parentId).height();
-
+ 
   sketch.nbColumns = 18;
   sketch.nbRows = 12;
   sketch.xMin = 40;
@@ -71,6 +70,8 @@ function sketchEtincelles( sketch )
   sketch.setTouchControl = function(is)
   {
 	sketch.bTouchControl = is;
+	
+//	console.log( sketch.theCanvas );
 
 	sketch.theCanvas.mouseMoved(is ? sketch.onMouseMoved : function(){});
 	sketch.theCanvas.mouseOut(is ? sketch.onMouseOut : function(){});
@@ -107,8 +108,12 @@ function sketchEtincelles( sketch )
   //--------------------------------------------------------
   sketch.setup = function()
   {
+  
     sketch.theCanvas = sketch.createCanvas(sketch.w,sketch.h, "WEBGL");
 	sketch.theCanvas.parent(sketch.parentId);
+
+//  	console.log("sketch.theCanvas = "+sketch.theCanvas);
+//  	console.log("sketch.setup() called");
 
 	sketch.createLeds();
   };
@@ -131,7 +136,7 @@ function sketchEtincelles( sketch )
   //--------------------------------------------------------
   sketch.draw = function()
   {
-    sketch.background(34,34,34);
+    sketch.background(0,0,0);
 	
 	sketch.noStroke();
 	sketch.fill(255);
@@ -172,6 +177,8 @@ function sketchEtincelles( sketch )
 			led.valueTarget = 100;
 	
 	}
+	
+	activity();
   }
  
   //--------------------------------------------------------

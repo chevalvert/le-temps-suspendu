@@ -1,4 +1,7 @@
 // --------------------------------------------------
+// if inspector in window devtools does not work -> https://github.com/electron/electron/issues/8876#issuecomment-296445185
+
+// --------------------------------------------------
 const {app, BrowserWindow, ipcMain} 		= require('electron');
 const electron 								= require('electron');
 const windowManager 						= require('electron-window-manager');
@@ -131,11 +134,17 @@ function onConfigLoaded()
 		if (mainWindow.content())
 			mainWindow.content().send('leds', value);
 	})
+
+	ipcMain.on('animation-floor-leds', (event, value) =>
+	{
+		if (mainWindow.content())
+			mainWindow.content().send('floor-leds', value);
+	})
 	
 	
 	ipcMain.on('indexPupitre-ready', (event, value) =>
 	{
-		console.log( "indexPupitre-ready" );
+		// console.log( "indexPupitre-ready" );
 
 		// Tool window
 		if (configuration.tool.enable)
@@ -149,7 +158,29 @@ function onConfigLoaded()
 				}, configuration.tool.devtools);
 		}
 
-	})
+	});
+
+
+	ipcMain.on('indexPupitre-setAnimation', (event, value) =>
+	{
+		if (toolWindow /*&& typeof toolWindow.content == "function"*/)
+		{
+			toolWindow.content().send('setAnimation', value);
+		}
+	
+	});
+
+	ipcMain.on('indexPupitre-setGridViewCamPos', (event, value) =>
+	{
+		if (toolWindow /*&& typeof toolWindow.content == "function"*/)
+		{
+			toolWindow.content().send('setGridViewCamPos', value);
+		}
+	
+	});
+
+
+
 }
 
 // --------------------------------------------------

@@ -1,1 +1,1 @@
-{"gridTouchDebug":false,"gridTouchControl":false,"animations":["blank","sine","sine2","plasma","plasma2","rectRotate","mix"],"radiusInfluence":70,"radiusHeight":100,"ledGreyOut":100}
+{"gridTouchDebug":false,"gridTouchControl":false,"animations":["blank","sine","sine2","plasma","plasma2","rectRotate","manual","timeline","sine_ground"],"timeline":false,"radiusInfluence":70}
