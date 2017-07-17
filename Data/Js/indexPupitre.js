@@ -133,6 +133,12 @@ function enableViewsMouseEvents(is)
 }
 
 
+//--------------------------------------------------------
+function showPhoto(imgId, thumbId)
+{
+	ipcRenderer.send('indexPupitre-showPhoto', {imgId:imgId, thumbId:thumbId});
+}
+
 
 //--------------------------------------------------------
 function changeState(newState)
@@ -202,8 +208,8 @@ function changeState(newState)
 		{
 			bChangeState = true;
 			gridview.showOverlayImage(true);
+			showPhoto( gridview.imageClickedId, gridview.thumbClickedId  ); // TEMP ?
 		}
-
 
 	}
 	else
@@ -468,16 +474,8 @@ ipcRenderer.on('gridTouchDebug', function (event, value)
 		p5Sketch.setDebug(value);
 });
 
-
-ipcRenderer.on('gridTouchControl', function (event, value)
-{
-	if (p5Sketch)
-		p5Sketch.setTouchControl(value);
-});
-
 ipcRenderer.on('listAnimations', function (event, value)
 {
-	console.log( toolPupitre )
 });
 
 ipcRenderer.on('radiusInfluence', function (event, value)

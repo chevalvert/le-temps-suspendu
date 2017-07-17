@@ -16,10 +16,11 @@ function toolPupitre()
 	// --------------------------------------------
 	// Properties
 	this.properties.gridTouchDebug = false;
-	this.properties.gridTouchControl = false;
+	// this.properties.gridTouchControl = false;
 	this.properties.animations = [];
 	this.properties.timeline = false;
 	this.properties.radiusInfluence = 70;
+	this.properties.photoScale = 0.5;
 
 	// --------------------------------------------
 	// Animation
@@ -59,9 +60,7 @@ function toolPupitre()
 		var gridViewFolder = this.guiGlobals.addFolder("Grid view");
 
   		var chkGridTouchDebug = gridViewFolder.add(this.properties, 'gridTouchDebug', false);
-  		var chkGridTouchControl = gridViewFolder.add(this.properties, 'gridTouchControl', true);
   		var sliderRadiusInfluence = gridViewFolder.add(this.properties, 'radiusInfluence', 60, 100);
-
 
   		var listAnimations 			= this.guiAnimationList.add(this.properties, 'animations', 				this.properties.animations);
   		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 'animationsGround', 	this.properties.animationsGround);
@@ -82,15 +81,21 @@ function toolPupitre()
 			toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', value);
 		});
 
-		chkGridTouchControl.onChange(function(value)
-		{
-			toolPupitre.ipcRenderer.send('toolPupitre-gridTouchControl', value);
-		});
-
 		sliderRadiusInfluence.onChange(function(value)
 		{
 			toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', value);
 		});
+		
+		
+		
+		var photoViewFolder = this.guiGlobals.addFolder("Photo view");
+  		var sliderPhotoScale = photoViewFolder.add(this.properties, 'photoScale', 0.1, 1.0);
+
+		sliderPhotoScale.onChange(function(value)
+		{
+			toolPupitre.ipcRenderer.send('toolPupitre-photoScale', value);
+		});
+		
 
 
 		// Apply our own style :)

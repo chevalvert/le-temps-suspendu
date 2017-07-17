@@ -5,6 +5,7 @@ function animationManual(){}
 animationManual.prototype = Object.create(animationShader.prototype);
 animationManual.prototype.gridx = 0.5;
 animationManual.prototype.gridy = 0.5;
+animationManual.prototype.type = "floor";
 
 //--------------------------------------------------------
 animationManual.prototype.loadProperties = function()

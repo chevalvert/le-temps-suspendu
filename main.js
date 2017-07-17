@@ -18,7 +18,7 @@ let configurationName = "configuration.json";
 let externalDisplay;
 
 // Windows
-let mainWindow, toolWindow;
+let mainWindow, toolWindow, photoWindow;
 
 // mySQL
 let connection;
@@ -37,6 +37,9 @@ app.on('window-all-closed', function()
 
 	if (connection)
 		connection.end();
+
+	mainWindow = null;
+	toolWindow = null;
 });
 
 
@@ -82,6 +85,18 @@ function onConfigLoaded()
 		'frame' : false
 	}, configuration.pupitre.devtools);
 
+	// Photo  window
+	
+	photoWindow = windowManager.open('photo', 'Le temps suspendu : photo', getFile('indexPhoto.html'), {},
+	{
+		'width' : configuration.photo.w,
+		'height' : configuration.photo.h,
+		'x' : 800,
+		'y' : 600,
+		'frame' : false
+	}, configuration.photo.devtools);
+
+
 	// Artnet
 	leds.init( configuration );
 	leds.reset();
@@ -94,60 +109,67 @@ function onConfigLoaded()
 	// events from windows
 	ipcMain.on('toolPupitre-gridTouchDebug', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow)
 			mainWindow.content().send('gridTouchDebug', value);
 	})
 	
-	ipcMain.on('toolPupitre-gridTouchControl', (event, value) =>
+/*	ipcMain.on('toolPupitre-gridTouchControl', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow)
 			mainWindow.content().send('gridTouchControl', value);
 	})
+*/
 
 	ipcMain.on('toolPupitre-listAnimations', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow)
 			mainWindow.content().send('listAnimations', value);
 	})
 
 	
 	ipcMain.on('toolPupitre-radiusInfluence', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow)
 			mainWindow.content().send('radiusInfluence', value);
 	})
 
 	ipcMain.on('toolPupitre-radiusHeight', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow)
 			mainWindow.content().send('radiusHeight', value);
 	})
 
 	ipcMain.on('toolPupitre-ledGreyOut', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow)
 			mainWindow.content().send('ledGreyOut', value);
 	})
+	
+
+	ipcMain.on('toolPupitre-photoScale', (event, value) =>
+	{
+		if (photoWindow)
+			photoWindow.content().send('photoScale', value);
+	})
+	
 
 	ipcMain.on('animation-leds', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow && mainWindow.content() != null)
 			mainWindow.content().send('leds', value);
 	})
 
 	ipcMain.on('animation-floor-leds', (event, value) =>
 	{
-		if (mainWindow.content())
+		if (mainWindow && mainWindow.content() != null)
 			mainWindow.content().send('floor-leds', value);
 	})
 	
 	
 	ipcMain.on('indexPupitre-ready', (event, value) =>
 	{
-		// console.log( "indexPupitre-ready" );
-
 		// Tool window
-		if (configuration.tool.enable)
+		if (configuration.tool.enable && toolWindow == null)
 		{
 			toolWindow = windowManager.open('tool', 'Le temps suspendu : outil de simulation', getFile('indexTool.html'),{},
 			{
@@ -163,7 +185,7 @@ function onConfigLoaded()
 
 	ipcMain.on('indexPupitre-setAnimation', (event, value) =>
 	{
-		if (toolWindow /*&& typeof toolWindow.content == "function"*/)
+		if (toolWindow)
 		{
 			toolWindow.content().send('setAnimation', value);
 		}
@@ -172,14 +194,21 @@ function onConfigLoaded()
 
 	ipcMain.on('indexPupitre-setGridViewCamPos', (event, value) =>
 	{
-		if (toolWindow /*&& typeof toolWindow.content == "function"*/)
+		if (toolWindow)
 		{
 			toolWindow.content().send('setGridViewCamPos', value);
 		}
 	
 	});
 
-
+	ipcMain.on('indexPupitre-showPhoto', (event, value) =>
+	{
+		console.log('indexPupitre-showPhoto');
+		if (photoWindow)
+		{
+			photoWindow.content().send('showPhoto', value);
+		}
+	});
 
 }
 

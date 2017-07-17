@@ -41,7 +41,9 @@ function gridview()
 	this.imgI	= 0;
 	this.imgJ	= 0;
 	this.imgCam	= null;
+
 	
+	this.imgClickedId = -1;
 	this.thumbClickedId = -1;
 //	this.thumbClicked = {imgId : -1, i : -1, j : -1, ii : -1, jj : -1, offset : -1, };
 //	this.thumbOver = {imgId : -1, i : -1, j : -1, ii : -1, jj : -1 offset : -1, }; // Camera position over thumb
@@ -105,9 +107,7 @@ function gridview()
 		var ii = parseInt( clickInsideX / this.thumbSize);
 		var jj = this.nbThumbs-1-parseInt( clickInsideY / this.thumbSize);
 
-//		this.thumbClicked.i = i;
-//		this.thumbClicked.j = j;
-
+		this.imgClickedId 	= i+9*j;
 		this.thumbClickedId = (ii+this.nbThumbs*jj);
 		
 		this.overlayImageCache.setPosition( i*this.imgWidth + ii*this.thumbSize + 0.5*this.thumbSize, j*this.imgHeight + (29-jj)*this.thumbSize + 0.5*this.thumbSize   );

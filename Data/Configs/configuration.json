@@ -28,6 +28,12 @@
 		"devtools"	: true,
 		"w"			: 1280,
 		"h"			: 1024
+	},
+	
+	"photo" :
+	{
+		"devtools"	: true,
+		"w"			: 1024,
+		"h"			: 768
 	}
-
 }

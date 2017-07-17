@@ -21,7 +21,7 @@ animation.prototype.ledValues = [];
 animation.prototype.read = null;
 animation.prototype.readValues = [];
 animation.prototype.ipcLedsKey = "animation-leds";
-animation.prototype.propertiesAnimName = "properties-animation";
+animation.prototype.propertiesAnimName = "#properties-animation";
 
 
 animation.prototype.nbColumns = 18;
@@ -86,18 +86,21 @@ animation.prototype.createControls = function()
 {
 	this.gui = new dat.GUI({ autoPlace: false , width : 300});
 	this.addControls();
-	$("#properties-animation").append( this.gui.domElement );
+	
+	$(this.propertiesAnimName).append( this.gui.domElement );
 	this.gui.domElement.style.display = "none";
 }
 
 //--------------------------------------------------------
 animation.prototype.setup = function(options)
 {
-	if (this.type == "floor"/* || options.type == "floor"*/)
+	if (this.type == "floor")
 	{
 		this.ipcLedsKey = "animation-floor-leds";
 		this.propertiesAnimName = "#properties-animationGround";
 	}
+
+	console.log( this.propertiesAnimName );
 
 	this.timer = new timer();
 	this.timer.reset();
