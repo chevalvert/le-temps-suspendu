@@ -43,8 +43,6 @@ function resizeViews()
 
 	$("#save-button")
 	.offset({left : $(window).width()-74	,top : $(window).height()-34});
-	
-	console.log( $("#save-button").offset() );
 }
 
 //--------------------------------------------------------

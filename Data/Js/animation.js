@@ -45,8 +45,8 @@ animation.prototype.readPropertiesFile = function()
 	var p = this.getPathFileProperties();
 	if (this.fs.existsSync(p))
 	{
-		this.properties = JSON.parse( this.fs.readFileSync(this.getPathFileProperties()).toString() );
-		console.log( this.properties )
+		this.properties = JSON.parse( this.fs.readFileSync(p).toString() );
+		// console.log( this.properties )
 	}
 	else
 	{

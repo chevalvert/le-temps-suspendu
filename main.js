@@ -23,6 +23,10 @@ let mainWindow, toolWindow, photoWindow;
 // mySQL
 let connection;
 
+// Flags
+let bIndexPupitreReady = false;
+let bIndexPhotoReady = false;
+
 // --------------------------------------------------
 app.on('ready', () =>
 {
@@ -58,6 +62,24 @@ function loadConfiguration(pathRel)
     });
 }
 
+
+// --------------------------------------------------
+function openToolWindow()
+{
+   // Tool window
+   if (configuration.tool.enable && toolWindow == null)
+   {
+	   toolWindow = windowManager.open('tool', 'Le temps suspendu : outil de simulation', getFile('indexTool.html'),{},
+	   {
+		   'x' : configuration.tool.x,
+		   'y' : configuration.tool.y,
+		   'w' : configuration.tool.w,
+		   'h' : configuration.tool.h,
+		   }, configuration.tool.devtools);
+   }
+}
+
+
 // --------------------------------------------------
 function onConfigLoaded()
 {
@@ -86,13 +108,12 @@ function onConfigLoaded()
 	}, configuration.pupitre.devtools);
 
 	// Photo  window
-	
 	photoWindow = windowManager.open('photo', 'Le temps suspendu : photo', getFile('indexPhoto.html'), {},
 	{
 		'width' : configuration.photo.w,
 		'height' : configuration.photo.h,
-		'x' : 800,
-		'y' : 600,
+		'x' : configuration.photo.x,
+		'y' : configuration.photo.y,
 		'frame' : false
 	}, configuration.photo.devtools);
 
@@ -106,20 +127,33 @@ function onConfigLoaded()
 	global.rqcv.connection = connection;
 	global.rqcv.leds = leds;
 	
+	
 	// events from windows
+	ipcMain.on('toolPupitre-appStateDebug', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('appStateDebug', value);
+	})
+
+	ipcMain.on('toolPupitre-gridFactorMouseDrag', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('gridFactorMouseDrag', value);
+	})
+
+	ipcMain.on('toolPupitre-gridFactorCamSpeed', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('gridFactorCamSpeed', value);
+	})
+
+
 	ipcMain.on('toolPupitre-gridTouchDebug', (event, value) =>
 	{
 		if (mainWindow)
 			mainWindow.content().send('gridTouchDebug', value);
 	})
 	
-/*	ipcMain.on('toolPupitre-gridTouchControl', (event, value) =>
-	{
-		if (mainWindow)
-			mainWindow.content().send('gridTouchControl', value);
-	})
-*/
-
 	ipcMain.on('toolPupitre-listAnimations', (event, value) =>
 	{
 		if (mainWindow)
@@ -164,22 +198,17 @@ function onConfigLoaded()
 		if (mainWindow && mainWindow.content() != null)
 			mainWindow.content().send('floor-leds', value);
 	})
-	
+
+	ipcMain.on('indexPhoto-ready', (event, value) =>
+	{
+		bIndexPhotoReady = true;
+		openToolWindow();
+	});
 	
 	ipcMain.on('indexPupitre-ready', (event, value) =>
 	{
-		// Tool window
-		if (configuration.tool.enable && toolWindow == null)
-		{
-			toolWindow = windowManager.open('tool', 'Le temps suspendu : outil de simulation', getFile('indexTool.html'),{},
-			{
-				'x' : configuration.tool.x,
-				'y' : configuration.tool.y,
-				'w' : configuration.tool.w,
-				'h' : configuration.tool.h,
-				}, configuration.tool.devtools);
-		}
-
+		bIndexPupitreReady = true;
+		openToolWindow();
 	});
 
 
@@ -203,12 +232,20 @@ function onConfigLoaded()
 
 	ipcMain.on('indexPupitre-showPhoto', (event, value) =>
 	{
-		console.log('indexPupitre-showPhoto');
 		if (photoWindow)
 		{
 			photoWindow.content().send('showPhoto', value);
 		}
 	});
+
+	ipcMain.on('indexPupitre-showPhotoList', (event, value) =>
+	{
+		if (photoWindow)
+		{
+			photoWindow.content().send('showPhotoList', value);
+		}
+	});
+
 
 }
 

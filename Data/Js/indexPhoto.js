@@ -6,6 +6,7 @@ var ipcRenderer = require('electron').ipcRenderer;
 $(document).ready( function()
 {
 	photoView.init("#photo");
+	ipcRenderer.send("indexPhoto-ready",0);
 });
 
 //--------------------------------------------------------
@@ -22,10 +23,23 @@ function showPhoto(info)
 }
 
 //--------------------------------------------------------
+function showPhotoList(info)
+{
+	photoView.setPhotoList(info);
+}
+
+
+//--------------------------------------------------------
 ipcRenderer.on('showPhoto', function (event, value)
 {
 	showPhoto(value);
 });
+
+ipcRenderer.on('showPhotoList', function (event, value)
+{
+	showPhotoList(value);
+});
+
 
 ipcRenderer.on('photoScale', function (event, value)
 {

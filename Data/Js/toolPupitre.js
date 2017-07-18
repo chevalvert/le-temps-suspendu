@@ -15,12 +15,14 @@ function toolPupitre()
 
 	// --------------------------------------------
 	// Properties
-	this.properties.gridTouchDebug = false;
-	// this.properties.gridTouchControl = false;
-	this.properties.animations = [];
-	this.properties.timeline = false;
-	this.properties.radiusInfluence = 70;
-	this.properties.photoScale = 0.5;
+	this.properties.gridTouchDebug 		= false;
+	this.properties.gridFactorMouseDrag	= 2.0;
+	this.properties.gridFactorCamSpeed	= 0.1;
+	this.properties.appStateDebug 		= true;
+	this.properties.animations 			= [];
+	this.properties.timeline 			= false;
+	this.properties.radiusInfluence 	= 70;
+	this.properties.photoScale 			= 0.5;
 
 	// --------------------------------------------
 	// Animation
@@ -41,9 +43,6 @@ function toolPupitre()
 		// Animations
 		this.animManager = new animationManager();
 		this.animManager.setup();
-
-		this.properties.animations 			= Object.keys(this.animManager.animations);
-		this.properties.animationsGround 	= Object.keys(this.animManager.animationsGround);
 	
 		// UI
 		this.animView = new animationView();
@@ -52,68 +51,81 @@ function toolPupitre()
 		this.animGroundView = new animationGroundView();
 		this.animGroundView.init();
 
-		this.guiGlobals 			= new dat.GUI({ autoPlace: false , width : 300});
-		this.guiAnimationList 		= new dat.GUI({ autoPlace: false , width : 300});
-		this.guiAnimationGroundList = new dat.GUI({ autoPlace: false , width : 300});
+		this.guiGlobals 			= new dat.GUI({ autoPlace: false , width : $("#column1").width()});
+		this.guiAnimationList 		= new dat.GUI({ autoPlace: false , width : $("#column2").width()});
+		this.guiAnimationGroundList = new dat.GUI({ autoPlace: false , width : $("#column3").width()});
 		
 		// Properties
-		var gridViewFolder = this.guiGlobals.addFolder("Grid view");
+		this.loadProperties();
 
-  		var chkGridTouchDebug = gridViewFolder.add(this.properties, 'gridTouchDebug', false);
-  		var sliderRadiusInfluence = gridViewFolder.add(this.properties, 'radiusInfluence', 60, 100);
-
-  		var listAnimations 			= this.guiAnimationList.add(this.properties, 'animations', 				this.properties.animations);
-  		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 'animationsGround', 	this.properties.animationsGround);
+		this.properties.animations 			= Object.keys(this.animManager.animations);
+		this.properties.animationsGround 	= Object.keys(this.animManager.animationsGround);
 
 
-		listAnimations.onChange(function(value)
-		{
-			toolPupitre.setAnimation(value)
-		});
+		// UI > Globals
+		var globalsFolder 			= this.guiGlobals.addFolder("Globals");
+  		var chkAppStateDebug 		= globalsFolder.add(this.properties, 				'appStateDebug', 	this.properties.appStateDebug);
 
-		listAnimationsGround.onChange(function(value)
-		{
-			toolPupitre.setAnimationGround(value)
-		});
-		
-		chkGridTouchDebug.onChange(function(value)
-		{
-			toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', value);
-		});
 
-		sliderRadiusInfluence.onChange(function(value)
-		{
-			toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', value);
-		});
-		
-		
-		
-		var photoViewFolder = this.guiGlobals.addFolder("Photo view");
-  		var sliderPhotoScale = photoViewFolder.add(this.properties, 'photoScale', 0.1, 1.0);
 
-		sliderPhotoScale.onChange(function(value)
-		{
-			toolPupitre.ipcRenderer.send('toolPupitre-photoScale', value);
-		});
-		
+		// UI > Grid view
+		var gridViewFolder 				= this.guiGlobals.addFolder("Grid view");
+		var sliderGridFactorMouseDrag	= gridViewFolder.add(this.properties,			'gridFactorMouseDrag',	0.5, 3);
+		var sliderGridFactorCamSpeed	= gridViewFolder.add(this.properties,			'gridFactorCamSpeed',	0.1, 0.5);
+
+		sliderGridFactorMouseDrag.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-gridFactorMouseDrag', 	value); });
+		sliderGridFactorCamSpeed.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-gridFactorCamSpeed', 	value); });
+
+		// UI > Interactive view
+		var interactiveViewFolder 	= this.guiGlobals.addFolder("Interactive view");
+  		var chkGridTouchDebug 		= interactiveViewFolder.add(this.properties, 		'gridTouchDebug', 	this.properties.gridTouchDebug);
+  		var sliderRadiusInfluence 	= interactiveViewFolder.add(this.properties, 		'radiusInfluence', 	60, 100);
+  		var listAnimations 			= this.guiAnimationList.add(this.properties, 		'animations', 		this.properties.animations);
+  		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 	'animationsGround', this.properties.animationsGround);
+
+		listAnimations.onChange			(function(value){ toolPupitre.setAnimation(value) });
+		listAnimationsGround.onChange	(function(value){ toolPupitre.setAnimationGround(value) });
+
+		chkAppStateDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-appStateDebug', 	value); });
+		chkGridTouchDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', 	value); });
+		sliderRadiusInfluence.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', 	value); });
+
+		// UI > Photo view
+		var photoViewFolder 		= this.guiGlobals.addFolder("Photo view");
+  		var sliderPhotoScale 		= photoViewFolder.add(this.properties, 				'photoScale', 0.1, 1.0);
+
+		sliderPhotoScale.onChange(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-photoScale', value); });
+
+		// Apply values
+		chkAppStateDebug.			setValue( this.properties.appStateDebug );
+		sliderGridFactorMouseDrag.	setValue( this.properties.gridFactorMouseDrag );
+		sliderGridFactorCamSpeed.	setValue( this.properties.gridFactorCamSpeed );
+		chkGridTouchDebug.			setValue( this.properties.gridTouchDebug );
+		sliderRadiusInfluence.		setValue( this.properties.radiusInfluence );
+		sliderPhotoScale.			setValue( this.properties.photoScale ); // Hmmmmmmmmm doing this to call onChange @ start
 
 
 		// Apply our own style :)
+		this.applyStyleControls();
+
+		// Set animations
+		this.setAnimation("timeline");
+		this.setAnimationGround("sine_ground");
+
+	   window.requestAnimationFrame(this.update.bind(this));
+	}
+
+	
+	// --------------------------------------------
+	this.applyStyleControls = function()
+	{
 		this.container.find("#properties-globals").append( this.guiGlobals.domElement );
 		this.container.find("#properties-animation-list").append( this.guiAnimationList.domElement );
 		this.container.find("#properties-animationGround-list").append( this.guiAnimationGroundList.domElement );
 
 
 		$(".dg").css( {"font-family" : "Friction-Regular", "font-size" : "13px"} );
-
-		this.setAnimation("timeline");
-		this.setAnimationGround("sine_ground");
-
-//	   this.animGroundView.setAnimation( this.animManager.animations["sine_ground"] );
-
-	   window.requestAnimationFrame(this.update.bind(this));
 	}
-	
 	
 	// --------------------------------------------
 	this.setGridViewCamPos = function(value)
@@ -129,32 +141,40 @@ function toolPupitre()
 	// --------------------------------------------
 	this.setAnimation = function(id)
 	{
+		if (this.animView == null) return;
+	
 		with(this.animManager)
 		{
 			if (animation)
 				animation.showControls(false);
 
 			animation = animations[id];
-			animation.showControls(true);
+			if (animation)
+				animation.showControls(true);
 		}
 
-		this.animView.setAnimation( this.animManager.animation );
+		if (this.animManager.animation)
+			this.animView.setAnimation( this.animManager.animation );
 	}
 
 
 	// --------------------------------------------
 	this.setAnimationGround = function(id)
 	{
+		if (this.animGroundView == null) return;
+
 		with(this.animManager)
 		{
 			if (animationGround)
 				animationGround.showControls(false);
 
 			animationGround = animationsGround[id];
-			animationGround.showControls(true);
+			if (animationGround)
+				animationGround.showControls(true);
 		}
 
-		this.animGroundView.setAnimation( this.animManager.animationGround );
+		if (this.animManager.animationGround)
+			this.animGroundView.setAnimation( this.animManager.animationGround );
 	}
 
 	// --------------------------------------------

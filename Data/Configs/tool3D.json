@@ -1,1 +1,1 @@
-{"gridTouchDebug":false,"gridTouchControl":false,"animations":["blank","sine","sine2","plasma","plasma2","rectRotate","manual","timeline","sine_ground"],"timeline":false,"radiusInfluence":70}
+{"gridTouchDebug":false,"gridFactorMouseDrag":2,"gridFactorCamSpeed":0.1,"appStateDebug":true,"animations":[],"timeline":false,"radiusInfluence":70,"photoScale":0.5}

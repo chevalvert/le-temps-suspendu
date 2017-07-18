@@ -5,6 +5,9 @@ function gridViewMeshImageCache(scene, w,h,wThumb,hThumb)
 	this.material = new THREE.MeshBasicMaterial({color:0x000000 , transparent: true, wireframe:false, opacity : 0.0})
 	this.meshes = new Array(4);
 	this.opacityTarget = 0.0;
+	
+	wThumb -= 2; // dirty hack
+	hThumb -= 2;
 
 
 	w *= 2.0;

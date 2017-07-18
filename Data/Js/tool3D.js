@@ -16,7 +16,9 @@ function tool3D()
 
   	this.objModelNames = ["Data/3D/poudriere-structure.obj", "Data/3D/poudriere-leds.obj"];
 
-	this.objLeds = new Array(18*12);
+	this.objLeds 		= new Array(18*12);
+	this.objLedsFloor 	= new Array(18*12);
+
 
 	// --------------------------------------------
 	// Timing
@@ -45,14 +47,6 @@ function tool3D()
 
 		var gridHelper = new THREE.GridHelper( 30, 40,0x444444,0x444444 );
 		this.scene.add( gridHelper );
-
-
-/*		var geometry = new THREE.PlaneGeometry( 5, 20, 32 );
-		var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-		var plane = new THREE.Mesh( geometry, material );
-		plane.rotation.z = 3.14/2;
-		this.scene.add( plane );
-*/
 
 
 		// https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
@@ -216,8 +210,7 @@ function tool3D()
 
 		var box3 = new THREE.Box3();
 		box3.setFromObject( boxHelper );
-		console.log( box3.min );
-
+		// console.log( box3.min );
 
 		object.traverse(function(obj)
 		{
@@ -234,7 +227,10 @@ function tool3D()
 			}
 			else if (type == "F")
 			{
-				
+				obj.material = new THREE.MeshBasicMaterial({color: new THREE.Color(0,0,0)});
+				obj.rotation.x = THREE.Math.degToRad( -90 ) ;
+				// obj.position.y = -box3.min.y ;
+				pThis.objLedsFloor[id] = obj ;
 			}
 		
 		});
@@ -244,6 +240,12 @@ function tool3D()
 		{
 			if (this.objLeds[i]) // for the two missing bars
 				this.scene.add( this.objLeds[i] );
+		}
+
+		for (var i=0; i<this.objLedsFloor.length; i++)
+		{
+			if (this.objLedsFloor[i])
+				this.scene.add( this.objLedsFloor[i] );
 		}
 
 

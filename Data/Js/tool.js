@@ -9,19 +9,20 @@ tool.prototype.properties = {};
 tool.prototype.ipcRenderer = require('electron').ipcRenderer;
 
 //--------------------------------------------------------
-tool.prototype.loadProperties = function( callback )
+tool.prototype.loadProperties = function()
 {
 	var fs 	= require('fs');
-	var pThis = this;
-	fs.readFile(this.getPathFileProperties(), "utf-8", function(err, data)
-	{
-		pThis.properties = JSON.parse(data);
 
-		if (typeof callback === 'function')
-		{
-			callback();
-		}
-	});
+	var p = this.getPathFileProperties();
+	if (this.fs.existsSync(p))
+	{
+		this.properties = JSON.parse( this.fs.readFileSync(p).toString() );
+		 console.log( this.properties )
+	}
+	else
+	{
+		console.log("cannot find \""+p+"\"");
+	}
 }
 
 //--------------------------------------------------------

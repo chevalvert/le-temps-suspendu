@@ -36,7 +36,7 @@ var time;
 
 //--------------------------------------------------------
 // Debug
-var debug = true;
+var bAppStateDebug = true;
 
 //--------------------------------------------------------
 $(document).ready( function()
@@ -72,7 +72,6 @@ var tween = new TWEEN.Tween(coords)
 
 	
 });
-
 
 //--------------------------------------------------------
 function setAnimation(which)
@@ -139,6 +138,12 @@ function showPhoto(imgId, thumbId)
 	ipcRenderer.send('indexPupitre-showPhoto', {imgId:imgId, thumbId:thumbId});
 }
 
+//--------------------------------------------------------
+function showPhotoList()
+{
+	ipcRenderer.send('indexPupitre-showPhotoList', {}); // TODO : parameters ?
+}
+
 
 //--------------------------------------------------------
 function changeState(newState)
@@ -183,6 +188,7 @@ function changeState(newState)
 		else if (newState === state_grid_scroll_clicked)
 		{
 			bChangeState = true;
+			showPhoto( gridview.imageClickedId, gridview.thumbClickedId  ); // TEMP ?
 		}
 	}
 	else
@@ -192,6 +198,7 @@ function changeState(newState)
 		{
 			bChangeState = true;
 			setAnimation(state_stand_by.animation);
+			showPhotoList();
 		}
 		else if (newState === state_interagir)
 		{
@@ -219,6 +226,7 @@ function changeState(newState)
 		{
 			bChangeState = true;
 			setAnimation(state_stand_by.animation);
+			showPhotoList();
 		}
 		else if (newState === state_interagir)
 		{
@@ -245,6 +253,7 @@ function changeState(newState)
 			// View
 			setView("grid");
 			setAnimation(state_stand_by.animation);
+			showPhotoList();
 
 			bChangeState = true;
 		}
@@ -257,6 +266,7 @@ function changeState(newState)
 			// View
 			setView("grid");
 			setAnimation(state_stand_by.animation);
+			showPhotoList();
 
 			bChangeState = true;
 		}
@@ -284,6 +294,7 @@ function changeState(newState)
 		if (newState === state_stand_by)
 		{
 			setView("grid");
+			showPhotoList();
 			bChangeState = true;
 		}
 		else if (newState === state_grid_scroll)
@@ -368,22 +379,32 @@ function animate(t)
 	if (p5Sketch)
 		leds.set( p5Sketch.ledValues );
  
-	if (state)
-	{
-	 	var strDebug = state.name+" ( "+stateTime.toFixed(1) + "s )";
-		if (state === state_grid_scroll || state === state_stand_by)
-		{
-			strDebug += "<br />img id = " + (this.gridview.imgCam ?  this.gridview.imgCam.id : "-");
-			strDebug += "<br />thumb clicked id = " + this.gridview.thumbClickedId;
-		}
-		
-		
-		$("#view-debug").html ( strDebug );
-	}
+ 
+ 	renderDebug();
 	
 	// Request a new animation frame
 	window.requestAnimationFrame( animate );
 }
+
+//--------------------------------------------------------
+function renderDebug()
+{
+	if (bAppStateDebug)
+	{
+	 if (state)
+	 {
+		 var strDebug = state.name+" ( "+stateTime.toFixed(1) + "s )";
+		 if (state === state_grid_scroll || state === state_stand_by)
+		 {
+			 strDebug += "<br />img id = " + (this.gridview.imgCam ?  this.gridview.imgCam.id : "-");
+			 strDebug += "<br />thumb clicked id = " + this.gridview.thumbClickedId;
+		 }
+		 
+		 $("#view-debug").html ( strDebug );
+	 }
+	}
+}
+
 
 //--------------------------------------------------------
 function initMenu()
@@ -422,7 +443,7 @@ function onGridViewMouseDrag()
 //--------------------------------------------------------
 function onGridViewMouseDragEnd()
 {
-	console.log("onGridViewMouseDragEnd()");
+//	console.log("onGridViewMouseDragEnd()");
 //	changeState(state_stand_by);
 }
 
@@ -434,8 +455,6 @@ function createViewGrid()
 	gridview.cbMouseDragStart 	=  onGridViewMouseDragStart.bind(this) ;
 	gridview.cbMouseDrag 		=  onGridViewMouseDrag.bind(this) ;
 	gridview.cbMouseDragEnd 	=  onGridViewMouseDragEnd.bind(this) ;
-	
-	// gridview.gotoThumb(0,0,400);
 }
 
 //--------------------------------------------------------
@@ -468,6 +487,30 @@ function createViewKeyboard()
 
 //--------------------------------------------------------
 // Events
+ipcRenderer.on('appStateDebug', function (event, value)
+{
+	bAppStateDebug = value;
+	if (bAppStateDebug == false)
+		$("#view-debug").hide();
+	else
+		$("#view-debug").show();
+});
+
+ipcRenderer.on('gridFactorMouseDrag', function(event, value)
+{
+	if (gridview)
+		gridview.factorMouseDrag = value;
+});
+
+
+ipcRenderer.on('gridFactorCamSpeed', function(event, value)
+{
+	if (gridview)
+		gridview.cameraSpeedFactorDrag = value;
+});
+
+
+
 ipcRenderer.on('gridTouchDebug', function (event, value)
 {
 	if (p5Sketch)

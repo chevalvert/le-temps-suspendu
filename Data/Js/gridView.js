@@ -20,7 +20,8 @@ function gridview()
 	this.cameraPositionStart = {x:0,y:0};
 	this.cameraPositionOffset = {x:0,y:0};
 	this.cameraPositionTarget = {x:0,y:0};
-	this.cameraSpeedFactor = 0.1;
+	this.cameraSpeedFactorDrag = 0.1;
+	this.cameraSpeedFactor = this.cameraSpeedFactorDrag;
 
 	this.cameraPerspective = null;
 	
@@ -169,7 +170,7 @@ function gridview()
 				pThis.bMouseDrag = true;
 				pThis.cameraPositionOffset = {x:0, y:0};
 				pThis.cameraPositionStart = {x:pThis.cameraPosition.x, y:pThis.cameraPosition.y}
-				pThis.cameraSpeedFactor = 0.1;
+				pThis.cameraSpeedFactor = pThis.cameraSpeedFactorDrag;
 			}
 			
 			if (pThis.bMouseDrag)
@@ -330,13 +331,13 @@ function gridview()
 		{
 			this.bMouseDrag = false;
 			this.cameraPositionTarget.x = this.container.width() / 2;
-			this.cameraSpeedFactor = 0.05;
+			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}
 		else if (this.cameraPosition.x >= this.gridWidth)
 		{
 			this.bMouseDrag = false;
 			this.cameraPositionTarget.x = this.gridWidth - this.container.width() / 2;
-			this.cameraSpeedFactor = 0.05;
+			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}
 
 
@@ -344,13 +345,13 @@ function gridview()
 		{
 			this.bMouseDrag = false;
 			this.cameraPositionTarget.y = this.container.height() / 2;
-			this.cameraSpeedFactor = 0.05;
+			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}
 		else if (this.cameraPosition.y >= this.gridHeight)
 		{
 			this.bMouseDrag = false;
 			this.cameraPositionTarget.y = this.gridHeight - this.container.height() / 2;
-			this.cameraSpeedFactor = 0.05;
+			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}
 	}
 	
