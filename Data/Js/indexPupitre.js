@@ -13,9 +13,9 @@ var TWEEN 		= require('@tweenjs/tween.js');
 var state_stand_by 				= {id : 0, name: "stand_by", animation : "sine"};
 var state_grid_scroll 			= {id : 1, name: "grid_scroll", animation : "manual", timeout : 5};
 var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", timeout : 20};
-var state_interagir 			= {id : 3, name: "interagir", animation : "manual", timeout : 10};
+var state_interagir 			= {id : 3, name: "interagir", animation : "manual", timeout : 100};
 var state_rechercher 			= {id : 4, name: "rechercher", timeout : 5};
-var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", timeout : 10}; // TODO : timeout depends on animation sequence
+var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", timeout : 10, panel:-1, position:-1}; // TODO : timeout depends on animation sequence
 var state_rechercher_fail 		= {id : 6, name: "rechercher_fail"};
 
 // Initial state
@@ -27,6 +27,7 @@ var stateTime 					= 0.0;
 var gridview;
 var p5Sketch;
 var views;
+var bViewsAnimate = false;
 var btnInteragir, btnInteragirBack;
 var btnRechercher, btnRechercherBack;
 
@@ -79,12 +80,30 @@ function setAnimation(which)
 	ipcRenderer.send('indexPupitre-setAnimation', which);
 }
 
+
+
+//--------------------------------------------------------
+function onSetViewStart()
+{
+	bViewsAnimate = true;
+}
+
+
+//--------------------------------------------------------
+function onSetViewCompleted()
+{
+	bViewsAnimate = false;
+}
+
 //--------------------------------------------------------
 function setView(which)
 {
+	var duration = 500;
+	var options = {duration : duration, start : onSetViewStart.bind(this), complete : onSetViewCompleted.bind(this)};
+
 	if (which == "grid")
 	{
-		views.clearQueue().stop().animate({left : -1280});
+		views.clearQueue().stop().animate({left : -1280}, options);
 		enableViewsMouseEvents(false);
 		gridview.mask(false);
 		gridview.showOverlayImage(false);
@@ -94,13 +113,13 @@ function setView(which)
 		btnRechercher.clearQueue().fadeTo("fast", 1.0);
 		btnInteragirBack.clearQueue().fadeTo("fast",0.0, function(){$(this).hide()});
 		btnRechercherBack.clearQueue().fadeTo("fast",0.0, function(){$(this).hide()});
-		
 	}
 	else if (which == "interagir")
 	{
-		views.clearQueue().stop().animate({left : 0});
+		views.clearQueue().stop().animate({left : 0}, options);
 		enableViewsMouseEvents(true);
 		p5Sketch.setTouchControl(true);
+		p5Sketch.showLabel();
 		gridview.mask(true);
 		gridview.showOverlayImage(false);
 		
@@ -109,10 +128,12 @@ function setView(which)
 		btnRechercher.clearQueue().fadeTo("fast", 0.0, function(){$(this).hide()});
 		btnInteragirBack.clearQueue().fadeTo("fast",1.0);
 		btnRechercherBack.clearQueue().fadeTo("fast",0.0, function(){$(this).hide()});
+		
+//		console.log("p5 z-index="+$("#view-p5").css("z-index"));
 	}
 	else if (which == "rechercher")
 	{
-		views.clearQueue().stop().animate({left : -2560});
+		views.clearQueue().stop().animate({left : -2560}, options);
 		enableViewsMouseEvents(true);
 		keyboardView.reset();
 		gridview.mask(false);
@@ -122,7 +143,22 @@ function setView(which)
 		btnRechercher.clearQueue().fadeTo("fast", 0.0, function(){$(this).hide()});
 		btnInteragirBack.clearQueue().fadeTo("fast",0.0, function(){$(this).hide()});
 		btnRechercherBack.clearQueue().fadeTo("fast",1.0);
+
 	}
+}
+
+//--------------------------------------------------------
+function enableGridViewMouseDrag(is)
+{
+	gridview.enableMouseDrag(is);
+}
+
+
+
+//--------------------------------------------------------
+function enableMenuMouseEvents(is)
+{
+	$("#menu").css("pointer-events", is ? "auto" : "none");
 }
 
 //--------------------------------------------------------
@@ -133,9 +169,9 @@ function enableViewsMouseEvents(is)
 
 
 //--------------------------------------------------------
-function showPhoto(imgId, thumbId)
+function showPhoto(panel, position)
 {
-	ipcRenderer.send('indexPupitre-showPhoto', {imgId:imgId, thumbId:thumbId});
+	ipcRenderer.send('indexPupitre-showPhoto', {panel:panel, position:position});
 }
 
 //--------------------------------------------------------
@@ -146,205 +182,281 @@ function showPhotoList()
 
 
 //--------------------------------------------------------
+function enterState(newState)
+{
+	if (newState === state_stand_by)
+	{
+		setView("grid");
+		setAnimation(state_stand_by.animation);
+		enableGridViewMouseDrag(true);
+		showPhotoList();
+		gridview.showOverlayImage(false);
+	}
+	else if (newState === state_grid_scroll_clicked )
+	{
+		gridview.showOverlayImage(true);
+		showPhoto( gridview.panelClicked, gridview.panelPositionClicked  ); // TEMP ?
+		enableGridViewMouseDrag(true);
+		gridview.setPositionOverlayImageClicked();
+	}
+}
+
+//--------------------------------------------------------
 function changeState(newState)
 {
 	let bChangeState = false;
 
-
+	// ----------------------------------
+	// ----- start
+	// ----------------------------------
 	if (state == null)
 	{
 		if (newState === state_stand_by)
 		{
-			setView("grid");
-			setAnimation(state_stand_by.animation);
-
 			// Notify
 			bChangeState = true;
 		}
 	}
+
+	// ----------------------------------
+	// ----- state_stand_by
+	// ----------------------------------
 	else
 	if (state === state_stand_by)
 	{
 		if (newState === state_interagir)
 		{
-			// View
 			setView("interagir");
 			setAnimation(state_interagir.animation);
+			enableGridViewMouseDrag(false);
 
 			bChangeState = true;
 		}
 		else if (newState === state_rechercher)
 		{
-			// View
 			setView("rechercher");
+			enableGridViewMouseDrag(false);
 		
 			bChangeState = true;
 		}
 		else if (newState === state_grid_scroll)
 		{
-			bChangeState = true;
 			setAnimation(state_grid_scroll.animation);
+			enableGridViewMouseDrag(true);
+
+			bChangeState = true;
 		}
 		else if (newState === state_grid_scroll_clicked)
 		{
 			bChangeState = true;
-			showPhoto( gridview.imageClickedId, gridview.thumbClickedId  ); // TEMP ?
 		}
 	}
+
+
+
+	// ----------------------------------
+	// ----- state_grid_scroll
+	// ----------------------------------
 	else
 	if (state === state_grid_scroll)
 	{
 		if (newState === state_stand_by)
 		{
 			bChangeState = true;
-			setAnimation(state_stand_by.animation);
-			showPhotoList();
 		}
 		else if (newState === state_interagir)
 		{
-			bChangeState = true;
 			setView("interagir");
 			setAnimation(state_interagir.animation);
+			enableGridViewMouseDrag(false);
+
+			bChangeState = true;
 		}
 		else if (newState === state_rechercher)
 		{
-			bChangeState = true;
 			setView("rechercher");
+			enableGridViewMouseDrag(false);
+
+			bChangeState = true;
 		}
 		else if (newState === state_grid_scroll_clicked)
 		{
 			bChangeState = true;
-			gridview.showOverlayImage(true);
-			showPhoto( gridview.imageClickedId, gridview.thumbClickedId  ); // TEMP ?
 		}
 
 	}
+
+
+	// ----------------------------------
+	// ----- state_grid_scroll_clicked
+	// ----------------------------------
 	else
 	if (state === state_grid_scroll_clicked)
 	{
+		if (newState === state_grid_scroll_clicked)
+		{
+			bChangeState = true;
+		}
+		else
 		if (newState === state_stand_by)
 		{
 			bChangeState = true;
-			setAnimation(state_stand_by.animation);
-			showPhotoList();
 		}
 		else if (newState === state_interagir)
 		{
-			bChangeState = true;
 			setView("interagir");
 			setAnimation(state_interagir.animation);
+			enableGridViewMouseDrag(false);
+
+			bChangeState = true;
 		}
 		else if (newState === state_rechercher)
 		{
-			bChangeState = true;
 			setView("rechercher");
+			enableGridViewMouseDrag(false);
+
+			bChangeState = true;
 		}
 		else if (newState === state_grid_scroll)
 		{
-			bChangeState = true;
 			gridview.showOverlayImage(false);
+			enableGridViewMouseDrag(true);
+
+			bChangeState = true;
 		}
 	}
+
+
+	// ----------------------------------
+	// ----- state_interagir
+	// ----------------------------------
 	else
 	if (state === state_interagir)
 	{
 		if (newState === state_stand_by)
 		{
-			// View
-			setView("grid");
-			setAnimation(state_stand_by.animation);
-			showPhotoList();
-
 			bChangeState = true;
 		}
 	}
+
+
+	// ----------------------------------
+	// ----- state_rechercher
+	// ----------------------------------
 	else
 	if (state === state_rechercher)
 	{
 		if (newState === state_stand_by)
 		{
-			// View
-			setView("grid");
-			setAnimation(state_stand_by.animation);
-			showPhotoList();
-
 			bChangeState = true;
 		}
 		else if (newState === state_rechercher_ok)
 		{
 			setView("grid");
-			// TODO : set animation ok here
-			gridview.gotoThumb( 0,0, parseInt( Math.random()*899 ) );
+			gridview.gotoPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+			showPhoto( state_rechercher_ok.panel, state_rechercher_ok.position  );
+			enableGridViewMouseDrag(false);
+
 		
 			bChangeState = true;
 		}
 		else if (newState === state_rechercher_fail)
 		{
 			keyboardView.reset();
-			// TODO : set animation fail here
+			enableGridViewMouseDrag(false);
+			newState = state_rechercher;
 
 			bChangeState = true;
 		}
 
 	}
 
+	// ----------------------------------
+	// ----- state_rechercher_ok
+	// ----------------------------------
 	else
 	if (state === state_rechercher_ok)
 	{
 		if (newState === state_stand_by)
 		{
-			setView("grid");
-			showPhotoList();
 			bChangeState = true;
 		}
-		else if (newState === state_grid_scroll)
+/*		else if (newState === state_grid_scroll)
 		{
 			bChangeState = true;
 			gridview.showOverlayImage(false);
 		}
-		else if (newState === state_rechercher)
+*/		else if (newState === state_rechercher)
 		{
 			setView("rechercher");
+			enableGridViewMouseDrag(true);
+
 			bChangeState = true;
 		}
 		else if (newState === state_interagir)
 		{
 			setView("interagir");
+			enableGridViewMouseDrag(true);
+
+			bChangeState = true;
+		}
+	}
+
+	// ----------------------------------
+	// ----- state_rechercher_fail
+	// ----------------------------------
+	else
+	if (state === state_rechercher_fail)
+	{
+		if (newState === state_rechercher)
+		{
 			bChangeState = true;
 		}
 	}
 
 
-
+	// ----------------------------------
 	if (bChangeState)
 	{
 		state = newState;
 		stateTime = 0;
+		enterState(state);
 	}
 }
 
 //--------------------------------------------------------
 function onBtnInteragirClicked()
 {
-	console.log("onBtnInteragirClicked()");
+	if (bViewsAnimate)
+		return;
+
 	changeState( state_interagir );
 }
 
 //--------------------------------------------------------
 function onBtnInteragirBackClicked()
 {
+	if (bViewsAnimate)
+		return;
+
 	changeState( state_stand_by );
 }
 
 //--------------------------------------------------------
 function onBtnRechercherClicked()
 {
+	if (bViewsAnimate)
+		return;
+
 	changeState( state_rechercher );
 }
 
 //--------------------------------------------------------
 function onBtnRechercherBackClicked()
 {
+	if (bViewsAnimate)
+		return;
+
 	changeState( state_stand_by );
 }
 
@@ -379,7 +491,7 @@ function animate(t)
 	if (p5Sketch)
 		leds.set( p5Sketch.ledValues );
  
- 
+ 	// Debug
  	renderDebug();
 	
 	// Request a new animation frame
@@ -394,10 +506,14 @@ function renderDebug()
 	 if (state)
 	 {
 		 var strDebug = state.name+" ( "+stateTime.toFixed(1) + "s )";
-		 if (state === state_grid_scroll || state === state_stand_by)
+		 if (state === state_grid_scroll || state === state_grid_scroll_clicked  || state === state_stand_by)
 		 {
 			 strDebug += "<br />img id = " + (this.gridview.imgCam ?  this.gridview.imgCam.id : "-");
-			 strDebug += "<br />thumb clicked id = " + this.gridview.thumbClickedId;
+		 }
+		 if (state === state_grid_scroll_clicked)
+		 {
+			 strDebug += "<br />panel = " + this.gridview.panelClicked;
+			 strDebug += "<br />position = " + this.gridview.panelPositionClicked;
 		 }
 		 
 		 $("#view-debug").html ( strDebug );
@@ -418,8 +534,10 @@ function initMenu()
 	btnRechercher.click(onBtnRechercherClicked);
 	btnInteragirBack.click(onBtnInteragirBackClicked);
 	btnRechercherBack.click(onBtnRechercherBackClicked);
+	
+	
+	$(".menu-item").css("cursor", "pointer")
 }
-
 
 //--------------------------------------------------------
 function onGridViewMouseClick()
@@ -431,6 +549,7 @@ function onGridViewMouseClick()
 function onGridViewMouseDragStart()
 {
 	changeState(state_grid_scroll);
+	enableMenuMouseEvents(false); // continue drag event on menu
 }
 
 //--------------------------------------------------------
@@ -443,8 +562,7 @@ function onGridViewMouseDrag()
 //--------------------------------------------------------
 function onGridViewMouseDragEnd()
 {
-//	console.log("onGridViewMouseDragEnd()");
-//	changeState(state_stand_by);
+	enableMenuMouseEvents(true);
 }
 
 //--------------------------------------------------------
@@ -460,22 +578,40 @@ function createViewGrid()
 //--------------------------------------------------------
 function createViewInteragir()
 {
+	// p5.js sketch
 	p5Sketch = new p5(sketchInteragir);
+	
+	// Center "interagir" label
+	var label = $("#view-interagir #view-label");
+	var wLabel = label.width();
+	var hLabel = label.height();
+	label.css({"top" : 0.5 * ($(window).height()-hLabel), "left" : 0.5 * ($(window).width()-wLabel)});
 }
 
 
 //--------------------------------------------------------
 function onCodeEntered(code)
 {
-	// TODO : mysql request to check code here
-	if (code == "12345")
-	{
-		changeState(state_rechercher_ok);
-	}
-	else
-	{
-		changeState(state_rechercher_fail);
-	}
+   var query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
+
+   rqcv.connection.query(query, function (error, results, fields)
+   {
+		if (error == null)
+		{
+			// Only one result
+			if (results.length == 1)
+			{
+				state_rechercher_ok.panel 		= results[0].panel;
+				state_rechercher_ok.position 	= results[0].position;
+			
+				changeState(state_rechercher_ok);
+			}
+			else
+			{
+				changeState(state_rechercher_fail);
+			}
+		}
+   });
 }
 
 //--------------------------------------------------------
@@ -496,6 +632,7 @@ ipcRenderer.on('appStateDebug', function (event, value)
 		$("#view-debug").show();
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('gridFactorMouseDrag', function(event, value)
 {
 	if (gridview)
@@ -503,34 +640,38 @@ ipcRenderer.on('gridFactorMouseDrag', function(event, value)
 });
 
 
+//--------------------------------------------------------
 ipcRenderer.on('gridFactorCamSpeed', function(event, value)
 {
 	if (gridview)
 		gridview.cameraSpeedFactorDrag = value;
 });
 
-
-
+//--------------------------------------------------------
 ipcRenderer.on('gridTouchDebug', function (event, value)
 {
 	if (p5Sketch)
 		p5Sketch.setDebug(value);
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('listAnimations', function (event, value)
 {
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('radiusInfluence', function (event, value)
 {
 	radiusInfluence = value; // defined in interagirView.js
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('radiusHeight', function (event, value)
 {
 	radiusHeight = value; // defined in interagirView.js
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('leds', function (event, values)
 {
 //	if (p5Sketch && values)

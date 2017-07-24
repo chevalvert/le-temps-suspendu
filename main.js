@@ -124,6 +124,7 @@ function onConfigLoaded()
 
 	// save some objects on global
 	global.rqcv = {};
+	global.rqcv.configuration = configuration;
 	global.rqcv.connection = connection;
 	global.rqcv.leds = leds;
 	

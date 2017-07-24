@@ -8,6 +8,7 @@ function gridview()
 	this.bMouseDrag = false;
 	this.thMouseDragStart = 3; // pixels
 	this.factorMouseDrag = 2; // pixels
+	this.bMouseDragEnable = false;
 
 	this.cbMouseClick = null;
 	this.cbMouseDragStart = null;
@@ -44,10 +45,8 @@ function gridview()
 	this.imgCam	= null;
 
 	
-	this.imgClickedId = -1;
-	this.thumbClickedId = -1;
-//	this.thumbClicked = {imgId : -1, i : -1, j : -1, ii : -1, jj : -1, offset : -1, };
-//	this.thumbOver = {imgId : -1, i : -1, j : -1, ii : -1, jj : -1 offset : -1, }; // Camera position over thumb
+	this.panelClicked = -1;		// "panel" in database
+	this.panelPositionClicked = -1;	// "position" in database
 	
 	this.overlayMesh = null;
 	this.overlayOpacity = this.overlayOpacityTarget = 0.0;
@@ -73,6 +72,13 @@ function gridview()
 	this.gridImagesList = new Array(9*12);
 
 	var pThis = this;
+
+
+	//--------------------------------------------------------
+	this.enableMouseDrag = function(is)
+	{
+		this.bMouseDragEnable = is;
+	}
 
 	//--------------------------------------------------------
 	this.mouseDrag = function()
@@ -104,14 +110,12 @@ function gridview()
 		var clickInsideX = clickX - i * this.imgWidth;
 		var clickInsideY = clickY - j * this.imgHeight;
 
-
 		var ii = parseInt( clickInsideX / this.thumbSize);
 		var jj = this.nbThumbs-1-parseInt( clickInsideY / this.thumbSize);
 
-		this.imgClickedId 	= i+9*j;
-		this.thumbClickedId = (ii+this.nbThumbs*jj);
+		this.panelClicked 	= i+9*j;
+		this.panelPositionClicked = (ii+this.nbThumbs*jj);
 		
-		this.overlayImageCache.setPosition( i*this.imgWidth + ii*this.thumbSize + 0.5*this.thumbSize, j*this.imgHeight + (29-jj)*this.thumbSize + 0.5*this.thumbSize   );
 	
 		if (typeof this.cbMouseClick === "function")
 			this.cbMouseClick();
@@ -122,6 +126,15 @@ function gridview()
 	{
 	}
 
+
+	//--------------------------------------------------------
+	this.gotoPanelWithPosition = function(panel, position)
+	{
+		var i = panel % 9;
+		var j = parseInt(panel / 9);
+
+		this.gotoThumb( i,j,position );
+	}
 
 	//--------------------------------------------------------
 	this.gotoThumb = function(imgI,imgJ, thumbOffset)
@@ -136,6 +149,25 @@ function gridview()
 		
 		this.showOverlayImage(false);
 		this.bGotoThumb = true;
+	}
+
+
+	//--------------------------------------------------------
+	this.setPositionOverlayImageClicked = function()
+	{
+		this.setPositionOverlayImage( this.panelClicked, this.panelPositionClicked );
+	}
+
+	//--------------------------------------------------------
+	this.setPositionOverlayImage = function(panel, position)
+	{
+		var i = panel % 9;
+		var j = parseInt(panel / 9);
+
+		var ii = position % this.nbThumbs;
+		var jj = parseInt(position / this.nbThumbs);
+
+		this.overlayImageCache.setPosition( i*this.imgWidth + ii*this.thumbSize + 0.5*this.thumbSize, j*this.imgHeight + (this.nbThumbs-1-jj)*this.thumbSize + 0.5*this.thumbSize   );
 	}
 
 	//--------------------------------------------------------
@@ -162,8 +194,16 @@ function gridview()
 	 	// Mouse move
 		this.container.mousemove(function(event)
 		{
+			event.stopPropagation();
+		
 			pThis.mouseX = event.pageX;
 			pThis.mouseY = event.pageY;
+
+			if (pThis.bMouseDragEnable == false)
+				return;
+
+			var bMouseDragPrevious = pThis.bMouseDrag;
+
 
 			if (!pThis.bMouseDrag && ( pThis.bMouseDown && Math.dist(pThis.mouseX,pThis.mouseY,pThis.mouseDownX,pThis.mouseDownY) >= pThis.thMouseDragStart ))
 			{
@@ -171,6 +211,13 @@ function gridview()
 				pThis.cameraPositionOffset = {x:0, y:0};
 				pThis.cameraPositionStart = {x:pThis.cameraPosition.x, y:pThis.cameraPosition.y}
 				pThis.cameraSpeedFactor = pThis.cameraSpeedFactorDrag;
+			}
+
+			// detect mouse drag start
+			if (bMouseDragPrevious != pThis.bMouseDrag)
+			{
+				if (typeof pThis.cbMouseDragStart === "function")
+					pThis.cbMouseDragStart();
 			}
 			
 			if (pThis.bMouseDrag)
@@ -185,26 +232,30 @@ function gridview()
 			pThis.mouseDownX = event.pageX;
 			pThis.mouseDownY = event.pageY;
 			pThis.bMouseDown = true;
-
-
-			if (typeof pThis.cbMouseDragStart === "function")
-				pThis.cbMouseDragStart();
-			
 		});
 
 	 	// Mouse up
 		this.container.mouseup(function(event)
 		{
-			if (pThis.bMouseDrag)
+			event.stopPropagation();
+		
+		
+			if (pThis.bMouseDragEnable)
 			{
-				pThis.mousedragEnd();
-				if (typeof pThis.cbMouseDragEnd === "function")
-					pThis.cbMouseDragEnd();
+				if (pThis.bMouseDrag)
+				{
+					pThis.mousedragEnd();
+					if (typeof pThis.cbMouseDragEnd === "function")
+						pThis.cbMouseDragEnd();
+
+				}
 			}
-			else
+			
+			if (pThis.bMouseDrag == false)
 			{
 				pThis.mouseClick();
 			}
+
 
 			pThis.bMouseDown = false;
 			pThis.bMouseDrag = false;

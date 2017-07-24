@@ -50,17 +50,28 @@ VIEWS : rechercher + interagir
 
 #views #view-interagir
 {
+	position:			absolute;
+	top:				0;
 	left:				0;
 }
 
 #views #view-interagir #view-p5
 {
-	position:			absolute;
+	position: 			relative;
 	width:				574px;
 	height:				860px;
 	top:				0px;
 	left:				355px;
+	z-index:			0;
 }
+
+#views #view-interagir #view-label
+{
+	position: 			absolute;
+	font-size:			160px;
+	z-index:			1;
+}
+
 
 #view-recherche
 {

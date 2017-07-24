@@ -5,7 +5,10 @@
 		"port"	 	: "8889",
   		"user"     	: "root",
   		"password" 	: "root",
-  		"database" 	: "LeTempsSuspendu"
+  		"database" 	: "LeTempsSuspendu",
+		"table"		: "export",
+		"folder_figure"		: "Data/Db/files/figure-thumbs/",
+		"folder_web"		: "Data/Db/files/thumbs/"
 	},
 	
 	"artnet" :

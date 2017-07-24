@@ -11,7 +11,7 @@ function photoView()
 	this.sizePhoto = 1;
 	this.loaderPhoto = new THREE.TextureLoader();
 	
-	this.state_show_photo 		= {id : 1};
+	this.state_show_photo 		= {id : 1, pathFile : ""};
 	this.state_show_photo_list 	= {id : 2, timeChangePhoto:0.0, intervalChangePhoto: 0.05};
 
 	this.state 		= this.state_show_photo;
@@ -21,24 +21,23 @@ function photoView()
 	this.timer = new timer();
 	
 	
-	// TEMP
+	// Photos data
 	this.photoTexture = null;
 	this.photoTextureLoaded = false;
 	
-	this.listPhotosFolder = __dirname+"/Data/Db/files/figure-thumbs/";
+	this.listPhotosFolder = __dirname + "/Data/Db/files/figure-thumbs/";
 	this.listPhotos = new Array(20);
 	this.listPhotosTexture = new Array( this.listPhotos.length );
 	this.loaderListPhotos = new THREE.TextureLoader();
 	this.listPhotosLoadIndex = 0;
 	this.listPhotosLoaded = false;
 	this.listPhotosIndexShow = 0;
-	
 
 
 	//--------------------------------------------------------
 	this.loadListPhotoTexture = function()
 	{
-		console.log("loading " + this.listPhotos[this.listPhotosLoadIndex]);
+//		console.log("loading " + this.listPhotos[this.listPhotosLoadIndex]);
 
 		this.loaderListPhotos.load
 		(
@@ -83,7 +82,10 @@ function photoView()
 		var fs = require('fs');
 		var listPhotosAll = fs.readdirSync(this.listPhotosFolder);
 		
-		var indexStart = parseInt( listPhotosAll.length-this.listPhotos.length-1 );
+		var indexEndMax = parseInt( listPhotosAll.length-this.listPhotos.length-1 );
+
+
+		var indexStart = parseInt( Math.random()*indexEndMax );
 		var indexEnd = indexStart + this.listPhotos.length;
 		var j=0;
 		for (var i=indexStart;  i<indexEnd; i++)
@@ -171,6 +173,13 @@ function photoView()
 	
 		if (this.state === this.state_show_photo)
 		{
+			if (newState === this.state_show_photo)
+			{
+				this.photoTextureLoaded = false;
+				this.loadPhoto(this.state_show_photo.pathFile);
+				bChangeState = true;
+			}
+			else
 			if (newState === this.state_show_photo_list)
 			{
 				this.state_show_photo_list.timeChangePhoto = 0.0;
@@ -183,52 +192,46 @@ function photoView()
 			if (newState === this.state_show_photo)
 			{
 				this.photoTextureLoaded = false;
+				this.loadPhoto(this.state_show_photo.pathFile);
 				bChangeState = true;
 			}
 		}
 	
 		if (bChangeState)
 		{
-			bChangeState = true;
+			bChangeState = false;
 			this.state = newState;
 		 	this.stateTime = 0.0;
 		}
 	
 	}
 
+
+	//--------------------------------------------------------
+	this.loadPhoto = function( pathFile )
+	{
+		var pThis = this;
+		this.loaderPhoto.load
+		(
+			pathFile,
+			function(texture)
+			{
+				pThis.photoTexture = texture;
+				pThis.photoTextureLoaded = true;
+			}
+		);
+	}
+
 	//--------------------------------------------------------
 	this.prevName = "";
-	this.setPhoto = function(info)
+	this.setPhoto = function( pathPhoto )
 	{
-		this.changeState( this.state_show_photo );
-		
-		
-		// TEMP -> use info to load photo
-		var pThis = this;
-		var nameImages = ["843260", "843261", "843264", "843266", "843267", "843270"];
-		do
+		// New photo ?
+		if (pathPhoto != this.state_show_photo.pathFile)
 		{
-			var indexRnd = parseInt(Math.random()*nameImages.length);
-			if (indexRnd == nameImages.length) indexRnd -= 1;
+			this.state_show_photo.pathFile = pathPhoto;
+			this.changeState( this.state_show_photo );
 		}
-		while (  this.prevName == nameImages[indexRnd]  );
-		
-		
-		var pathImage = "Data/Db/files/figure-thumbs/"+nameImages[indexRnd]+".png";
-
-		this.loaderPhoto.load(
-		pathImage,
-		function(texture){
-			pThis.photoTexture = texture;
-		
-		
-			pThis.materialPhoto.map = texture;
-			pThis.materialPhoto.needsUpdate = true;
-		});
-	
-		this.prevName = nameImages[indexRnd];
-
-
 	}
 
 
@@ -263,8 +266,9 @@ function photoView()
 			if (this.photoTextureLoaded)
 			{
 				this.photoTextureLoaded = false;
-				this.materialPhoto.tex = this.photoTexture;
+				this.materialPhoto.map = this.photoTexture;
 				this.materialPhoto.needsUpdate = true;
+				
 			}
 		}
 		else

@@ -55,6 +55,7 @@ function sketchInteragir( sketch )
   sketch.hLed = 50;
   sketch.bTouchControl = false;
   sketch.bDebug = false;
+  sketch.bMouseMoveFirst = false;
 
   sketch.leds 		= [];
   sketch.ledValues 	= []; // to be sent to artnet
@@ -75,6 +76,14 @@ function sketchInteragir( sketch )
 
 	sketch.theCanvas.mouseMoved(is ? sketch.onMouseMoved : function(){});
 	sketch.theCanvas.mouseOut(is ? sketch.onMouseOut : function(){});
+  }
+ 
+ 
+  //--------------------------------------------------------
+  sketch.showLabel = function()
+  {
+	sketch.bMouseMoveFirst = false;
+  	$("#view-interagir #view-label").show();
   }
 
   //--------------------------------------------------------
@@ -177,7 +186,16 @@ function sketchInteragir( sketch )
 			led.valueTarget = 100;
 	
 	}
+
+	// Hide label
+	if (sketch.bMouseMoveFirst == false)
+	{
+		sketch.bMouseMoveFirst = true;
+		$("#view-interagir #view-label").fadeOut("fast");
 	
+	}
+	
+	// State activity
 	activity();
   }
  
