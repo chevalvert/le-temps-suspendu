@@ -17,7 +17,9 @@ function tool3D()
   	this.objModelNames = ["Data/3D/poudriere-structure.obj", "Data/3D/poudriere-leds.obj"];
 
 	this.objLeds 		= new Array(18*12);
-	this.objLedsFloor 	= new Array(18*12);
+	this.objLedsFloor 	= new Array(7*12);
+	
+	this.objLoaded		= false;
 
 
 	// --------------------------------------------
@@ -104,7 +106,7 @@ function tool3D()
 		var manager = new THREE.LoadingManager();
 		manager.onProgress = function ( item, loaded, total )
 		{
-			console.log( item, loaded, total );
+//			console.log( item, loaded, total );
 		};
 
 		var onProgress = function ( xhr )
@@ -112,7 +114,7 @@ function tool3D()
 			if ( xhr.lengthComputable )
 			{
 				var percentComplete = xhr.loaded / xhr.total * 100;
-				console.log( Math.round(percentComplete, 2) + '% downloaded' );
+//				console.log( Math.round(percentComplete, 2) + '% downloaded' );
 			}
 		};
 
@@ -248,6 +250,7 @@ function tool3D()
 				this.scene.add( this.objLedsFloor[i] );
 		}
 
+		this.objLoaded = true;
 
 		this.animate();
 	}
@@ -266,16 +269,32 @@ function tool3D()
 
 
 	// --------------------------------------------
-	this.setLedValues = function(values)
+	this.setLedCeilValues = function(values)
 	{
+		if (this.objLoaded == false) return;
+	
 		var v = 0.0;
 		for (var i=0; i<this.objLeds.length; i++)
 		{
 			if (this.objLeds[i]) // for the two missing bars
 			{
-				v = values[i] / 255.0;
+				v = values[i];
 				this.objLeds[i].material.color.setRGB(v,v,v);
 			}
+		}
+	}
+
+
+	// --------------------------------------------
+	this.setLedFloorValues = function(values)
+	{
+		if (this.objLoaded == false) return;
+	
+		var v = 0.0;
+		for (var i=0; i<this.objLedsFloor.length; i++)
+		{
+			v = values[i];
+			this.objLedsFloor[i].material.color.setRGB(v,v,v);
 		}
 	}
 

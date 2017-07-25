@@ -19,7 +19,7 @@ animation.prototype.hRTT = 0;
 animation.prototype.ipcRenderer = require('electron').ipcRenderer;
 animation.prototype.ledValues = [];
 animation.prototype.read = null;
-animation.prototype.readValues = [];
+animation.prototype.readValues = null;
 animation.prototype.ipcLedsKey = "animation-leds";
 animation.prototype.propertiesAnimName = "#properties-animation";
 
@@ -98,9 +98,12 @@ animation.prototype.setup = function(options)
 	{
 		this.ipcLedsKey = "animation-floor-leds";
 		this.propertiesAnimName = "#properties-animationGround";
+
+		this.nbColumns = 7;
+		this.nbRows = 12;
 	}
 
-	console.log( this.propertiesAnimName );
+	this.readValues = new Array(this.nbColumns*this.nbRows);
 
 	this.timer = new timer();
 	this.timer.reset();
@@ -134,11 +137,6 @@ animation.prototype.setup = function(options)
 }
 
 //--------------------------------------------------------
-animation.prototype.render = function(renderer_)
-{
-}
-
-//--------------------------------------------------------
 animation.prototype.sampleAndSendValues = function(renderer_)
 {
 	var i,j,offset;
@@ -154,15 +152,23 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 		for (i=0;i<this.nbColumns;i++)
 		{
 			offset = i + this.nbColumns * j;
-			this.readValues[offset] = 255.0*this.read[4*(parseInt(stepx*i) + this.wRTT * parseInt(stepy*j))];
+			this.readValues[offset] = this.read[4*(parseInt(stepx*i) + this.wRTT * parseInt(stepy*j))];
+		
+			if (this.readValues[offset] < 0) this.readValues[offset] = 0; // TODO : why negative values ?
 		}
 	}
 
 	// Send the values !
 	this.ipcRenderer.send(this.ipcLedsKey, this.readValues);
-	
+ 
 	// Set in the tool3D
-	tool3D.setLedValues(this.readValues);
+	if (this.type == "ceil")
+	{
+		tool3D.setLedCeilValues(this.readValues);
+	}
+	else if (this.type == "floor")
+		tool3D.setLedFloorValues(this.readValues);
+
 }
 
 
@@ -170,9 +176,4 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 animation.prototype.renderOffscreen = function(renderer_)
 {
 	renderer_.render( this.sceneRTT, this.cameraRTT, this.rendererRTT, true );
-}
-
-//--------------------------------------------------------
-animation.prototype.render = function(renderer_)
-{
 }

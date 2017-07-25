@@ -129,6 +129,7 @@ function onConfigLoaded()
 	global.rqcv.leds = leds;
 	
 	
+	// --------------------------------------------------
 	// events from windows
 	ipcMain.on('toolPupitre-appStateDebug', (event, value) =>
 	{
@@ -136,12 +137,14 @@ function onConfigLoaded()
 			mainWindow.content().send('appStateDebug', value);
 	})
 
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-gridFactorMouseDrag', (event, value) =>
 	{
 		if (mainWindow)
 			mainWindow.content().send('gridFactorMouseDrag', value);
 	})
 
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-gridFactorCamSpeed', (event, value) =>
 	{
 		if (mainWindow)
@@ -149,12 +152,14 @@ function onConfigLoaded()
 	})
 
 
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-gridTouchDebug', (event, value) =>
 	{
 		if (mainWindow)
 			mainWindow.content().send('gridTouchDebug', value);
 	})
 	
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-listAnimations', (event, value) =>
 	{
 		if (mainWindow)
@@ -162,18 +167,21 @@ function onConfigLoaded()
 	})
 
 	
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-radiusInfluence', (event, value) =>
 	{
 		if (mainWindow)
 			mainWindow.content().send('radiusInfluence', value);
 	})
 
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-radiusHeight', (event, value) =>
 	{
 		if (mainWindow)
 			mainWindow.content().send('radiusHeight', value);
 	})
 
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-ledGreyOut', (event, value) =>
 	{
 		if (mainWindow)
@@ -181,6 +189,7 @@ function onConfigLoaded()
 	})
 	
 
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-photoScale', (event, value) =>
 	{
 		if (photoWindow)
@@ -188,49 +197,62 @@ function onConfigLoaded()
 	})
 	
 
+	// --------------------------------------------------
 	ipcMain.on('animation-leds', (event, value) =>
 	{
-		if (mainWindow && mainWindow.content() != null)
+		leds.updateCeil( value );
+		if (mainWindow)
 			mainWindow.content().send('leds', value);
 	})
 
+	// --------------------------------------------------
 	ipcMain.on('animation-floor-leds', (event, value) =>
 	{
-		if (mainWindow && mainWindow.content() != null)
-			mainWindow.content().send('floor-leds', value);
+		leds.updateFloor( value );
 	})
 
+	// --------------------------------------------------
 	ipcMain.on('indexPhoto-ready', (event, value) =>
 	{
 		bIndexPhotoReady = true;
 		openToolWindow();
 	});
 	
+	// --------------------------------------------------
 	ipcMain.on('indexPupitre-ready', (event, value) =>
 	{
 		bIndexPupitreReady = true;
 		openToolWindow();
 	});
 
-
+	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setAnimation', (event, value) =>
 	{
 		if (toolWindow)
 		{
 			toolWindow.content().send('setAnimation', value);
 		}
-	
 	});
 
+	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setGridViewCamPos', (event, value) =>
 	{
 		if (toolWindow)
 		{
 			toolWindow.content().send('setGridViewCamPos', value);
 		}
-	
 	});
 
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-setInteragirMousePos', (event, value) =>
+	{
+		if (toolWindow)
+		{
+			toolWindow.content().send('setInteragirMousePos', value);
+		}
+	});
+
+	// --------------------------------------------------
 	ipcMain.on('indexPupitre-showPhoto', (event, value) =>
 	{
 		if (photoWindow)
@@ -239,6 +261,7 @@ function onConfigLoaded()
 		}
 	});
 
+	// --------------------------------------------------
 	ipcMain.on('indexPupitre-showPhotoList', (event, value) =>
 	{
 		if (photoWindow)
@@ -246,7 +269,32 @@ function onConfigLoaded()
 			photoWindow.content().send('showPhotoList', value);
 		}
 	});
+	
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-ledsLuminosityMin', (event, value) =>
+	{
+		leds.setValueAppliedMin(value);
+	});
+	
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-ledsLuminosityMax', (event, value) =>
+	{
+		leds.setValueAppliedMax(value);
+	});
 
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-ledsValueMin', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('ledsValueMin', value);
+	});
+	
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-ledsValueMax', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('ledsValueMax', value);
+	});
 
 }
 

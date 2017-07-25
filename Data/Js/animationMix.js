@@ -115,7 +115,7 @@ animationMix.prototype.onTimelineEvent = function(event)
 //--------------------------------------------------------
 animationMix.prototype.onTimelineEnd = function(event)
 {
-	console.log("onTimelineEnd");
+//	console.log("onTimelineEnd");
 	this.timeline.reset();
 }
 

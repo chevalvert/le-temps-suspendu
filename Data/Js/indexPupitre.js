@@ -485,11 +485,16 @@ function animate(t)
 	{
 		ipcRenderer.send('indexPupitre-setGridViewCamPos', this.gridview.cameraPositionNormalized);
 	}
-
+	
+	if (state === state_interagir)
+	{
+		ipcRenderer.send('indexPupitre-setInteragirMousePos', p5Sketch.mousePositionNormalized);
+	}
 
 	// TEMP
-	if (p5Sketch)
-		leds.set( p5Sketch.ledValues );
+	//if (p5Sketch)
+		// leds.set( p5Sketch.ledValues );
+
  
  	// Debug
  	renderDebug();
@@ -672,11 +677,27 @@ ipcRenderer.on('radiusHeight', function (event, value)
 });
 
 //--------------------------------------------------------
-ipcRenderer.on('leds', function (event, values)
+ipcRenderer.on('leds', function(event, value)
 {
-//	if (p5Sketch && values)
-//		p5Sketch.setLedValues(values);
+	if (p5Sketch)
+		p5Sketch.setLedValues( value );
 });
+
+//--------------------------------------------------------
+ipcRenderer.on('ledsValueMin', function(event, value)
+{
+	if (p5Sketch)
+		p5Sketch.setLedValueMin( value );
+});
+
+
+//--------------------------------------------------------
+ipcRenderer.on('ledsValueMax', function(event, value)
+{
+	if (p5Sketch)
+		p5Sketch.setLedValueMax( value );
+});
+
 
 
 

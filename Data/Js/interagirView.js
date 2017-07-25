@@ -13,8 +13,9 @@ function LED(sketch,id,w,h)
    this.y = 0;
    this.w = w;
    this.h = h;
-   this.value = 100;
+   this.value = 0.5;
    this.valueTarget = this.value;
+   this.greyLevel = 255;
 
    this.setPosition = function(x,y)
    {
@@ -27,8 +28,10 @@ function LED(sketch,id,w,h)
    this.draw = function()
    {
 		this.value += (this.valueTarget - this.value) * 0.05; // TODO : time-dependent
+
+		this.greyLevel = this.value * (sketch.ledValueMax-sketch.ledValueMin) + sketch.ledValueMin;
 	
-		sketch.fill(255,255,255,this.value);
+		sketch.fill(this.greyLevel,this.greyLevel,this.greyLevel,255.0);
 		sketch.rect(this.x,this.y,this.w,this.h);
    }
 
@@ -58,7 +61,11 @@ function sketchInteragir( sketch )
   sketch.bMouseMoveFirst = false;
 
   sketch.leds 		= [];
-  sketch.ledValues 	= []; // to be sent to artnet
+  // sketch.ledValues 	= []; // to be sent to artnet
+  sketch.ledValueMin = 30;
+  sketch.ledValueMax = 255;
+
+  sketch.mousePositionNormalized = {x:0.0, y:0.0}
 
 
   //--------------------------------------------------------
@@ -104,7 +111,7 @@ function sketchInteragir( sketch )
 	  		sketch.leds[offset] = new LED(sketch, offset, sketch.wLed, sketch.hLed);
 			sketch.leds[offset].setPosition(x,y);
 
-			sketch.ledValues[offset] = 0;
+//			sketch.ledValues[offset] = 0;
 			
 			y -= (sketch.hLed+10);
 	  	 }
@@ -128,20 +135,31 @@ function sketchInteragir( sketch )
   };
 
   //--------------------------------------------------------
-  sketch.setLedValues = function(value)
+  sketch.setLedValues = function(values)
   {
-	  if (sketch.bTouchControl) return;
-  
-	  var offset = 0;
-	  var i,j;
-	  for (j=0;j<sketch.nbRows;j++)
-		  for (i=0;i<sketch.nbColumns;i++)
-		  {
-			offset = i+j*sketch.nbColumns;
-			sketch.leds[offset].value = value[offset];
-		  }
+	  var nb = sketch.nbColumns * sketch.nbRows;
+	  for (var i=0;i<nb;i++)
+		sketch.leds[i].valueTarget = values[i];
   }
 
+  //--------------------------------------------------------
+  sketch.setLedValueMin = function(v)
+  {
+	sketch.ledValueMin = 255.0*v;
+  }
+
+  //--------------------------------------------------------
+  sketch.setLedValueMax = function(v)
+  {
+	sketch.ledValueMax = 255.0*v;
+  }
+
+  //--------------------------------------------------------
+  sketch.setRadiusInfluenceFactor = function(f)
+  {
+	radiusInfluence = f * sketch.width;
+  }
+ 
   //--------------------------------------------------------
   sketch.draw = function()
   {
@@ -150,10 +168,7 @@ function sketchInteragir( sketch )
 	sketch.noStroke();
 	sketch.fill(255);
 	for (var i=0; i<sketch.leds.length; i++)
-	{
 		sketch.leds[i].draw();
-		sketch.ledValues[i] = sketch.leds[i].value; // set value for artnet
-	}
 	
 	if (sketch.bDebug)
 	{
@@ -169,6 +184,8 @@ function sketchInteragir( sketch )
   		}
 	}
 	
+	sketch.mousePositionNormalized.x = sketch.mouseX / sketch.width;
+	sketch.mousePositionNormalized.y = sketch.mouseY / sketch.height;
   };
  
   //--------------------------------------------------------
@@ -176,7 +193,9 @@ function sketchInteragir( sketch )
   {
   	var d = 0;
 	var led = null;
-	for (var i=0; i<sketch.leds.length; i++)
+
+
+/*	for (var i=0; i<sketch.leds.length; i++)
 	{
 		led = sketch.leds[i];
 		d = sketch.dist(sketch.mouseX,sketch.mouseY,led.xCenter,led.yCenter);
@@ -184,8 +203,9 @@ function sketchInteragir( sketch )
 			led.valueTarget = 255;
 		else
 			led.valueTarget = 100;
-	
 	}
+*/
+
 
 	// Hide label
 	if (sketch.bMouseMoveFirst == false)
@@ -203,6 +223,6 @@ function sketchInteragir( sketch )
   sketch.onMouseOut = function()
   {
 	for (var i=0; i<sketch.leds.length; i++)
-	 sketch.leds[i].valueTarget = 100;
+	 sketch.leds[i].valueTarget = 0;
   }
 };

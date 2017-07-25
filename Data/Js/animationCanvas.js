@@ -8,7 +8,7 @@ animationCanvas.prototype.texture = null;
 //--------------------------------------------------------
 animationCanvas.prototype.createMaterial = function()
 {
-	console.log("animationCanvas.prototype.createMaterial");
+//	console.log("animationCanvas.prototype.createMaterial");
 	
 	this.drawingCanvas = document.getElementById( 'animation-canvas' );
 	this.drawingContext = this.drawingCanvas.getContext( '2d' );

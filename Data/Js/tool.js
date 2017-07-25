@@ -17,7 +17,7 @@ tool.prototype.loadProperties = function()
 	if (this.fs.existsSync(p))
 	{
 		this.properties = JSON.parse( this.fs.readFileSync(p).toString() );
-		 console.log( this.properties )
+//		 console.log( this.properties )
 	}
 	else
 	{

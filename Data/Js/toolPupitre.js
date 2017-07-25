@@ -24,6 +24,12 @@ function toolPupitre()
 	this.properties.radiusInfluence 	= 70;
 	this.properties.photoScale 			= 0.5;
 
+	this.properties.ledsLuminosityMin	= 0.2;
+	this.properties.ledsLuminosityMax	= 1.0;
+
+	this.properties.ledsValueMin		= 0.2;
+	this.properties.ledsValueMax		= 1.0;
+
 	// --------------------------------------------
 	// Animation
 	this.animManager = new animationManager();
@@ -66,6 +72,13 @@ function toolPupitre()
 		var globalsFolder 			= this.guiGlobals.addFolder("Globals");
   		var chkAppStateDebug 		= globalsFolder.add(this.properties, 				'appStateDebug', 	this.properties.appStateDebug);
 
+		// UI > LEDs
+		var ledsFolder 				= this.guiGlobals.addFolder("LEDs");
+		var sliderLedsLuminosityMin	= ledsFolder.add(this.properties,				'ledsLuminosityMin',	0.0, 1.0);
+		var sliderLedsLuminosityMax	= ledsFolder.add(this.properties,				'ledsLuminosityMax',	0.0, 1.0);
+
+		sliderLedsLuminosityMin.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-ledsLuminosityMin', 	value); });
+		sliderLedsLuminosityMax.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-ledsLuminosityMax', 	value); });
 
 
 		// UI > Grid view
@@ -78,10 +91,14 @@ function toolPupitre()
 
 		// UI > Interactive view
 		var interactiveViewFolder 	= this.guiGlobals.addFolder("Interactive view");
+
   		var chkGridTouchDebug 		= interactiveViewFolder.add(this.properties, 		'gridTouchDebug', 	this.properties.gridTouchDebug);
   		var sliderRadiusInfluence 	= interactiveViewFolder.add(this.properties, 		'radiusInfluence', 	60, 100);
   		var listAnimations 			= this.guiAnimationList.add(this.properties, 		'animations', 		this.properties.animations);
   		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 	'animationsGround', this.properties.animationsGround);
+		var sliderLedsValueMin		= interactiveViewFolder.add(this.properties, 		'ledsValueMin', 	0, 1);
+		var sliderLedsValueMax		= interactiveViewFolder.add(this.properties, 		'ledsValueMax', 	0, 1);
+
 
 		listAnimations.onChange			(function(value){ toolPupitre.setAnimation(value) });
 		listAnimationsGround.onChange	(function(value){ toolPupitre.setAnimationGround(value) });
@@ -89,6 +106,10 @@ function toolPupitre()
 		chkAppStateDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-appStateDebug', 	value); });
 		chkGridTouchDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', 	value); });
 		sliderRadiusInfluence.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', 	value); });
+		sliderLedsValueMin.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-ledsValueMin', 		value); });
+		sliderLedsValueMax.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-ledsValueMax', 		value); });
+		
+
 
 		// UI > Photo view
 		var photoViewFolder 		= this.guiGlobals.addFolder("Photo view");
@@ -103,7 +124,11 @@ function toolPupitre()
 		chkGridTouchDebug.			setValue( this.properties.gridTouchDebug );
 		sliderRadiusInfluence.		setValue( this.properties.radiusInfluence );
 		sliderPhotoScale.			setValue( this.properties.photoScale ); // Hmmmmmmmmm doing this to call onChange @ start
-
+		sliderLedsLuminosityMin.	setValue( this.properties.ledsLuminosityMin );
+		sliderLedsLuminosityMax.	setValue( this.properties.ledsLuminosityMax );
+		sliderLedsValueMin.			setValue( this.properties.ledsValueMin );
+		sliderLedsValueMax.			setValue( this.properties.ledsValueMax );
+		
 
 		// Apply our own style :)
 		this.applyStyleControls();
@@ -137,6 +162,18 @@ function toolPupitre()
 
 		}
 	}
+
+	// --------------------------------------------
+	this.setInteragirMousePos = function(value)
+	{
+		if (this.animManager.animation && this.animManager.animation.id == "manual")
+		{
+			this.animManager.animation.gridx = value.x;
+			this.animManager.animation.gridy = 1.0-value.y;
+
+		}
+	}
+
 
 	// --------------------------------------------
 	this.setAnimation = function(id)

@@ -103,10 +103,19 @@ ipcRenderer.on('setAnimation', function (event, value)
 	toolPupitre.setAnimation(value);
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('setGridViewCamPos', function (event, value)
 {
 	toolPupitre.setGridViewCamPos(value);
 });
+
+//--------------------------------------------------------
+ipcRenderer.on('setInteragirMousePos', function (event, value)
+{
+	toolPupitre.setInteragirMousePos(value);
+});
+
+
 
 
 
