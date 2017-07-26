@@ -83,7 +83,7 @@ leds.prototype.init = function(configuration)
 	}
 
 	// Generated with Tools / sketch_map_dmx.pde
-	this.map = new Array(216);
+	this.map = new Array(300);
 	this.map[0]=1
 	this.map[1]=13
 	this.map[2]=25
