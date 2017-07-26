@@ -12,7 +12,7 @@ int indexCeil = 0;
 int indexFloor = 0;
 int indexDMX = 0;
 
-String stringMap = "\tthis.map = new Array("+nbCeil+");\n";
+String stringMap = "\tthis.map = new Array("+(nbCeil+nbFloor)+");\n";
 
 for (int j=0; j<nbRowsCeil; j++)
 {
