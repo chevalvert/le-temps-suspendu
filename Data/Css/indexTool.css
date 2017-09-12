@@ -1,3 +1,9 @@
+/*
+
+Tool global style
+
+*/
+
 #toolBar
 {
 	height:				30px;
@@ -87,7 +93,7 @@ Tool Animations
 
 #tool-pupitre #column3  #animationGround
 {
-	width:				60px;
-	height:				90px;
+	width:				120px;
+	height:				180px;
 }
 

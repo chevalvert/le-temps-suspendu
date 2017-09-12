@@ -31,6 +31,10 @@ animation.prototype.timer = null;
 
 animation.prototype.properties = {}
 
+
+//--------------------------------------------------------
+animation.prototype.reset = function(){}
+
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()
 {
@@ -96,7 +100,7 @@ animation.prototype.setup = function(options)
 {
 	if (this.type == "floor")
 	{
-		this.ipcLedsKey = "animation-floor-leds";
+		this.ipcLedsKey 		= "animation-floor-leds";
 		this.propertiesAnimName = "#properties-animationGround";
 
 		this.nbColumns = 7;
@@ -108,14 +112,23 @@ animation.prototype.setup = function(options)
 	this.timer = new timer();
 	this.timer.reset();
 
+	// TODO : adjust this to ratio nbColumns / nbRows ?
 	this.container = $("#animation");
 	var w = this.container.width();
 	var h = this.container.height();
 
 	var ratio = w/h;
-	this.wRTT = this.wRTT > 0 ? this.wRTT : parseInt(options.wRTT); // mandatory
+	if (this.type == "floor")
+	{
+		this.wRTT = parseInt(options.floor.wRTT); // mandatory
+	}
+	else
+	{
+		this.wRTT = parseInt(options.ceil.wRTT); // mandatory
+	}
 	this.hRTT = parseInt(this.wRTT / ratio);
 	this.read = new Float32Array( 4 * this.wRTT * this.hRTT  );
+	
 	
 	this.resetLedValues();
 	this.loadProperties();
@@ -159,6 +172,8 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	}
 
 	// Send the values !
+	// ceil : this.ipcLedsKey = "animation-leds"
+	// floor : this.ipcLedsKey = "animation-floor-leds"
 	this.ipcRenderer.send(this.ipcLedsKey, this.readValues);
  
 	// Set in the tool3D
@@ -166,9 +181,11 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	{
 		tool3D.setLedCeilValues(this.readValues);
 	}
-	else if (this.type == "floor")
+	else
+	if (this.type == "floor")
+	{
 		tool3D.setLedFloorValues(this.readValues);
-
+	}
 }
 
 

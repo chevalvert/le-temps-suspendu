@@ -10,7 +10,10 @@ animationCanvas.prototype.createMaterial = function()
 {
 //	console.log("animationCanvas.prototype.createMaterial");
 	
-	this.drawingCanvas = document.getElementById( 'animation-canvas' );
+	var canvasId = (this.type == "floor") ? "animationGround-canvas" : "animation-canvas";
+
+
+	this.drawingCanvas = document.getElementById( canvasId );
 	this.drawingContext = this.drawingCanvas.getContext( '2d' );
 
 	this.texture = new THREE.Texture( this.drawingCanvas ); // should be power of two

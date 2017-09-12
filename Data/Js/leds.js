@@ -25,14 +25,16 @@ leds.prototype.init = function(configuration)
 			this.valuesApplied[i] = this.mapValue( this.values[i] );
 	
 		// send
-		this.artnet.set(this.values);
+		this.artnet.set(this.valuesApplied);
 	}
 
 	//--------------------------------------------------------
 	this.mapValue = function(v)
 	{
+		// Just in case
 		if (this.valueAppliedMin >= this.valueAppliedMax)
 			return v * 255.0;
+		// Lerp
 		return v * (this.valueAppliedMax - this.valueAppliedMin) + this.valueAppliedMin;
 	}
 
@@ -61,7 +63,7 @@ leds.prototype.init = function(configuration)
 	//--------------------------------------------------------
 	this.updateCeil = function(valuesCeil)
 	{
-		var offset = 18*12;
+		var offset = 0;
 		for(var i=0; i<valuesCeil.length;i++)
 			this.values[ this.map[offset+i] ] = valuesCeil[i];
 		this.apply();

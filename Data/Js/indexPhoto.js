@@ -45,7 +45,7 @@ function showPhoto(info)
 //--------------------------------------------------------
 function getPathPhoto(filename)
 {
-	var pathFolder = isFilenameWeb(filename) ? pathFolderWeb : pathFolderFigure;;
+	var pathFolder = isFilenameWeb(filename) ? pathFolderWeb : pathFolderFigure;
 	return __dirname+"/"+pathFolder + filename
 }
 

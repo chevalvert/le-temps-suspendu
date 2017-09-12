@@ -1,6 +1,9 @@
 //--------------------------------------------------------
 window.$ = window.jQuery = require("./Data/Js/jquery-3.2.1.min.js");
+var remote 		= require('electron').remote;
 var ipcRenderer = require('electron').ipcRenderer;
+var TWEEN 		= require('@tweenjs/tween.js');
+var rqcv 		= remote.getGlobal("rqcv");
 
 //--------------------------------------------------------
 $(document).ready( function()
@@ -11,6 +14,8 @@ $(document).ready( function()
 	initSaveButton();
 
 	selectToolBarItem("pupitre");
+
+	window.requestAnimationFrame( animate );
 });
 
 //--------------------------------------------------------
@@ -20,6 +25,13 @@ $(window).resize( function()
 	resizeViews();
 	resizeTools();
 });
+
+//--------------------------------------------------------
+function animate()
+{
+	TWEEN.update();
+	window.requestAnimationFrame( animate );
+}
 
 //--------------------------------------------------------
 function resizeToolBar()

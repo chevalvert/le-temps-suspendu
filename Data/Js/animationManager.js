@@ -18,6 +18,8 @@ animationManager.prototype.setup = function()
    this.animations["plasma2"] 		= new animationPlasma();
    this.animations["rectRotate"] 	= new animationRectRotate();
    this.animations["manual"] 		= new animationManual();
+   this.animations["rechercherOK"] 	= new animationRechercherOK();
+   this.animations["rechercherFail"]= new animationRechercherFail();
  
    this.animations["timeline"] 		= new animationMix();
    this.animations["timeline"].setAnimationManager(this);
@@ -25,6 +27,9 @@ animationManager.prototype.setup = function()
 
    this.animationsGround["sine_ground"] 	= new animationSine();
    this.animationsGround["sine_ground"].type = "floor";
+
+   this.animationsGround["rechercherOK_ground"] 	= new animationRechercherOK();
+   this.animationsGround["rechercherOK_ground"].type = "floor";
 
 
    this.setupAnimations(this.animations);
@@ -39,7 +44,7 @@ animationManager.prototype.setupAnimations = function(anims)
    		with(anims[id_])
 		{
 			id = id_;
-			setup();
+			setup( rqcv.configuration.animations ); // rqcv is defined in main.js and then retrieved from index[*].js
 		}
    }
 }

@@ -187,7 +187,10 @@ function toolPupitre()
 
 			animation = animations[id];
 			if (animation)
+			{
 				animation.showControls(true);
+				animation.reset();
+			}
 		}
 
 		if (this.animManager.animation)
