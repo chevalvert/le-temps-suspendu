@@ -24,8 +24,8 @@ animation.prototype.ipcLedsKey = "animation-leds";
 animation.prototype.propertiesAnimName = "#properties-animation";
 
 
-animation.prototype.nbColumns = 18;
-animation.prototype.nbRows = 12;
+animation.prototype.nbColumns 	= 18;
+animation.prototype.nbRows 		= 12;
 
 animation.prototype.timer = null;
 

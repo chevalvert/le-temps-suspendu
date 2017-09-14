@@ -491,9 +491,16 @@ function animate(t)
 		ipcRenderer.send('indexPupitre-setInteragirMousePos', p5Sketch.mousePositionNormalized);
 	}
 
-	// TEMP
-	//if (p5Sketch)
-		// leds.set( p5Sketch.ledValues );
+	// send gridview infos to main (panel, position)
+	// (whatever state)
+	ipcRenderer.send(
+		'indexPupitre-setGridViewPanelPosition',
+		{
+			panel:				this.gridview.panelOver,
+			position:			this.gridview.positionOver,
+			cameraPosition : 	this.gridview.cameraPosition,
+			thumbSize : 		this.gridview.thumbSize
+		 });
 
  
  	// Debug
@@ -513,12 +520,16 @@ function renderDebug()
 		 var strDebug = state.name+" ( "+stateTime.toFixed(1) + "s )";
 		 if (state === state_grid_scroll || state === state_grid_scroll_clicked  || state === state_stand_by)
 		 {
-			 strDebug += "<br />img id = " + (this.gridview.imgCam ?  this.gridview.imgCam.id : "-");
+			 strDebug += "<br />panel = " + (this.gridview.panelOver > -1 ?  this.gridview.panelOver : "-");
+			 strDebug += "<br />position = " + (this.gridview.positionOver > -1 ?  this.gridview.positionOver : "-");
+			 strDebug += "<br />(imgI,imgJ) = (" + this.gridview.imgI + "," + this.gridview.imgJ + ")";
+			 strDebug += "<br />(thumbI,thumbJ) = (" + this.gridview.thumbI + "," + this.gridview.thumbJ + ")";
+//			 strDebug += "<br />(thumbPos.x,thumbPos.y) = (" + this.gridview.thumbPos.x + "," + this.gridview.thumbPos.y + ")";
 		 }
 		 if (state === state_grid_scroll_clicked)
 		 {
-			 strDebug += "<br />panel = " + this.gridview.panelClicked;
-			 strDebug += "<br />position = " + this.gridview.panelPositionClicked;
+			 strDebug += "<br />panel clicked = " + this.gridview.panelClicked;
+			 strDebug += "<br />position clicked = " + this.gridview.panelPositionClicked;
 		 }
 		 
 		 $("#view-debug").html ( strDebug );

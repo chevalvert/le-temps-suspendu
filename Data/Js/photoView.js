@@ -21,10 +21,11 @@ function photoView()
 	this.timer = new timer();
 	
 	
-	// Photos data
+	// Photos texture for state_show_photo
 	this.photoTexture = null;
 	this.photoTextureLoaded = false;
 	
+	// List of photos for state_show_photo_list
 	this.listPhotosFolder = __dirname + "/Data/Db/files/figure-thumbs/";
 	this.listPhotos = new Array(20);
 	this.listPhotosTexture = new Array( this.listPhotos.length );
@@ -32,7 +33,8 @@ function photoView()
 	this.listPhotosLoadIndex = 0;
 	this.listPhotosLoaded = false;
 	this.listPhotosIndexShow = 0;
-
+	this.listPhotosIndexAdd = 0;
+	
 
 	//--------------------------------------------------------
 	this.loadListPhotoTexture = function()
@@ -54,7 +56,9 @@ function photoView()
 
 		this.listPhotosLoadIndex++;
 		if (this.listPhotosLoadIndex < this.listPhotos.length)
+		{
 			this.loadListPhotoTexture();
+		}
 		else
 		{
 			this.listPhotosLoaded = true;
@@ -126,6 +130,7 @@ function photoView()
 		this.container.append( this.renderer.domElement );
 		
 		this.setPhotoSize(0.75);
+		this.setIntervalChangePhoto(0.05);
 
 		// Timer
 		this.timer.reset();
@@ -236,16 +241,68 @@ function photoView()
 
 
 	//--------------------------------------------------------
+	this.isPhotoInList = function(path)
+	{
+		var nb = this.listPhotos.length;
+		for (var i=0;i<nb;i++)
+		{
+		 	if (this.listPhotos[i] === path)
+				return true;
+		}
+		return false;
+	}
+
+	//--------------------------------------------------------
 	this.setPhotoList = function(info)
 	{
 		this.changeState( this.state_show_photo_list );
 	}
 
+	//--------------------------------------------------------
+	this.addPhotoToList = function(path)
+	{
+		if (this.state == this.state_show_photo_list)
+		{
+			if (this.listPhotosIndexShow != this.listPhotosIndexAdd && this.listPhotosLoaded)
+			{
+				// this.listPhotosLoaded set to true block slideshow
+			
+			
+				if (this.isPhotoInList( path ) == false)
+				{
+					this.loaderListPhotos.load(path, this.addPhotoToListLoaded.bind(this));
+			
+					this.listPhotos[this.listPhotosIndexAdd] = path;
+					this.listPhotosLoaded = false;
+				}
+			}
+		}
+	}
 
 	//--------------------------------------------------------
-	this.setPhotoSize = function(f)
+	this.addPhotoToListLoaded = function(texture)
 	{
-		this.meshPhoto.scale.set( f, f );
+		this.listPhotosTexture.splice(this.listPhotosIndexAdd,1,texture);
+		this.listPhotosLoaded = true;
+		this.listPhotosIndexAdd = (this.listPhotosIndexAdd+1)%this.listPhotosTexture.length;
+	}
+
+	//--------------------------------------------------------
+	this.setIntervalChangePhoto = function(v)
+	{
+		this.state_show_photo_list.intervalChangePhoto = v;
+	}
+
+	//--------------------------------------------------------
+	this.setPhotoSize = function(v)
+	{
+		this.meshPhoto.scale.set( v, v );
+	}
+
+	//--------------------------------------------------------
+	this.setGridViewPanelPosition = function(info)
+	{
+		
 	}
 
 	//--------------------------------------------------------

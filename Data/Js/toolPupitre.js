@@ -23,6 +23,7 @@ function toolPupitre()
 	this.properties.timeline 			= false;
 	this.properties.radiusInfluence 	= 70;
 	this.properties.photoScale 			= 0.5;
+	this.properties.photoInterval 		= 0.05; // secondes
 
 	this.properties.ledsLuminosityMin	= 0.2;
 	this.properties.ledsLuminosityMax	= 1.0;
@@ -113,9 +114,11 @@ function toolPupitre()
 
 		// UI > Photo view
 		var photoViewFolder 		= this.guiGlobals.addFolder("Photo view");
-  		var sliderPhotoScale 		= photoViewFolder.add(this.properties, 				'photoScale', 0.1, 1.0);
+  		var sliderPhotoScale 		= photoViewFolder.add(this.properties, 				'photoScale', 		0.1, 1.0);
+  		var sliderPhotoInterval 	= photoViewFolder.add(this.properties, 				'photoInterval', 	0.05, 0.5);
 
-		sliderPhotoScale.onChange(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-photoScale', value); });
+		sliderPhotoScale.	onChange(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-photoScale', 	value); });
+		sliderPhotoInterval.onChange(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-photoInterval', value); });
 
 		// Apply values
 		chkAppStateDebug.			setValue( this.properties.appStateDebug );

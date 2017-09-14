@@ -24,36 +24,48 @@ function gridview()
 	this.cameraSpeedFactorDrag = 0.1;
 	this.cameraSpeedFactor = this.cameraSpeedFactorDrag;
 
-	this.cameraPerspective = null;
+	this.cameraPosMesh 		= null;
+	this.cameraPerspective 	= null;
 	
 	this.cameraCurrent = null;
 	this.cameraMesh = null;
  
-	this.imgWidth 	= 1280*4;
-	this.imgHeight 	= this.imgWidth;
-	this.imgSub		= 8 ; // number of subdivision for an image
+	this.imgWidth 		= 4096;
+	this.imgHeight 		= this.imgWidth;
+	this.imgSub			= 8 ; // number of subdivision for an image / panel
+	this.imgNbColumns 	= 9;
+	this.imgNbRows 		= 12;
+	this.imgNb 			= this.imgNbColumns * this.imgNbRows;
+	
+	this.gridWidth 		= this.imgWidth * this.imgNbColumns;
+	this.gridHeight 	= this.imgHeight * this.imgNbRows;
+	
+	this.nbThumbs 		= 30; // per row / column
+	this.thumbSize  	= this.imgWidth / this.nbThumbs;
+	
+	// Current camera image over
+	this.imgI			= 0;
+	this.imgJ			= 0;
+	this.imgIndex		= -1; // -1 if invalid (if cam goes out of range for example)
+	this.imgCam			= null; // ref to gridImagesList
+	this.panelOver		= -1;
+	this.positionOver	= -1;
 
-	this.gridWidth 	= this.imgWidth * 9;
-	this.gridHeight = this.imgHeight * 12;
-	
-	this.nbThumbs 	= 30; // per row / column
-	
-	this.thumbSize  = this.imgWidth / this.nbThumbs;
-	
-	this.imgI	= 0;
-	this.imgJ	= 0;
-	this.imgCam	= null;
+	// Current thumb over
+	this.thumbI   		= -1;
+	this.thumbJ   		= -1;
+	this.thumbPos 		= {};
 
 	
-	this.panelClicked = -1;		// "panel" in database
-	this.panelPositionClicked = -1;	// "position" in database
+	this.panelClicked 			= -1;		// "panel" in database
+	this.panelPositionClicked 	= -1;	// "position" in database
 	
-	this.overlayMesh = null;
-	this.overlayOpacity = this.overlayOpacityTarget = 0.0;
+	this.overlayMesh 		= null;
+	this.overlayOpacity 	= this.overlayOpacityTarget = 0.0;
 
-	this.overlayImageCache = null;
+	this.overlayImageCache 	= null;
 
-	this.bGotoThumb = false;
+	this.bGotoThumb 		= false;
 
 
 	//--------------------------------------------------------
@@ -69,7 +81,8 @@ function gridview()
 	this.renderer = null;
 	
 	// Images container
-	this.gridImagesList = new Array(9*12);
+	// Array of gridImagesCache instances
+	this.gridImagesList = new Array(this.imgNbColumns * this.imgNbRows);
 
 	var pThis = this;
 
@@ -103,18 +116,22 @@ function gridview()
 		var clickX = this.cameraPosition.x - 0.5*this.container.width() + this.mouseX;
 		var clickY = this.cameraPosition.y + 0.5*this.container.height() - this.mouseY;
 		
-		var i = parseInt(clickX / this.gridWidth * 9);
-		var j = parseInt(clickY / this.gridHeight * 12);
-
+		var i = parseInt(clickX / this.gridWidth * this.imgNbColumns);
+		var j = parseInt(clickY / this.gridHeight * this.imgNbRows);
+		
 		// inside image now
 		var clickInsideX = clickX - i * this.imgWidth;
 		var clickInsideY = clickY - j * this.imgHeight;
 
 		var ii = parseInt( clickInsideX / this.thumbSize);
 		var jj = this.nbThumbs-1-parseInt( clickInsideY / this.thumbSize);
+		
 
-		this.panelClicked 	= i+9*j;
-		this.panelPositionClicked = (ii+this.nbThumbs*jj);
+		this.panelClicked 			= i+this.imgNbColumns*j;
+		this.panelPositionClicked 	= (ii+this.nbThumbs*jj);
+		
+//		console.log( this.gridHeight );
+//		console.log( this.panelClicked );
 		
 	
 		if (typeof this.cbMouseClick === "function")
@@ -126,31 +143,39 @@ function gridview()
 	{
 	}
 
+	
+	//--------------------------------------------------------
+	this.getImageIJ = function(panel)
+	{
+		return {i : panel % this.imgNbColumns, j : parseInt(panel / this.imgNbColumns) }
+	}
+
+	//--------------------------------------------------------
+	this.getThumbIJ = function(position)
+	{
+		return {i : position % this.nbThumbs, j : parseInt(position / this.nbThumbs) }
+	}
 
 	//--------------------------------------------------------
 	this.gotoPanelWithPosition = function(panel, position)
 	{
-		var i = panel % 9;
-		var j = parseInt(panel / 9);
-
-		this.gotoThumb( i,j,position );
+		var imgIJ = this.getImageIJ(panel)
+		this.gotoThumb( imgIJ.i,imgIJ.j,position );
 	}
 
 	//--------------------------------------------------------
-	this.gotoThumb = function(imgI,imgJ, thumbOffset)
+	this.gotoThumb = function(imgI,imgJ, position)
 	{
-		var ii = thumbOffset % this.nbThumbs;
-		var jj = parseInt(thumbOffset / this.nbThumbs);
-			
-		this.cameraPositionTarget.x = imgI * this.imgWidth  + ii*this.thumbSize + 0.5*this.thumbSize;
-		this.cameraPositionTarget.y = imgJ * this.imgHeight + (this.nbThumbs-jj)*this.thumbSize - 0.5*this.thumbSize;
+		var thumbIJ = this.getThumbIJ(position);
+	 
+		this.cameraPositionTarget.x = imgI * this.imgWidth  + thumbIJ.i*this.thumbSize + 0.5*this.thumbSize;
+		this.cameraPositionTarget.y = imgJ * this.imgHeight + (this.nbThumbs-thumbIJ.j)*this.thumbSize - 0.5*this.thumbSize;
 
 		this.overlayImageCache.setPosition( this.cameraPositionTarget.x, this.cameraPositionTarget.y   );
 		
 		this.showOverlayImage(false);
 		this.bGotoThumb = true;
 	}
-
 
 	//--------------------------------------------------------
 	this.setPositionOverlayImageClicked = function()
@@ -161,8 +186,8 @@ function gridview()
 	//--------------------------------------------------------
 	this.setPositionOverlayImage = function(panel, position)
 	{
-		var i = panel % 9;
-		var j = parseInt(panel / 9);
+		var i = panel % this.imgNbColumns;
+		var j = parseInt(panel / this.imgNbColumns);
 
 		var ii = position % this.nbThumbs;
 		var jj = parseInt(position / this.nbThumbs);
@@ -314,7 +339,7 @@ function gridview()
 		this.cameraCurrent = this.camera;
 
 		this.scene.add( this.camera );
-		// this.scene.add( new THREE.AxisHelper( 50 ) );
+		//this.scene.add( new THREE.AxisHelper( 50 ) );
 
 		this.cameraMesh = new THREE.Mesh
 		(
@@ -322,6 +347,8 @@ function gridview()
 			new THREE.MeshBasicMaterial({color:0xffff00 , wireframe:true})
 		  );
 		this.scene.add( this.cameraMesh );
+		
+		
 
 		this.overlayMesh = new THREE.Mesh
 		(
@@ -330,10 +357,15 @@ function gridview()
 		  );
 		this.scene.add( this.overlayMesh );
 
+		this.cameraPosMesh = new THREE.Mesh
+		(
+			new THREE.PlaneGeometry(20,20,1,1),
+			new THREE.MeshBasicMaterial({color:0xFF0000 , transparent :true, wireframe:false, opacity : 0.5})
+		  );
+		this.scene.add( this.cameraPosMesh );
+
 
 		this.overlayImageCache = new gridViewMeshImageCache( this.scene, width, height,  this.thumbSize, this.thumbSize);
-
-
 
 
 		this.renderer = new THREE.WebGLRenderer();
@@ -355,9 +387,9 @@ function gridview()
 		var id = 0;
 		var gridImagesCacheObj;
 		var pThis = this;
-		for (j=0;j<12;j++)
+		for (j=0;j<this.imgNbRows;j++)
 		{
-			for (i=0;i<9;i++)
+			for (i=0;i<this.imgNbColumns;i++)
 			{
 				gridImagesCacheObj = new gridImagesCache(id,i*this.imgWidth,j*this.imgHeight, this.imgWidth, this.imgHeight, this.imgSub);
 				gridImagesCacheObj.create(pThis.scene)
@@ -425,6 +457,8 @@ function gridview()
 		this.cameraMesh.position.set( this.camera.position.x, this.camera.position.y, 10 );
 		this.cameraPerspective.position.set(this.camera.position.x, this.camera.position.y, 4500);
 		
+		this.cameraPosMesh.position.set( this.camera.position.x, this.camera.position.y, 5 );
+		
 		// Overlay (Mask)
 		this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;
 
@@ -446,32 +480,46 @@ function gridview()
 		}
 		
 		
-		// Image where camera is over
-		this.imgCam = null;
-		this.imgI	= parseInt(this.cameraPositionNormalized.x * 9);
-		this.imgJ	= parseInt(this.cameraPositionNormalized.y * 12);
-	 	if (this.imgI>=0 && this.imgI <= 8 && this.imgJ>=0 && this.imgJ <= 11)
-		{
-			this.imgCam = this.gridImagesList[this.imgI + 9*this.imgJ];
-		}
-	 
+		// Image + thumb where camera is over
+		this.imgCam 		= null;
+		this.imgIndex 		= -1;
+		this.imgI			= parseInt(this.cameraPositionNormalized.x * this.imgNbColumns);
+		this.imgJ			= parseInt(this.cameraPositionNormalized.y * this.imgNbRows);
+		this.thumbI			= -1;
+		this.thumbJ			= -1;
+		this.panelOver		= -1;
+		this.positionOver	= -1;
 
+	 	if (this.imgI>=0 && this.imgI <= (this.imgNbColumns-1) && this.imgJ>=0 && this.imgJ <= (this.imgNbRows-1))
+		{
+			this.imgIndex 	= this.imgI + this.imgNbColumns*this.imgJ;
+			this.imgCam 	= this.gridImagesList[this.imgIndex];
+		
+			this.thumbPos.x = this.cameraPosition.x -  this.imgI * this.imgWidth;
+			this.thumbPos.y = this.cameraPosition.y -  this.imgJ * this.imgHeight;
+
+			this.thumbI   		= parseInt(this.thumbPos.x / this.thumbSize);
+			this.thumbJ   		= this.nbThumbs - 1 - parseInt(this.thumbPos.y / this.thumbSize);
+
+			this.panelOver		= this.imgIndex;
+			this.positionOver	= this.thumbI +  this.nbThumbs * this.thumbJ;
+		}
 	 
 
 		// upload textures to images
 		var g = null;
 		var i,j,offset;
 
-		for (j=0;j<9*12;j++)
+		for (j=0;j<this.imgNb;j++)
 			this.gridImagesList[j].markUnloadTexture();
 
 
 		var ii,jj;
-		for (j=0;j<12;j++)
+		for (j=0;j<this.imgNbRows;j++)
 		{
-			for (i=0;i<9;i++)
+			for (i=0;i<this.imgNbColumns;i++)
 			{
-				offset = i+9*j;
+				offset = i+this.imgNbColumns*j;
 				g = this.gridImagesList[offset];
 
 				if ( this.camera.position.x >= g.x && this.camera.position.x <= (g.x+g.w) && this.camera.position.y >= g.y && this.camera.position.y <= (g.y+g.h))
@@ -479,9 +527,9 @@ function gridview()
 					for (var ii = i-1; ii <= i+1 ; ii++)
 						for (var jj = j-1; jj <= j+1 ; jj++)
 						{
-							if (ii>=0 && ii<=8 && jj>=0 && jj<=11)
+							if (ii>=0 && ii<=(this.imgNbColumns-1) && jj>=0 && jj<=(this.imgNbRows-1))
 							{
-								this.gridImagesList[ ii + 9*jj ].markLoadTexture();
+								this.gridImagesList[ ii + this.imgNbColumns*jj ].markLoadTexture();
 							}
 						}
 				}
@@ -489,7 +537,8 @@ function gridview()
 			}
 		}
 
-		for (j=0;j<9*12;j++)
+
+		for (j=0;j<this.imgNb;j++)
 			this.gridImagesList[j].update(dt);
 
 

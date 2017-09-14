@@ -7,6 +7,13 @@ var rqcv 		= remote.getGlobal("rqcv");
 var pathFolderFigure 	= rqcv.configuration.db_rq.folder_figure;
 var pathFolderWeb 		= rqcv.configuration.db_rq.folder_web;
 
+// Current user position on grid
+// So that we can change photo list on the run
+var userPosCurrent 	= {gridPanel : -1, gridPosition : -1, gridCameraPosition : {}}
+var userPosPrevious = {gridPanel : -1, gridPosition : -1, gridCameraPosition : {}}
+
+var gridThumbSize = 0;
+
 //--------------------------------------------------------
 $(document).ready( function()
 {
@@ -22,23 +29,38 @@ $(window).resize( function()
 
 
 //--------------------------------------------------------
-function showPhoto(info)
+function getQuery(panel, position)
 {
-   var query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+info.panel+" AND position="+info.position;
+	return "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+panel+" AND position="+position;
+}
 
-   rqcv.connection.query(query, function (error, results, fields)
+//--------------------------------------------------------
+function showPhoto(panel, position)
+{
+   rqcv.connection.query( getQuery(panel, position), function (error, results, fields)
    {
-		if (error == null)
+		if (error == null && results.length == 1)
 		{
-			// Only one result
-			if (results.length == 1)
-			{
-			   var pathFile = getPathPhoto( results[0].filename )
-			   photoView.setPhoto( pathFile );
+		   var pathFile = getPathPhoto( results[0].filename )
+		   photoView.setPhoto( pathFile );
 
-			   console.log("showing '" + pathFile + "'");
-			}
+		   console.log("showing '" + pathFile + "'");
 		}
+   });
+}
+
+//--------------------------------------------------------
+function addPhotoToList(panel, position)
+{
+   rqcv.connection.query( getQuery(userPosCurrent.gridPanel, userPosCurrent.gridPosition), function (error, results, fields)
+   {
+	   if (error == null && results.length == 1)
+	   {
+		  var pathFile = getPathPhoto( results[0].filename )
+		  console.log(pathFile);
+		  
+		  photoView.addPhotoToList(pathFile);
+	   }
    });
 }
 
@@ -65,7 +87,7 @@ function showPhotoList(info)
 //--------------------------------------------------------
 ipcRenderer.on('showPhoto', function (event, value)
 {
-	showPhoto(value);
+	showPhoto(value.panel, value.position);
 });
 
 //--------------------------------------------------------
@@ -76,8 +98,57 @@ ipcRenderer.on('showPhotoList', function (event, value)
 
 
 //--------------------------------------------------------
+ipcRenderer.on('photoInterval', function (event, value)
+{
+	photoView.setIntervalChangePhoto( value )
+});
+
+
+//--------------------------------------------------------
 ipcRenderer.on('photoScale', function (event, value)
 {
 	photoView.setPhotoSize( value )
 });
+
+//--------------------------------------------------------
+ipcRenderer.on('setGridViewPanelPosition', function (event, value)
+{
+	// init values
+	if (userPosCurrent.gridPanel == -1 && userPosPrevious.gridPanel == -1)
+	{
+		userPosCurrent.gridPanel 			= userPosPrevious.gridPanel 	= value.panel;
+		userPosCurrent.gridPosition 		= userPosPrevious.gridPosition 	= value.position;
+		userPosCurrent.gridCameraPosition.x = userPosPrevious.gridCameraPosition.x = value.cameraPosition.x;
+		userPosCurrent.gridCameraPosition.y = userPosPrevious.gridCameraPosition.y = value.cameraPosition.y;
+		
+		gridThumbSize = value.thumbSize;
+	}
+	else
+	{
+		userPosCurrent.gridCameraPosition.x = value.cameraPosition.x;
+		userPosCurrent.gridCameraPosition.y = value.cameraPosition.y;
+		userPosCurrent.gridPanel = value.panel;
+		userPosCurrent.gridPosition = value.position;
+		
+		if (Math.dist(
+				userPosCurrent.gridCameraPosition.x,userPosCurrent.gridCameraPosition.y,
+				userPosPrevious.gridCameraPosition.x,userPosPrevious.gridCameraPosition.y
+			) >= 4*gridThumbSize)
+	   	{
+			userPosPrevious.gridCameraPosition.x = userPosCurrent.gridCameraPosition.x;
+			userPosPrevious.gridCameraPosition.y = userPosCurrent.gridCameraPosition.y;
+		
+			console.log( " ----> load new photo("+userPosCurrent.gridPanel+","+userPosCurrent.gridPosition+")" );
+
+			addPhotoToList( userPosCurrent.gridPanel, userPosCurrent.gridPosition );
+		}
+
+	}
+
+	// photoView.setGridViewPanelPosition( value )
+});
+
+
+
+
 

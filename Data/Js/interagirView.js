@@ -137,6 +137,9 @@ function sketchInteragir( sketch )
   //--------------------------------------------------------
   sketch.setLedValues = function(values)
   {
+  	if (sketch.leds.length == 0) return;
+  
+  
 	  var nb = sketch.nbColumns * sketch.nbRows;
 	  for (var i=0;i<nb;i++)
 		sketch.leds[i].valueTarget = values[i];

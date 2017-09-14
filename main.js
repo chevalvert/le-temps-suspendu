@@ -195,6 +195,13 @@ function onConfigLoaded()
 		if (photoWindow)
 			photoWindow.content().send('photoScale', value);
 	})
+
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-photoInterval', (event, value) =>
+	{
+		if (photoWindow)
+			photoWindow.content().send('photoInterval', value);
+	})
 	
 
 	// --------------------------------------------------
@@ -267,6 +274,15 @@ function onConfigLoaded()
 		if (photoWindow)
 		{
 			photoWindow.content().send('showPhotoList', value);
+		}
+	});
+
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-setGridViewPanelPosition', (event, value) =>
+	{
+		if (photoWindow)
+		{
+			photoWindow.content().send('setGridViewPanelPosition', value);
 		}
 	});
 	
