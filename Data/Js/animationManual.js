@@ -18,6 +18,17 @@ animationManual.prototype.loadProperties = function()
 }
 
 //--------------------------------------------------------
+animationManual.prototype.setData = function(data)
+{
+	if (data)
+	{
+		this.gridx = data.x;
+		this.gridy = data.y;
+	}
+}
+
+
+//--------------------------------------------------------
 animationManual.prototype.addControls = function()
 {
 	this.gui.add(this.properties, 'distFactor', 0.2, 0.6);

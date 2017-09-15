@@ -115,6 +115,11 @@ ipcRenderer.on('setAnimation', function (event, value)
 	toolPupitre.setAnimation(value);
 });
 
+ipcRenderer.on('setAnimationGround', function (event, value)
+{
+	toolPupitre.setAnimationGround(value);
+});
+
 //--------------------------------------------------------
 ipcRenderer.on('setGridViewCamPos', function (event, value)
 {

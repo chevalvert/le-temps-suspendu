@@ -205,6 +205,20 @@ function onConfigLoaded()
 	
 
 	// --------------------------------------------------
+	ipcMain.on('animationRechercherOK_setPhoto', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('animationRechercherOK_setPhoto', value)
+	});
+	
+	// --------------------------------------------------
+	ipcMain.on('animationRechercherOK_done', (event, value) =>
+	{
+		if (mainWindow)
+			mainWindow.content().send('animationRechercherOK_done', value)
+	});
+
+	// --------------------------------------------------
 	ipcMain.on('animation-leds', (event, value) =>
 	{
 		leds.updateCeil( value );
@@ -242,6 +256,15 @@ function onConfigLoaded()
 	});
 
 	// --------------------------------------------------
+	ipcMain.on('indexPupitre-setAnimationGround', (event, value) =>
+	{
+		if (toolWindow)
+		{
+			toolWindow.content().send('setAnimationGround', value);
+		}
+	});
+
+	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setGridViewCamPos', (event, value) =>
 	{
 		if (toolWindow)
@@ -250,6 +273,15 @@ function onConfigLoaded()
 		}
 	});
 
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-setGridViewPanelPosition', (event, value) =>
+	{
+		if (photoWindow)
+		{
+			photoWindow.content().send('setGridViewPanelPosition', value);
+		}
+	});
+	
 	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setInteragirMousePos', (event, value) =>
 	{
@@ -277,14 +309,6 @@ function onConfigLoaded()
 		}
 	});
 
-	// --------------------------------------------------
-	ipcMain.on('indexPupitre-setGridViewPanelPosition', (event, value) =>
-	{
-		if (photoWindow)
-		{
-			photoWindow.content().send('setGridViewPanelPosition', value);
-		}
-	});
 	
 	// --------------------------------------------------
 	ipcMain.on('toolPupitre-ledsLuminosityMin', (event, value) =>

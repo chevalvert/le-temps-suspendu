@@ -20,6 +20,9 @@ animationRechercherOK.prototype.alphaPulse 	= 0.0;
 animationRechercherOK.prototype.alphaPulse2 = 0.0;
 animationRechercherOK.prototype.bReset = false;
 animationRechercherOK.prototype.anglePulse2 = 0.0
+animationRechercherOK.prototype.nbPulsesTodo = 2; // number of pulses before exit
+animationRechercherOK.prototype.nbPulses = 0;
+
 
 //--------------------------------------------------------
 animationRechercherOK.prototype.loadProperties = function()
@@ -46,6 +49,16 @@ animationRechercherOK.prototype.reset = function()
 }
 
 //--------------------------------------------------------
+animationRechercherOK.prototype.setData = function(thumbPosNormalized)
+{
+	if (this.type=="ceil" && thumbPosNormalized != null)
+	{
+		this.posPulse.x = thumbPosNormalized.x * this.container.width();
+		this.posPulse.y = (1.0-thumbPosNormalized.y) * this.container.height(); // Y-axis reversed relative to gridview
+	}
+}
+
+//--------------------------------------------------------
 animationRechercherOK.prototype.render = function(renderer_, bSample)
 {
 	if (this.bReset)
@@ -55,6 +68,7 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		this.anglePulse2 = 0.0;
 		this.alphaPulse = 0.0;
 		this.alphaPulse2 = 0.0;
+		this.nbPulses = 0;
 		this.timer.reset();
 		TWEEN.remove(this.tweenPulseAppear);
 
@@ -84,14 +98,25 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 	
 		// Coords + size in view space
 		var r = this.properties.radiusPulse * w;
-		var pulsex = w/2;
-		var pulsey = h/2;
+		var pulsex = this.posPulse.x;
+		var pulsey = this.posPulse.y;
 
 		var scalex = 128.0 / 120.0;
 		var scaley = 128.0 / 180.0;
 		
 		this.anglePulse2 += 0.5*Math.PI*dt;
-		if (this.anglePulse2 >= 2.0*Math.PI) this.anglePulse2 -= 2.0*Math.PI;
+		if (this.anglePulse2 >= 2.0*Math.PI)
+		{
+			this.anglePulse2 -= 2.0*Math.PI;
+			this.nbPulses++;
+			if (this.nbPulses == this.nbPulsesTodo)
+			{
+				this.anglePulse2 = 0;
+
+				// Exit now
+				ipcRenderer.send('animationRechercherOK_done', {});
+			}
+		}
 		this.alphaPulse2 = 0.5 * ( 1.0+Math.sin( this.anglePulse2 ) );
 	
 		this.gradPulse = this.drawingContext.createRadialGradient(pulsex,pulsey,0, pulsex,pulsey,r);
@@ -120,7 +145,9 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		{
 			// HIT
 			this.state = this.state_wave_back;
-			// Emit event
+
+			// Emit event => show photo
+			ipcRenderer.send('animationRechercherOK_setPhoto', {});
 		}
 
 	}

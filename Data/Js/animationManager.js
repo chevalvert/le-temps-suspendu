@@ -30,7 +30,9 @@ animationManager.prototype.setup = function()
 
    this.animationsGround["rechercherOK_ground"] 	= new animationRechercherOK();
    this.animationsGround["rechercherOK_ground"].type = "floor";
-
+ 
+   this.animationsGround["rechercherFail_ground"] 	= new animationRechercherFail();
+   this.animationsGround["rechercherFail_ground"].type = "floor";
 
    this.setupAnimations(this.animations);
    this.setupAnimations(this.animationsGround);

@@ -34,6 +34,7 @@ animation.prototype.properties = {}
 
 //--------------------------------------------------------
 animation.prototype.reset = function(){}
+animation.prototype.setData = function(data){}
 
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()

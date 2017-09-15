@@ -179,9 +179,23 @@ function toolPupitre()
 
 
 	// --------------------------------------------
-	this.setAnimation = function(id)
+	this.setAnimation = function(params)
 	{
 		if (this.animView == null) return;
+
+		var id = "";
+		var data = null;
+
+		if (typeof params === "object")
+		{
+			id = params.id;
+			data = params.data;
+		}
+		else
+		if (typeof params === "string")
+		{
+			id = params;
+		}
 	
 		with(this.animManager)
 		{
@@ -192,6 +206,7 @@ function toolPupitre()
 			if (animation)
 			{
 				animation.showControls(true);
+				animation.setData(data);
 				animation.reset();
 			}
 		}
@@ -202,9 +217,23 @@ function toolPupitre()
 
 
 	// --------------------------------------------
-	this.setAnimationGround = function(id)
+	this.setAnimationGround = function(params)
 	{
 		if (this.animGroundView == null) return;
+
+		var id = "";
+		var data = null;
+
+		if (typeof params === "object")
+		{
+			id = params.id;
+			data = params.data;
+		}
+		else
+		if (typeof params === "string")
+		{
+			id = params;
+		}
 
 		with(this.animManager)
 		{
@@ -213,7 +242,11 @@ function toolPupitre()
 
 			animationGround = animationsGround[id];
 			if (animationGround)
+			{
 				animationGround.showControls(true);
+				animationGround.setData(data);
+				animationGround.reset();
+			}
 		}
 
 		if (this.animManager.animationGround)
