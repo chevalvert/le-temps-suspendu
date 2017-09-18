@@ -28,7 +28,13 @@ function gridImagesCache(id,x,y,w,h, sub)
 	this.stateTime					= 0;
 	
 	this.indexTextureToLoad			= 0;
+	this.folderImages				= ""
 	
+	//--------------------------------------------------------
+	this.setFolderImages = function(pathRel)
+	{
+		this.folderImages = pathRel;
+	}
 
 	//--------------------------------------------------------
 	this.update = function(dt)
@@ -44,7 +50,7 @@ function gridImagesCache(id,x,y,w,h, sub)
 
 		else if (this.state === this.state_loading)
 		{
-			if (this.indexTextureToLoad == this.sub * this.sub-1)
+			if (this.indexTextureToLoad == this.sub * this.sub)
 			{
 				this.state = this.state_loaded;
 			}
@@ -55,6 +61,8 @@ function gridImagesCache(id,x,y,w,h, sub)
 				var pThis = this;
 				var pathImage = this.getPathImage(this.indexTextureToLoad);
 
+//				if (this.id == 0)
+//					console.log(">>> loading ["+this.indexTextureToLoad+"] "+pathImage);
 				this.loader.load
 				(
 						pathImage,
@@ -65,7 +73,7 @@ function gridImagesCache(id,x,y,w,h, sub)
 							material.wireframe = false;
 							material.needsUpdate = true;
 
-							if (pThis.indexTextureToLoad < pThis.sub * pThis.sub-1)
+							if (pThis.indexTextureToLoad < pThis.sub * pThis.sub)
 							{
 								pThis.indexTextureToLoad++;
 				 				pThis.bLoading = false;
@@ -187,7 +195,7 @@ function gridImagesCache(id,x,y,w,h, sub)
 		var i = index % this.sub;
 		var j = sub-parseInt(index / this.sub)-1;
 	
-		return "Data/Img/temp/"+this.getName()+"_"+i+"_"+j+".jpg";
+		return this.folderImages+this.getName()+"_"+i+"_"+j+".jpg";
 	}
 	
 	

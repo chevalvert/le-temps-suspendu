@@ -266,8 +266,6 @@ function photoView()
 			if (this.listPhotosIndexShow != this.listPhotosIndexAdd && this.listPhotosLoaded)
 			{
 				// this.listPhotosLoaded set to true block slideshow
-			
-			
 				if (this.isPhotoInList( path ) == false)
 				{
 					this.loaderListPhotos.load(path, this.addPhotoToListLoaded.bind(this));
@@ -282,6 +280,14 @@ function photoView()
 	//--------------------------------------------------------
 	this.addPhotoToListLoaded = function(texture)
 	{
+		// Release previous texture
+		if (this.listPhotosTexture[this.listPhotosIndexAdd])
+		{
+			this.listPhotosTexture[this.listPhotosIndexAdd].dispose();
+			this.listPhotosTexture[this.listPhotosIndexAdd] = null;
+		}
+
+		// Set new
 		this.listPhotosTexture.splice(this.listPhotosIndexAdd,1,texture);
 		this.listPhotosLoaded = true;
 		this.listPhotosIndexAdd = (this.listPhotosIndexAdd+1)%this.listPhotosTexture.length;

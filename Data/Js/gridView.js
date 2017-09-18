@@ -2,7 +2,7 @@ function gridview()
 {
 	//--------------------------------------------------------
 	// Debug
-	this.bCameraDrawPosition = false; // debug
+	this.bCameraDrawPosition = true; // debug
 
 
 	//--------------------------------------------------------
@@ -41,11 +41,12 @@ function gridview()
 	this.imgNbColumns 	= 9;
 	this.imgNbRows 		= 12;
 	this.imgNb 			= this.imgNbColumns * this.imgNbRows;
+	this.imgFolder		= "Data/Img/"+this.imgWidth+"_cliclac_"+this.imgSub+"_"+this.imgSub+"/";
 	
 	this.gridWidth 		= this.imgWidth * this.imgNbColumns;
 	this.gridHeight 	= this.imgHeight * this.imgNbRows;
 	
-	this.nbThumbs 		= 30; // per row / column
+	this.nbThumbs 		= 33; // per row / column
 	this.thumbSize  	= this.imgWidth / this.nbThumbs;
 	
 	// Current camera image over
@@ -144,6 +145,19 @@ function gridview()
 	{
 	}
 
+
+	//--------------------------------------------------------
+	this.getPathImageSub = function(index)
+	{
+		return this.gridImagesList[index].getPathImage(index)
+	}
+
+	//--------------------------------------------------------
+	this.getPathImageSubOver = function()
+	{
+		return this.getPathImageSub( this.panelOver );
+	}
+	
 	
 	//--------------------------------------------------------
 	this.getImageIJ = function(panel)
@@ -393,6 +407,7 @@ function gridview()
 		this.overlayImageCache = new gridViewMeshImageCache( this.scene, width, height,  this.thumbSize, this.thumbSize);
 
 
+
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 		this.renderer.setSize( width, height );
@@ -417,6 +432,7 @@ function gridview()
 			for (i=0;i<this.imgNbColumns;i++)
 			{
 				gridImagesCacheObj = new gridImagesCache(id,i*this.imgWidth,j*this.imgHeight, this.imgWidth, this.imgHeight, this.imgSub);
+				gridImagesCacheObj.setFolderImages(this.imgFolder)
 				gridImagesCacheObj.create(pThis.scene)
 
 				this.gridImagesList[id++] = gridImagesCacheObj;

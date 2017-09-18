@@ -536,6 +536,7 @@ function renderDebug()
 		 {
 			 strDebug += "<br />panel = " + (this.gridview.panelOver > -1 ?  this.gridview.panelOver : "-");
 			 strDebug += "<br />position = " + (this.gridview.positionOver > -1 ?  this.gridview.positionOver : "-");
+			 strDebug += "<br />img="+this.gridview.getPathImageSubOver();
 			 strDebug += "<br />(imgI,imgJ) = (" + this.gridview.imgI + "," + this.gridview.imgJ + ")";
 			 strDebug += "<br />(thumbI,thumbJ) = (" + this.gridview.thumbI + "," + this.gridview.thumbJ + ")";
 			 strDebug += "<br />(thumbPos.x,thumbPos.y) = (" + this.gridview.thumbPos.x.toFixed(1) + "," + this.gridview.thumbPos.y.toFixed(1) + ")";

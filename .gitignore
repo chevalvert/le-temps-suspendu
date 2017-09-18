@@ -1,6 +1,7 @@
 # exclude everything
 Data/Db/
-Data/Img/temp
-Data/Img/temp_
+Data/Img/4096_cliclac_8_8
+Data/Img/4096_cliclac_8_8_
+Data/Img/
 Tools/sketch_crop_images/exports
 *node_modules
