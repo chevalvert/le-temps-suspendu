@@ -31,7 +31,8 @@ $(window).resize( function()
 //--------------------------------------------------------
 function getQuery(panel, position)
 {
-	return "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+panel+" AND position="+position;
+	var s = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+panel+" AND position="+position;
+	return s;
 }
 
 //--------------------------------------------------------
@@ -57,7 +58,7 @@ function addPhotoToList(panel, position)
 	   if (error == null && results.length == 1)
 	   {
 		  var pathFile = getPathPhoto( results[0].filename )
-		  console.log(pathFile);
+		  //console.log(pathFile);
 		  
 		  photoView.addPhotoToList(pathFile);
 	   }

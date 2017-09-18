@@ -624,6 +624,7 @@ function createViewInteragir()
 function onCodeEntered(code)
 {
    var query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
+   console.log(query)
 
    rqcv.connection.query(query, function (error, results, fields)
    {

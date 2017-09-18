@@ -6,7 +6,7 @@
   		"user"     	: "root",
   		"password" 	: "root",
   		"database" 	: "LeTempsSuspendu",
-		"table"		: "export",
+		"table"		: "export_final",
 		"folder_figure"		: "Data/Db/files/figure-thumbs/",
 		"folder_web"		: "Data/Db/files/thumbs/"
 	},
