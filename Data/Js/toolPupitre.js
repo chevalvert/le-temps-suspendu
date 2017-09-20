@@ -274,6 +274,46 @@ function toolPupitre()
 	}
 
 
+
+
+	// --------------------------------------------
+	this.setAnimationGroundTransition = function(params)
+	{
+		this.setAnimationGround(params);
+	
+		// TODO : not working ... ? !
+		
+	
+/*		var bUseTransition = this.properties.useAnimTransition;
+	
+		if (bUseTransition)
+		{
+			if (this.animManager.animationGround == null)
+			{
+				this.setAnimationGround("transition_ground");
+			}
+			else
+			{
+				if (this.animManager.animationGround.id != "transition_ground")
+				{
+					this.setAnimationGround("transition_ground");
+				}
+			}
+			
+			var animTransition = this.animManager.animationGround;
+			if (animTransition)
+			{
+				 animTransition.setAnimation(params);
+			}
+		}
+		else
+		{
+		}
+	*/
+	
+	}
+
+
 	// --------------------------------------------
 	this.setAnimationGround = function(params)
 	{

@@ -2,7 +2,7 @@ function gridview()
 {
 	//--------------------------------------------------------
 	// Debug
-	this.bCameraDrawPosition = true; // debug
+	this.bCameraDrawPosition = false; // debug
 
 
 	//--------------------------------------------------------
@@ -28,6 +28,7 @@ function gridview()
 	this.cameraPositionTarget = {x:0,y:0};
 	this.cameraSpeedFactorDrag = 0.1;
 	this.cameraSpeedFactor = this.cameraSpeedFactorDrag;
+	this.cameraDragOffset = 200.0;
 
 	this.cameraPosMesh 		= null;
 	this.cameraPerspective 	= null;
@@ -111,6 +112,11 @@ function gridview()
 		this.cameraPositionTarget.x = this.cameraPositionStart.x+this.cameraPositionOffset.x;
 		this.cameraPositionTarget.y = this.cameraPositionStart.y+this.cameraPositionOffset.y;
 
+		var cw2 = this.container.width()/2;
+		var ch2 = this.container.height()/2;
+
+		this.cameraPositionTarget.x = Math.min( Math.max(cw2 - this.cameraDragOffset, this.cameraPositionTarget.x), this.gridWidth - cw2 + this.cameraDragOffset);
+		this.cameraPositionTarget.y = Math.min( Math.max(ch2 - this.cameraDragOffset, this.cameraPositionTarget.y), this.gridHeight - ch2 + this.cameraDragOffset);
 
 		if (typeof this.cbMouseDrag === "function")
 			this.cbMouseDrag();
@@ -448,32 +454,28 @@ function gridview()
 	}
 
 	//--------------------------------------------------------
-	// TODO : check this
 	this.limitCameraPosition = function()
 	{
-		if (this.cameraPosition.x <= 0)
+		if (this.bMouseDrag) return;
+	
+		if (this.cameraPosition.x <= this.container.width() / 2)
 		{
-			this.bMouseDrag = false;
 			this.cameraPositionTarget.x = this.container.width() / 2;
-			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
+			this.cameraSpeedFactor = this.cameraSpeedFactorDrag ;
 		}
-		else if (this.cameraPosition.x >= this.gridWidth)
+		else if (this.cameraPosition.x >= this.gridWidth - this.container.width() / 2)
 		{
-			this.bMouseDrag = false;
 			this.cameraPositionTarget.x = this.gridWidth - this.container.width() / 2;
-			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
+			this.cameraSpeedFactor = this.cameraSpeedFactorDrag;
 		}
 
-
-		if (this.cameraPosition.y <= 0)
+		if (this.cameraPosition.y <= this.container.height() / 2)
 		{
-			this.bMouseDrag = false;
 			this.cameraPositionTarget.y = this.container.height() / 2;
 			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}
-		else if (this.cameraPosition.y >= this.gridHeight)
+		else if (this.cameraPosition.y >= this.gridHeight - this.container.height() / 2)
 		{
-			this.bMouseDrag = false;
 			this.cameraPositionTarget.y = this.gridHeight - this.container.height() / 2;
 			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}

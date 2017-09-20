@@ -3,15 +3,11 @@ function animationTransition(){}
 
 //--------------------------------------------------------
 animationTransition.prototype = Object.create(animationShader.prototype);
-animationTransition.prototype.anim0 = null;
-animationTransition.prototype.anim1 = null;
-//animationTransition.prototype.anim0Name = null;
-//animationTransition.prototype.anim1Name = null;
+animationTransition.prototype.anim0 				= null;
+animationTransition.prototype.anim1 				= null;
 
 animationTransition.prototype.blendFactor			= 0.0;
 animationTransition.prototype.bTransition 			= false;
-animationTransition.prototype.timeTransition		= 0.0;
-animationTransition.prototype.durationTransition	= 1.0;
 animationTransition.prototype.tweenTransition 		= null;
 
 animationTransition.prototype.animationManager		= null;
@@ -60,6 +56,7 @@ animationTransition.prototype.loadProperties = function()
 	this.vertexShaderName = "mix.vert";
 	this.fragmentShaderName = "mix.frag";
 	this.properties = {}
+	this.properties.durationTransition = 0.5; // seconds
 
 	this.readPropertiesFile();
 }
@@ -67,6 +64,7 @@ animationTransition.prototype.loadProperties = function()
 //--------------------------------------------------------
 animationTransition.prototype.addControls = function()
 {
+	this.gui.add(this.properties, 'durationTransition', 0.1, 1.0);
 }
 
 //--------------------------------------------------------
@@ -150,7 +148,7 @@ animationTransition.prototype.setAnimation = function(params)
 				this.tweenTransition = null;
 			}
 			
-			this.tweenTransition = new TWEEN.Tween(this).to({ blendFactor: blendFactorTarget }, 500.0).onComplete( this.onTransitionComplete.bind(this) );
+			this.tweenTransition = new TWEEN.Tween(this).to({ blendFactor: blendFactorTarget }, 1000.0 * this.properties.durationTransition).onComplete( this.onTransitionComplete.bind(this) );
 			this.tweenTransition.start();
 		}
 	}

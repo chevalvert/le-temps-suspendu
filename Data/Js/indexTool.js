@@ -118,7 +118,8 @@ ipcRenderer.on('setAnimation', function (event, value)
 
 ipcRenderer.on('setAnimationGround', function (event, value)
 {
-	toolPupitre.setAnimationGround(value);
+//	toolPupitre.setAnimationGround(value);
+	toolPupitre.setAnimationGroundTransition(value);
 });
 
 //--------------------------------------------------------
