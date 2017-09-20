@@ -35,6 +35,7 @@ animation.prototype.properties = {}
 //--------------------------------------------------------
 animation.prototype.reset = function(){}
 animation.prototype.setData = function(data){}
+//animation.prototype.setUserGridPositionNormalized = function(x,y){}
 
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()
@@ -42,7 +43,6 @@ animation.prototype.resetLedValues = function()
 	for (var i=0; i<this.nbColumns * this.nbRows; i++)
 		this.ledValues[i] = 0.0;
 }
-
 
 //--------------------------------------------------------
 animation.prototype.readPropertiesFile = function()

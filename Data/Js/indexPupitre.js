@@ -10,13 +10,13 @@ var TWEEN 		= require('@tweenjs/tween.js');
 // State machine
 // timeout en secondes
 
-var state_stand_by 				= {id : 0, name: "stand_by", animation : "sine", animationGround : "sine_ground"};
-var state_grid_scroll 			= {id : 1, name: "grid_scroll", animation : "manual", timeout : 5};
+var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "sine", animationGround : "sine_ground"};
+var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manual", timeout : 5};
 var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manual", timeout : 20};
-var state_interagir 			= {id : 3, name: "interagir", animation : "manual", timeout : 100};
-var state_rechercher 			= {id : 4, name: "rechercher", timeout : 5};
-var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", timeout : 10, panel:-1, position:-1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
-var state_rechercher_fail 		= {id : 6, name: "rechercher_fail", animation : "rechercherFail", animationGround : "rechercherFail_ground", timeout : 10};
+var state_interagir 			= {id : 3, name: "interagir", 			animation : "manual", timeout : 100};
+var state_rechercher 			= {id : 4, name: "rechercher", 			timeout : 5};
+var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
+var state_rechercher_fail 		= {id : 6, name: "rechercher_fail", 	animation : "rechercherFail", animationGround : "rechercherFail_ground", timeout : 10};
 
 // Initial state
 var state 						= null;
@@ -536,7 +536,7 @@ function renderDebug()
 		 {
 			 strDebug += "<br />panel = " + (this.gridview.panelOver > -1 ?  this.gridview.panelOver : "-");
 			 strDebug += "<br />position = " + (this.gridview.positionOver > -1 ?  this.gridview.positionOver : "-");
-			 strDebug += "<br />img="+this.gridview.getPathImageSubOver();
+			 // strDebug += "<br />img="+this.gridview.getPathImageSubOver();
 			 strDebug += "<br />(imgI,imgJ) = (" + this.gridview.imgI + "," + this.gridview.imgJ + ")";
 			 strDebug += "<br />(thumbI,thumbJ) = (" + this.gridview.thumbI + "," + this.gridview.thumbJ + ")";
 			 strDebug += "<br />(thumbPos.x,thumbPos.y) = (" + this.gridview.thumbPos.x.toFixed(1) + "," + this.gridview.thumbPos.y.toFixed(1) + ")";

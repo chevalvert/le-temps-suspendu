@@ -89,7 +89,7 @@ animationMix.prototype.setUniforms = function()
 		this.materialRTT.uniforms.time.value = this.timer.time;
 		this.materialRTT.uniforms.blendFactor.value = this.properties.blendFactor;
 		this.materialRTT.uniforms.tex0.value = this.anim0 ? this.anim0.rendererRTT.texture : null;
-		this.materialRTT.uniforms.tex1.value = this.anim0 ? this.anim1.rendererRTT.texture : null;
+		this.materialRTT.uniforms.tex1.value = this.anim1 ? this.anim1.rendererRTT.texture : null;
 	}
 }
 
@@ -121,7 +121,7 @@ animationMix.prototype.onTimelineEnd = function(event)
 
 
 //--------------------------------------------------------
-animationShader.prototype.render = function(renderer_, bSample)
+animationMix.prototype.render = function(renderer_, bSample)
 {
 	var dt = this.timer.update(); // NOT GOOD 
 

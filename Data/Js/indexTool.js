@@ -112,7 +112,8 @@ function resizeTools()
 // Events
 ipcRenderer.on('setAnimation', function (event, value)
 {
-	toolPupitre.setAnimation(value);
+//	toolPupitre.setAnimation(value);
+	toolPupitre.setAnimationTransition(value);
 });
 
 ipcRenderer.on('setAnimationGround', function (event, value)

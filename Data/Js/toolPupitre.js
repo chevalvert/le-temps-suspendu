@@ -30,6 +30,8 @@ function toolPupitre()
 
 	this.properties.ledsValueMin		= 0.2;
 	this.properties.ledsValueMax		= 1.0;
+	
+	this.properties.useAnimTransition		= true;
 
 	// --------------------------------------------
 	// Animation
@@ -73,6 +75,8 @@ function toolPupitre()
 		var globalsFolder 			= this.guiGlobals.addFolder("Globals");
   		var chkAppStateDebug 		= globalsFolder.add(this.properties, 				'appStateDebug', 	this.properties.appStateDebug);
 
+		chkAppStateDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-appStateDebug', 	value); });
+
 		// UI > LEDs
 		var ledsFolder 				= this.guiGlobals.addFolder("LEDs");
 		var sliderLedsLuminosityMin	= ledsFolder.add(this.properties,				'ledsLuminosityMin',	0.0, 1.0);
@@ -95,21 +99,25 @@ function toolPupitre()
 
   		var chkGridTouchDebug 		= interactiveViewFolder.add(this.properties, 		'gridTouchDebug', 	this.properties.gridTouchDebug);
   		var sliderRadiusInfluence 	= interactiveViewFolder.add(this.properties, 		'radiusInfluence', 	60, 100);
-  		var listAnimations 			= this.guiAnimationList.add(this.properties, 		'animations', 		this.properties.animations);
-  		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 	'animationsGround', this.properties.animationsGround);
 		var sliderLedsValueMin		= interactiveViewFolder.add(this.properties, 		'ledsValueMin', 	0, 1);
 		var sliderLedsValueMax		= interactiveViewFolder.add(this.properties, 		'ledsValueMax', 	0, 1);
 
-
-		listAnimations.onChange			(function(value){ toolPupitre.setAnimation(value) });
-		listAnimationsGround.onChange	(function(value){ toolPupitre.setAnimationGround(value) });
-
-		chkAppStateDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-appStateDebug', 	value); });
 		chkGridTouchDebug.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-gridTouchDebug', 	value); });
 		sliderRadiusInfluence.onChange	(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-radiusInfluence', 	value); });
 		sliderLedsValueMin.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-ledsValueMin', 		value); });
 		sliderLedsValueMax.onChange		(function(value){ toolPupitre.ipcRenderer.send('toolPupitre-ledsValueMax', 		value); });
+
+
+		// UI > Animations
+  		var listAnimations 			= this.guiAnimationList.add(this.properties, 		'animations', 		this.properties.animations);
+  		var listAnimationsGround 	= this.guiAnimationGroundList.add(this.properties, 	'animationsGround', this.properties.animationsGround);
+
+		listAnimations.onChange			(function(value){ toolPupitre.setAnimation(value) });
+		listAnimationsGround.onChange	(function(value){ toolPupitre.setAnimationGround(value) });
+
 		
+  		var chkUseTransition 		= this.guiAnimationList.add(this.properties, 		'useAnimTransition', 	this.properties.useAnimTransition);
+		chkUseTransition.onChange(function(value){ console.log("chkUseTransition="+value) })
 
 
 		// UI > Photo view
@@ -137,7 +145,9 @@ function toolPupitre()
 		this.applyStyleControls();
 
 		// Set animations
-		this.setAnimation("timeline");
+		var animTransition = this.setAnimation("transition");
+		animTransition.setAnimation("sine2");
+		animTransition.setAnimation("plasma");
 		this.setAnimationGround("sine_ground");
 
 	   window.requestAnimationFrame(this.update.bind(this));
@@ -158,45 +168,88 @@ function toolPupitre()
 	// --------------------------------------------
 	this.setGridViewCamPos = function(value)
 	{
-		if (this.animManager.animation && this.animManager.animation.id == "manual")
+		var bUseTransition = this.properties.useAnimTransition;
+		if (bUseTransition)
 		{
-			this.animManager.animation.gridx = value.x;
-			this.animManager.animation.gridy = value.y;
-
+			if (this.animManager.animation && this.animManager.animation.id == "transition")
+			{
+			 this.animManager.animation.setGridPos(value.x,value.y);
+			}
 		}
+		else
+		{
+			if (this.animManager.animation && this.animManager.animation.id == "manual")
+			{
+				this.animManager.animation.gridx = value.x;
+				this.animManager.animation.gridy = value.y;
+			}
+		}
+	
 	}
 
 	// --------------------------------------------
 	this.setInteragirMousePos = function(value)
 	{
-		if (this.animManager.animation && this.animManager.animation.id == "manual")
+		var bUseTransition = this.properties.useAnimTransition;
+		if (bUseTransition)
 		{
-			this.animManager.animation.gridx = value.x;
-			this.animManager.animation.gridy = 1.0-value.y;
+			if (this.animManager.animation && this.animManager.animation.id == "transition")
+			{
+			 this.animManager.animation.setGridPos(value.x,1.0-value.y);
+			}
+		}
+		else
+		{
 
+			if (this.animManager.animation && this.animManager.animation.id == "manual")
+			{
+				this.animManager.animation.gridx = value.x;
+				this.animManager.animation.gridy = 1.0-value.y;
+			}
 		}
 	}
 
+	// --------------------------------------------
+	this.setAnimationTransition = function(params)
+	{
+		var bUseTransition = this.properties.useAnimTransition;
+	
+		if (bUseTransition)
+		{
+			if (this.animManager.animation == null)
+			{
+				this.setAnimation("transition");
+			}
+			else
+			{
+				if (this.animManager.animation.id != "transition")
+				{
+					this.setAnimation("transition");
+				}
+			}
+			
+			var animTransition = this.animManager.animation;
+			if (animTransition)
+			{
+				 animTransition.setAnimation(params);
+			}
+		}
+		else
+		{
+			this.setAnimation(params);
+		}
+	}
 
 	// --------------------------------------------
 	this.setAnimation = function(params)
 	{
 		if (this.animView == null) return;
 
-		var id = "";
-		var data = null;
 
-		if (typeof params === "object")
-		{
-			id = params.id;
-			data = params.data;
-		}
-		else
-		if (typeof params === "string")
-		{
-			id = params;
-		}
-	
+		var id = Utils.extractAnimParams("id", params)
+		var data = Utils.extractAnimParams("data", params)
+
+		// Animation
 		with(this.animManager)
 		{
 			if (animation)
@@ -212,7 +265,12 @@ function toolPupitre()
 		}
 
 		if (this.animManager.animation)
+		{
 			this.animView.setAnimation( this.animManager.animation );
+		}
+		
+	
+		return this.animManager.animation;
 	}
 
 
@@ -224,16 +282,10 @@ function toolPupitre()
 		var id = "";
 		var data = null;
 
-		if (typeof params === "object")
-		{
-			id = params.id;
-			data = params.data;
-		}
-		else
-		if (typeof params === "string")
-		{
-			id = params;
-		}
+
+		var id = Utils.extractAnimParams("id", params)
+		var data = Utils.extractAnimParams("data", params)
+
 
 		with(this.animManager)
 		{

@@ -25,6 +25,17 @@ animationManager.prototype.setup = function()
    this.animations["timeline"].setAnimationManager(this);
    this.animations["timeline"].createTimeline();
 
+   this.animations["transition"] 	= new animationTransition();
+   this.animations["transition"].setAnimationManager(this);
+
+   this.animationsGround["transition_ground"] 	= new animationTransition();
+   this.animationsGround["transition_ground"].type = "floor";
+   this.animationsGround["transition_ground"].setAnimationManager(this);
+
+
+   this.animationsGround["blank_ground"] 		= new animationBlank();
+   this.animationsGround["blank_ground"].type = "floor";
+
    this.animationsGround["sine_ground"] 	= new animationSine();
    this.animationsGround["sine_ground"].type = "floor";
 

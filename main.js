@@ -73,8 +73,8 @@ function openToolWindow()
 	   {
 		   'x' : configuration.tool.x,
 		   'y' : configuration.tool.y,
-		   'w' : configuration.tool.w,
-		   'h' : configuration.tool.h,
+		   'width' : configuration.tool.w,
+		   'height' : configuration.tool.h,
 		   }, configuration.tool.devtools);
    }
 }

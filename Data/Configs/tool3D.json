@@ -1,1 +1,1 @@
-{"gridTouchDebug":false,"gridFactorMouseDrag":2,"gridFactorCamSpeed":0.1,"appStateDebug":true,"animations":[],"timeline":false,"radiusInfluence":70,"photoScale":0.5,"photoInterval":0.05,"ledsLuminosityMin":0.2,"ledsLuminosityMax":1,"ledsValueMin":0.2,"ledsValueMax":1}
+{"gridTouchDebug":false,"gridFactorMouseDrag":2,"gridFactorCamSpeed":0.1,"appStateDebug":true,"animations":[],"timeline":false,"radiusInfluence":70,"photoScale":0.5,"photoInterval":0.05,"ledsLuminosityMin":0.2,"ledsLuminosityMax":1,"ledsValueMin":0.2,"ledsValueMax":1,"useAnimTransition":true}
