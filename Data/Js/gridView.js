@@ -377,8 +377,15 @@ function gridview()
 		this.cameraPerspective = new THREE.PerspectiveCamera( 50, width / height, 1, 10000);
 		this.cameraPerspective.position.z = 5000;
 
-
 		this.cameraCurrent = this.camera;
+
+		// Camera initial position
+		var cameraPositionInit = rqcv.configuration.pupitre.gridview.camera.position;
+		
+		this.cameraPosition.x = this.cameraPositionTarget.x = cameraPositionInit.x * this.gridWidth;
+		this.cameraPosition.y = this.cameraPositionTarget.y = cameraPositionInit.y * this.gridHeight;
+
+
 
 		this.scene.add( this.camera );
 		//this.scene.add( new THREE.AxisHelper( 50 ) );

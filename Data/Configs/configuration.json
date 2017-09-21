@@ -30,7 +30,14 @@
 	{
 		"devtools"	: true,
 		"w"			: 1280,
-		"h"			: 1024
+		"h"			: 1024,
+		"gridview"	:
+		{
+			"camera" :
+			{
+				"position" : {"x" : 0.5, "y" : 0.5}
+			}
+		}
 	},
 	
 	"photo" :

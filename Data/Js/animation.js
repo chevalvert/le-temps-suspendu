@@ -105,7 +105,7 @@ animation.prototype.setup = function(options)
 		this.propertiesAnimName = "#properties-animationGround";
 
 		this.nbColumns = 7;
-		this.nbRows = 12;
+		this.nbRows = 12; // TODO add + 1 because of the entrace led
 	}
 
 	this.readValues = new Array(this.nbColumns*this.nbRows);
@@ -114,7 +114,9 @@ animation.prototype.setup = function(options)
 	this.timer.reset();
 
 	// TODO : adjust this to ratio nbColumns / nbRows ?
-	this.container = $("#animation");
+	var containerId = this.type == "ceil" ? "#animation" : "#animationGround";
+
+	this.container = $(containerId);
 	var w = this.container.width();
 	var h = this.container.height();
 
@@ -159,6 +161,8 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	var stepx = this.wRTT / this.nbColumns;
 	var stepy = this.hRTT / this.nbRows;
 
+	//  origin @ lower left corner
+	// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
 	renderer_.readRenderTargetPixels( this.rendererRTT, 0, 0, this.wRTT, this.hRTT, this.read );
 	
 	for (j=0;j<this.nbRows;j++)

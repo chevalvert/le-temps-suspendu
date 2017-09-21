@@ -616,7 +616,7 @@ function createViewInteragir()
 	var label = $("#view-interagir #view-label");
 	var wLabel = label.width();
 	var hLabel = label.height();
-	label.css({"top" : 0.5 * ($(window).height()-hLabel), "left" : 0.5 * ($(window).width()-wLabel)});
+	label.css({"top" : 0.5 * ($(window).height()-hLabel) - 26, "left" : 0.5 * ($(window).width()-wLabel)});
 }
 
 

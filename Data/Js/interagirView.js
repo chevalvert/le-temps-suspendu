@@ -1,6 +1,6 @@
 //--------------------------------------------------------
 var radiusInfluence = 100;
-var radiusHeight = 100;
+var radiusHeight = 150;
 var ledGreyOut = 100;
 //var bTouchControl = false;
 
@@ -53,9 +53,10 @@ function sketchInteragir( sketch )
  
   sketch.nbColumns = 18;
   sketch.nbRows = 12;
-  sketch.xMin = 40;
   sketch.wLed = 5;
-  sketch.hLed = 50;
+  sketch.hLed = 37;
+  sketch.gapLed = 19;
+  sketch.xMin = 60 + sketch.wLed;
   sketch.bTouchControl = false;
   sketch.bDebug = false;
   sketch.bMouseMoveFirst = false;
@@ -96,14 +97,14 @@ function sketchInteragir( sketch )
   //--------------------------------------------------------
   sketch.createLeds = function()
   {
-	  var xMax = sketch.width-40;
+	  var xMax = sketch.width-sketch.xMin;
 	  var dx = xMax - sketch.xMin;
 
 	  var x = sketch.xMin;
 	  for (var i=0;i<sketch.nbColumns;i++)
 	  {
 	  	  var a = Math.acos( sketch.map(i,0,sketch.nbColumns-1,-1,1) );
-		  var y = sketch.height - 40 - radiusHeight * Math.sin (a);
+		  var y = sketch.height - sketch.hLed + 10 - radiusHeight * Math.sin (a);
 		  var offset = 0;
 		  for (var j=0;j<12;j++)
 		  {
@@ -113,7 +114,7 @@ function sketchInteragir( sketch )
 
 //			sketch.ledValues[offset] = 0;
 			
-			y -= (sketch.hLed+10);
+			y -= (sketch.hLed + sketch.gapLed);
 	  	 }
 		 
 		 x += dx/(sketch.nbColumns-1);
