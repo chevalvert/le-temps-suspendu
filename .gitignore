@@ -5,3 +5,4 @@ Data/Img/4096_cliclac_8_8_
 Data/Img/
 Tools/sketch_crop_images/exports
 *node_modules
+.DS_Store
