@@ -182,7 +182,7 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	this.ipcRenderer.send(this.ipcLedsKey, this.readValues);
  
 	// Set in the tool3D
-	if (this.type == "ceil")
+/*	if (this.type == "ceil")
 	{
 		tool3D.setLedCeilValues(this.readValues);
 	}
@@ -191,7 +191,7 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	{
 		tool3D.setLedFloorValues(this.readValues);
 	}
-}
+*/}
 
 
 //--------------------------------------------------------

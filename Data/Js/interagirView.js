@@ -84,6 +84,7 @@ function sketchInteragir( sketch )
 
 	sketch.theCanvas.mouseMoved(is ? sketch.onMouseMoved : function(){});
 	sketch.theCanvas.mouseOut(is ? sketch.onMouseOut : function(){});
+	
   }
  
  
@@ -129,8 +130,17 @@ function sketchInteragir( sketch )
     sketch.theCanvas = sketch.createCanvas(sketch.w,sketch.h, "WEBGL");
 	sketch.theCanvas.parent(sketch.parentId);
 
-//  	console.log("sketch.theCanvas = "+sketch.theCanvas);
-//  	console.log("sketch.setup() called");
+	if (rqcv.configuration.production == false)
+	{
+	  $(document).keydown(function(event)
+	  {
+		  var c = String.fromCharCode(event.which);
+		  if (c == 'S')
+		  {
+			  changeState(state_stand_by)
+		  }
+	  });
+	}
 
 	sketch.createLeds();
   };
@@ -197,19 +207,6 @@ function sketchInteragir( sketch )
   {
   	var d = 0;
 	var led = null;
-
-
-/*	for (var i=0; i<sketch.leds.length; i++)
-	{
-		led = sketch.leds[i];
-		d = sketch.dist(sketch.mouseX,sketch.mouseY,led.xCenter,led.yCenter);
-		if (d <= radiusInfluence)
-			led.valueTarget = 255;
-		else
-			led.valueTarget = 100;
-	}
-*/
-
 
 	// Hide label
 	if (sketch.bMouseMoveFirst == false)

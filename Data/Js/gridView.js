@@ -21,7 +21,8 @@ function gridview()
 	this.cbMouseDragEnd = null;
 
 
-	this.cameraPosition = {x:0,y:0};
+	this.cameraPosition 	= {x:0,y:0};
+	this.cameraPositionPrev = {x:0,y:0};
 	this.cameraPositionNormalized = {x:0,y:0};
 	this.cameraPositionStart = {x:0,y:0};
 	this.cameraPositionOffset = {x:0,y:0};
@@ -29,6 +30,7 @@ function gridview()
 	this.cameraSpeedFactorDrag = 0.1;
 	this.cameraSpeedFactor = this.cameraSpeedFactorDrag;
 	this.cameraDragOffset = 200.0;
+	this.cameraSpeed = 0.0;
 
 	this.cameraPosMesh 		= null;
 	this.cameraPerspective 	= null;
@@ -204,14 +206,10 @@ function gridview()
 	//--------------------------------------------------------
 	this.gotoPanelWithPosition = function(panel, position)
 	{
-		var camPositionTarget = this.getThumbPosition(panel, position);
-		
-		var distance = Math.dist(camPositionTarget.x, camPositionTarget.y, this.cameraPosition.x, this.cameraPosition.y);
-		
+//		var camPositionTarget = this.getThumbPosition(panel, position);
+		// var distance = Math.dist(camPositionTarget.x, camPositionTarget.y, this.cameraPosition.x, this.cameraPosition.y);
 		// this.mask(true);
-
 		// console.log("gotoPanelWithPosition(), distance="+distance);
-
 		this.gotoThumb(panel, position);
 	}
 
@@ -222,6 +220,20 @@ function gridview()
 		this.overlayImageCache.setPosition( this.cameraPositionTarget.x, this.cameraPositionTarget.y   );
 		this.showOverlayImage(false);
 		this.bGotoThumb = true;
+	}
+
+	//--------------------------------------------------------
+	this.setCameraPosition = function(posNorm, offsetNorm)
+	{
+		this.cameraPosition.x = this.cameraPositionTarget.x = posNorm.x * this.gridWidth;
+		this.cameraPosition.y = this.cameraPositionTarget.y = posNorm.y * this.gridHeight;
+
+		if (offsetNorm)
+		{
+			this.cameraPosition.x += offsetNorm.x * this.gridWidth;
+			this.cameraPosition.y += offsetNorm.y * this.gridHeight;
+		}
+
 	}
 
 	//--------------------------------------------------------
@@ -337,7 +349,6 @@ function gridview()
 		{
 			var c = String.fromCharCode(event.which);
 			
-			console.log(c);
 			if (c == ' ')
 			{
 				if (pThis.cameraCurrent == pThis.cameraPerspective)
@@ -358,7 +369,7 @@ function gridview()
 			
 				pThis.gotoThumb(0, thumbOffset);
 				
-				console.log("gotoThumb("+thumbOffset+")");
+				// console.log("gotoThumb("+thumbOffset+")");
 			}
 		});
 	 
@@ -509,6 +520,14 @@ function gridview()
 		
 		if (this.bCameraDrawPosition)
 			this.cameraPosMesh.position.set( this.camera.position.x, this.camera.position.y, 5 );
+		
+		// Compute speed
+		this.cameraSpeed = Math.dist(this.cameraPosition.x,this.cameraPosition.y,this.cameraPositionPrev.x,this.cameraPositionPrev.y);
+		this.cameraSpeed /= dt;
+
+		this.cameraPositionPrev.x = this.cameraPosition.x;
+		this.cameraPositionPrev.y = this.cameraPosition.y;
+
 		
 		// Overlay (Mask)
 		this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;

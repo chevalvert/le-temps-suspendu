@@ -32,9 +32,11 @@ animationManager.prototype.setup = function()
    this.animationsGround["transition_ground"].type = "floor";
    this.animationsGround["transition_ground"].setAnimationManager(this);
 
-
    this.animationsGround["blank_ground"] 		= new animationBlank();
    this.animationsGround["blank_ground"].type = "floor";
+
+   this.animationsGround["manual_ground"] 		= new animationManual();
+   this.animationsGround["manual_ground"].type = "floor";
 
    this.animationsGround["sine_ground"] 	= new animationSine();
    this.animationsGround["sine_ground"].type = "floor";

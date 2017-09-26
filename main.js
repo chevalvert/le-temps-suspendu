@@ -62,20 +62,36 @@ function loadConfiguration(pathRel)
     });
 }
 
+// --------------------------------------------------
+function getExternalDisplay()
+{
+	let displays = electron.screen.getAllDisplays();
+ 	let externalDisplay = displays.find( (display) => {
+		return display.bounds.x !== 0 || display.bounds.y !== 0
+  	})
+	return externalDisplay;
+}
 
 // --------------------------------------------------
 function openToolWindow()
 {
+
    // Tool window
    if (configuration.tool.enable && toolWindow == null)
    {
-	   toolWindow = windowManager.open('tool', 'Le temps suspendu : outil de simulation', getFile('indexTool.html'),{},
+	 	let externalDisplay = getExternalDisplay();
+
+		var w = configuration.production ? 1 : configuration.tool.w;
+		var h = configuration.production ? 1 : configuration.tool.h;
+
+	
+	   toolWindow = windowManager.open('tool', 'Le temps suspendu : outils', getFile('indexTool.html'),{},
 	   {
-		   'x' : configuration.tool.x,
-		   'y' : configuration.tool.y,
-		   'width' : configuration.tool.w,
-		   'height' : configuration.tool.h,
-		   }, configuration.tool.devtools);
+		   'x' : externalDisplay ? externalDisplay.bounds.x : configuration.tool.x,
+		   'y' : externalDisplay ? externalDisplay.bounds.y : configuration.tool.y,
+		   'width' : w,
+		   'height' : h,
+		   }, configuration.production ? false : configuration.tool.devtools);
    }
 }
 
@@ -84,10 +100,7 @@ function openToolWindow()
 function onConfigLoaded()
 {
 	// External displays
-	let displays = electron.screen.getAllDisplays()
- 	externalDisplay = displays.find((display) => {
-    	return display.bounds.x !== 0 || display.bounds.y !== 0
-  	})
+ 	let externalDisplay = getExternalDisplay();
 
 	// MySQL
 	// console.log("create connection");
@@ -102,20 +115,22 @@ function onConfigLoaded()
 	{
 		'width' : configuration.pupitre.w,
 		'height' : configuration.pupitre.h,
-		'x' : externalDisplay ? externalDisplay.bounds.x : 0,
-		'y' : externalDisplay ? externalDisplay.bounds.y : 0,
+		'x' : 0,
+		'y' : 0,
+		'fullscreen' : configuration.production ? true : false,
 		'frame' : false
-	}, configuration.pupitre.devtools);
+	}, configuration.production ? false : configuration.pupitre.devtools);
 
 	// Photo  window
 	photoWindow = windowManager.open('photo', 'Le temps suspendu : photo', getFile('indexPhoto.html'), {},
 	{
 		'width' : configuration.photo.w,
 		'height' : configuration.photo.h,
-		'x' : configuration.photo.x,
-		'y' : configuration.photo.y,
+		'x' : externalDisplay ? externalDisplay.bounds.x : configuration.photo.x,
+		'y' : externalDisplay ? externalDisplay.bounds.y : configuration.photo.y,
+		'fullscreen' : configuration.production ? true : false,
 		'frame' : false
-	}, configuration.photo.devtools);
+	}, configuration.production ? false : configuration.photo.devtools);
 
 
 	// Artnet
@@ -202,6 +217,21 @@ function onConfigLoaded()
 		if (photoWindow)
 			photoWindow.content().send('photoInterval', value);
 	})
+
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-photoOffsetCenterx', (event, value) =>
+	{
+		if (photoWindow)
+			photoWindow.content().send('photoOffsetCenterx', value);
+	})
+
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-photoOffsetCentery', (event, value) =>
+	{
+		if (photoWindow)
+			photoWindow.content().send('photoOffsetCentery', value);
+	})
+
 	
 
 	// --------------------------------------------------
@@ -219,11 +249,15 @@ function onConfigLoaded()
 	});
 
 	// --------------------------------------------------
+	// TODO : get called when exiting
 	ipcMain.on('animation-leds', (event, value) =>
 	{
-		leds.updateCeil( value );
-		if (mainWindow)
+		try
+		{
+			leds.updateCeil( value );
+				if (mainWindow)
 			mainWindow.content().send('leds', value);
+		} catch (e){}
 	})
 
 	// --------------------------------------------------
@@ -294,10 +328,13 @@ function onConfigLoaded()
 	// --------------------------------------------------
 	ipcMain.on('indexPupitre-showPhoto', (event, value) =>
 	{
-		if (photoWindow)
+		try
 		{
-			photoWindow.content().send('showPhoto', value);
-		}
+			if (photoWindow)
+			{
+				photoWindow.content().send('showPhoto', value);
+			}
+		} catch(e){}
 	});
 
 	// --------------------------------------------------
@@ -321,6 +358,20 @@ function onConfigLoaded()
 	{
 		leds.setValueAppliedMax(value);
 	});
+
+
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-ledsLuminosityMinFloor', (event, value) =>
+	{
+		leds.setValueAppliedMinFloor(value);
+	});
+	
+	// --------------------------------------------------
+	ipcMain.on('toolPupitre-ledsLuminosityMaxFloor', (event, value) =>
+	{
+		leds.setValueAppliedMaxFloor(value);
+	});
+
 
 	// --------------------------------------------------
 	ipcMain.on('toolPupitre-ledsValueMin', (event, value) =>

@@ -19,7 +19,17 @@ for (int j=0; j<nbRowsCeil; j++)
   for (int i=0; i<nbColumnsCeil; i++)
   {
     indexCeil = i+nbColumnsCeil*j;
-    indexDMX = j+nbRowsCeil*i + 1;
+    indexDMX = j+nbRowsCeil*i + 1 ;
+    
+    // Patch
+    indexDMX = indexDMX - 1;
+    if (j == 0)
+    {
+      indexDMX = indexDMX + 12;
+    }
+    
+
+
 
     stringMap += "\tthis.map["+indexCeil+"]="+indexDMX+"\n";
     
@@ -38,6 +48,14 @@ for (int j=0; j<nbRowsFloor; j++)
   {
     indexFloor = i+nbColumnsFloor*j;
     indexDMX = offset + j+nbRowsCeil*i + 1;
+
+    // Patch
+    indexDMX = indexDMX - 1;
+    if (j == 0)
+    {
+      indexDMX = indexDMX + 12;
+    }
+
 
     stringMap += "\tthis.map["+(offset+indexFloor)+"]="+indexDMX+"\n";
   }

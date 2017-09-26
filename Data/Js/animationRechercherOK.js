@@ -8,7 +8,7 @@ animationRechercherOK.prototype.state_wave_back = {id:2};
 animationRechercherOK.prototype.state_pulse_photo = {id:3};
 
 animationRechercherOK.prototype.state 		= null;
-animationRechercherOK.prototype.dimWave 	= {h:50};
+//animationRechercherOK.prototype.dimWave 	= {h:50};
 animationRechercherOK.prototype.gradWave 	= null;
 animationRechercherOK.prototype.posWave 	= {y:0};
 animationRechercherOK.prototype.speedWave 	= 80.0;
@@ -20,7 +20,7 @@ animationRechercherOK.prototype.alphaPulse 	= 0.0;
 animationRechercherOK.prototype.alphaPulse2 = 0.0;
 animationRechercherOK.prototype.bReset = false;
 animationRechercherOK.prototype.anglePulse2 = 0.0
-animationRechercherOK.prototype.nbPulsesTodo = 2; // number of pulses before exit
+animationRechercherOK.prototype.nbPulsesTodo = 4; // number of pulses before exit
 animationRechercherOK.prototype.nbPulses = 0;
 
 
@@ -30,7 +30,9 @@ animationRechercherOK.prototype.loadProperties = function()
 	this.properties = {}
 	
 	this.properties.speedWave = 80.0;
+	this.properties.dimWave = 50.0;
 	this.properties.radiusPulse = .5;
+	this.properties.freqPulse = 4;
 
 	this.readPropertiesFile();
 }
@@ -39,6 +41,7 @@ animationRechercherOK.prototype.loadProperties = function()
 animationRechercherOK.prototype.addControls = function()
 {
  	this.gui.add(this.properties, 'speedWave', 10.0, 100.0);
+ 	this.gui.add(this.properties, 'dimWave', 50.0, 200.0);
  	this.gui.add(this.properties, 'radiusPulse', 0.1, 1.0);
 }
 
@@ -70,7 +73,7 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		this.alphaPulse2 = 0.0;
 		this.nbPulses = 0;
 		this.timer.reset();
-		TWEEN.remove(this.tweenPulseAppear);
+//		TWEEN.remove(this.tweenPulseAppear);
 
 		if (this.type == "floor")
 			this.bDoPulse = false;
@@ -83,13 +86,13 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 	this.drawingContext.fillStyle = "#000000";
 	this.drawingContext.fillRect( 0, 0, this.drawingCanvas.width, this.drawingCanvas.height );
 
-	this.gradWave = this.drawingContext.createLinearGradient(0,this.posWave.y,0,this.posWave.y+this.dimWave.h);
+	this.gradWave = this.drawingContext.createLinearGradient(0,this.posWave.y,0,this.posWave.y+this.properties.dimWave);
 	this.gradWave.addColorStop(0,	"black");
 	this.gradWave.addColorStop(0.5,	"white");
 	this.gradWave.addColorStop(1,	"black");
 
 	this.drawingContext.fillStyle = this.gradWave;
-	this.drawingContext.fillRect(0, this.posWave.y,this.drawingCanvas.width, this.dimWave.h );
+	this.drawingContext.fillRect(0, this.posWave.y,this.drawingCanvas.width, this.properties.dimWave );
 	
 	if (this.bDoPulse && this.alphaPulse>0.0)
 	{
@@ -108,8 +111,8 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		if (this.anglePulse2 >= 2.0*Math.PI)
 		{
 			this.anglePulse2 -= 2.0*Math.PI;
-			this.nbPulses++;
-			if (this.nbPulses == this.nbPulsesTodo)
+			this.nbPulses += this.properties.freqPulse;
+			if (this.nbPulses == this.nbPulsesTodo * this.properties.freqPulse)
 			{
 				this.anglePulse2 = 0;
 
@@ -117,7 +120,7 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 				ipcRenderer.send('animationRechercherOK_done', {});
 			}
 		}
-		this.alphaPulse2 = 0.5 * ( 1.0+Math.sin( this.anglePulse2 ) );
+		this.alphaPulse2 = 0.5 * ( 1.0 + Math.cos( this.properties.freqPulse * this.anglePulse2 ) );
 	
 		this.gradPulse = this.drawingContext.createRadialGradient(pulsex,pulsey,0, pulsex,pulsey,r);
 		this.gradPulse.addColorStop(0,		"rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")");
@@ -141,7 +144,7 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 	if (this.state === this.state_wave_to)
 	{
 		this.posWave.y = this.posWave.y - this.properties.speedWave * dt;
-		if (this.posWave.y <= -0.5*this.dimWave.h)
+		if (this.posWave.y <= -0.5*this.properties.dimWave)
 		{
 			// HIT
 			this.state = this.state_wave_back;
@@ -158,8 +161,10 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		{
 			if (this.bDoPulse)
 			{
-				TWEEN.remove(this.tweenPulseAppear);
-				this.tweenPulseAppear = new TWEEN.Tween(this).to({ alphaPulse: 1.0 }, 1000).start();
+				this.alphaPulse = 1.0;
+//				TWEEN.remove(this.tweenPulseAppear);
+//				this.tweenPulseAppear = new TWEEN.Tween(this).to({ alphaPulse: 1.0 }, 1000).start();
+
 			}
 		}
 	}

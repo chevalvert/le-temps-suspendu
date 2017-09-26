@@ -19,6 +19,9 @@ $(document).ready( function()
 {
 	photoView.init("#photo");
 	ipcRenderer.send("indexPhoto-ready",0);
+
+	if (rqcv.configuration.production)
+		document.body.style.cursor = "none";
 });
 
 //--------------------------------------------------------
@@ -112,6 +115,18 @@ ipcRenderer.on('photoScale', function (event, value)
 });
 
 //--------------------------------------------------------
+ipcRenderer.on('photoOffsetCenterx', function (event, value)
+{
+	photoView.setPhotoPositionX( value )
+});
+
+//--------------------------------------------------------
+ipcRenderer.on('photoOffsetCentery', function (event, value)
+{
+	photoView.setPhotoPositionY( value )
+});
+
+//--------------------------------------------------------
 ipcRenderer.on('setGridViewPanelPosition', function (event, value)
 {
 	// init values
@@ -146,7 +161,7 @@ ipcRenderer.on('setGridViewPanelPosition', function (event, value)
 
 	}
 
-	// photoView.setGridViewPanelPosition( value )
+	photoView.setCameraSpeed( value.cameraSpeed );
 });
 
 

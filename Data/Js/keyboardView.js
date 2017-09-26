@@ -7,6 +7,9 @@ function keyboardView()
 	this.valDefault = "RECHERCHER";
 	this.nbCharsMax = 5;
 	this.bUserKey = false;
+	this.bDoShake = false;
+	this.timeShake = false;
+	this.position = null;
 
 	this.cbCodeEntered = null;
 
@@ -19,12 +22,19 @@ function keyboardView()
 		["W","X","C","V","B","N","#",this.valEffacer]
 	];
 
-
 	//--------------------------------------------------------
 	this.reset = function()
 	{
 		$("#code").val( this.valDefault );
 		this.bUserKey = false;
+	}
+
+	//--------------------------------------------------------
+	this.shake = function()
+	{
+		this.bDoShake = true;
+		this.timeShake = 0.0;
+		this.position = $("#view-recherche").offset();
 	}
 	
 	//--------------------------------------------------------
@@ -89,8 +99,25 @@ function keyboardView()
 		});
 		
 		
+		
 		this.reset();
 
+	}
+	
+	//--------------------------------------------------------
+	this.animate = function(dt)
+	{
+		if (this.bDoShake)
+		{
+			this.timeShake += dt;
+			if (this.timeShake >= 0.5){
+				this.bDoShake = false;
+			}
+			var top = this.position.top + Math.random()*20;
+			var left = this.position.left + Math.random()*20;
+			
+			$("#view-recherche").offset({top : top, left : left});
+		}
 	}
 }
 

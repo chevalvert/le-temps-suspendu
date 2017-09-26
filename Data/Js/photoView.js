@@ -34,6 +34,7 @@ function photoView()
 	this.listPhotosLoaded = false;
 	this.listPhotosIndexShow = 0;
 	this.listPhotosIndexAdd = 0;
+	this.listBlockSlide = false;
 	
 
 	//--------------------------------------------------------
@@ -302,13 +303,41 @@ function photoView()
 	//--------------------------------------------------------
 	this.setPhotoSize = function(v)
 	{
-		this.meshPhoto.scale.set( v, v );
+		this.meshPhoto.scale.set( v, v, 0 );
+	}
+
+	//--------------------------------------------------------
+	this.setPhotoPositionX = function(x)
+	{
+		this.meshPhoto.position.set( x * this.container.width(), this.meshPhoto.position.y, 0 );
+	}
+
+	//--------------------------------------------------------
+	this.setPhotoPositionY = function(y)
+	{
+		this.meshPhoto.position.set( this.meshPhoto.position.x, y * this.container.height(), 0 );
 	}
 
 	//--------------------------------------------------------
 	this.setGridViewPanelPosition = function(info)
 	{
 		
+	}
+
+	//--------------------------------------------------------
+	this.setCameraSpeed = function(speed)
+	{
+		if (speed < 1)
+		{
+			this.state_show_photo_list.intervalChangePhoto = 100;
+			this.listBlockSlide = true;
+		}
+		else
+		{
+			this.state_show_photo_list.intervalChangePhoto = 30.0 / speed;
+			this.listBlockSlide = false;
+		}
+
 	}
 
 	//--------------------------------------------------------
@@ -340,7 +369,7 @@ function photoView()
 		   if (this.listPhotosLoaded)
 		   {
 			   this.state_show_photo_list.timeChangePhoto += dt;
-			   if (this.state_show_photo_list.timeChangePhoto >= this.state_show_photo_list.intervalChangePhoto)
+			   if (!this.listBlockSlide && this.state_show_photo_list.timeChangePhoto >= this.state_show_photo_list.intervalChangePhoto)
 			   {
 				   this.state_show_photo_list.timeChangePhoto = 0;
 				   this.listPhotosIndexShow = (this.listPhotosIndexShow+1)%this.listPhotos.length;
