@@ -229,11 +229,15 @@ function enterState(newState)
 
 		if (gridview.panelClicked != gridPanelClicked || gridview.panelPositionClicked != gridPositionClicked)
 		{
-			showPhoto( gridview.panelClicked, gridview.panelPositionClicked  );
 			enableGridViewMouseDrag(true);
 		
 			var posNormThumbClicked = gridview.getThumbPositionNormalized(gridview.panelClicked, gridview.panelPositionClicked);
-			setAnimation(state_grid_scroll_clicked.animation,  posNormThumbClicked);
+
+			if (gridPanelClicked == -1)
+			{
+				showPhoto( gridview.panelClicked, gridview.panelPositionClicked  );
+				setAnimation(state_grid_scroll_clicked.animation,  posNormThumbClicked);
+			}
 
 			clickAnimation(posNormThumbClicked);
 
@@ -553,10 +557,10 @@ function animate(t)
 	  {
 		  panel						:	this.gridview.panelOver,
 		  position					:	this.gridview.positionOver,
-		  cameraPosition 				: 	this.gridview.cameraPosition,
-		  cameraPositionNormalized  	:	this.gridview.cameraPositionNormalized,
+		  cameraPosition 			: 	this.gridview.cameraPosition,
+		  cameraPositionNormalized  :	this.gridview.cameraPositionNormalized,
 		  cameraSpeed 				: 	this.gridview.cameraSpeed,
-		  thumbSize 					: 	this.gridview.thumbSize
+		  thumbSize 				: 	this.gridview.thumbSize
 	   });
 	 }
 

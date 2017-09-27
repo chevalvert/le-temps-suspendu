@@ -18,14 +18,11 @@ animationManualWaves.prototype.loadProperties = function()
 	this.readPropertiesFile();
 }
 
-
 //--------------------------------------------------------
-animationManualWaves.prototype.setData = function(posNorm)
+animationManualWaves.prototype.reset = function(posNorm)
 {
-	if (posNorm)
-		this.generateWave(posNorm.x, 1.0-posNorm.y);
+	this.timer.reset();
 }
-
 
 //--------------------------------------------------------
 animationManualWaves.prototype.setCamPosNormalized = function(pos)
@@ -53,6 +50,8 @@ animationManualWaves.prototype.onThumbClicked = function(posNorm)
 //--------------------------------------------------------
 animationManualWaves.prototype.generateWave = function(x,y)
 {
+	console.log("animationManualWaves.prototype.generateWave x="+x.toFixed(1)+",y="+y.toFixed(1));
+
 	this.waves.push( new animationWave(x * this.container.width(), y * this.container.height(), this.properties.widthWave, this.properties.radius, this.properties.speedWave,this.properties.ageMaxWave) );
 }
 
@@ -114,6 +113,7 @@ function animationWave(x,y,w,rstart, speed,ageMax)
 
 	this.update = function(dt)
 	{
+//	console.log("dt="+dt+",age="+this.age + " / " + this.ageMax);
 		this.age += dt;
 		if (this.age >= this.ageMax)
 			this.dead = true;

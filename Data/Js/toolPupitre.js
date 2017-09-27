@@ -167,7 +167,7 @@ function toolPupitre()
 		animTransition.setAnimation("plasma");
 		this.setAnimationGround("blank_ground");
 
-	   window.requestAnimationFrame(this.update.bind(this));
+//	   window.requestAnimationFrame(this.update.bind(this));
 	}
 
 	
@@ -394,7 +394,7 @@ function toolPupitre()
 	// --------------------------------------------
 	this.update = function()
 	{
-	   window.requestAnimationFrame(this.update.bind(this));
+//	   window.requestAnimationFrame(this.update.bind(this));
 	}
 
 	// --------------------------------------------
