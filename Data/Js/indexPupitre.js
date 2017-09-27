@@ -10,10 +10,10 @@ var TWEEN 		= require('@tweenjs/tween.js');
 // State machine
 // timeout en secondes
 
-var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "sine", animationGround : "blank_ground"};
-var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manual", timeout : 5};
-var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manual", timeout : 20};
-var state_interagir 			= {id : 3, name: "interagir", 			animation : "manual", animationGround : "manual_ground", timeout : 100};
+var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "sine", 		animationGround : "blank_ground"};
+var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	timeout : 5};
+var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	timeout : 20};
+var state_interagir 			= {id : 3, name: "interagir", 			animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 100};
 var state_rechercher 			= {id : 4, name: "rechercher", 			timeout : 15};
 var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
 var state_rechercher_fail 		= {id : 6, name: "rechercher_fail", 	animation : "rechercherFail", animationGround : "rechercherFail_ground", timeout : 10};
@@ -21,6 +21,10 @@ var state_rechercher_fail 		= {id : 6, name: "rechercher_fail", 	animation : "re
 // Initial state
 var state 						= null;
 var stateTime 					= 0.0;
+
+
+var gridPanelClicked			= -1;
+var gridPositionClicked			= -1;
 
 //--------------------------------------------------------
 // UI
@@ -67,6 +71,13 @@ $(document).ready( function()
 	window.requestAnimationFrame( animate );
 
 });
+
+
+//--------------------------------------------------------
+function clickAnimation(posNormThumbClicked)
+{
+	ipcRenderer.send('indexPupitre-clickAnimation', posNormThumbClicked);
+}
 
 //--------------------------------------------------------
 function setAnimation(which)
@@ -193,6 +204,12 @@ function showPhotoList()
 }
 
 //--------------------------------------------------------
+function resetGridPanelPositionInfos()
+{
+	gridPanelClicked = gridPositionClicked = -1;
+}
+
+//--------------------------------------------------------
 function enterState(newState)
 {
 	if (newState === state_stand_by)
@@ -207,10 +224,24 @@ function enterState(newState)
 	else if (newState === state_grid_scroll_clicked )
 	{
 		gridview.showOverlayImage(true);
-		showPhoto( gridview.panelClicked, gridview.panelPositionClicked  );
-		enableGridViewMouseDrag(true);
 		gridview.setPositionOverlayImageClicked();
-		setAnimation(state_grid_scroll_clicked.animation, gridview.getThumbPositionNormalized(gridview.panelClicked, gridview.panelPositionClicked) );
+
+
+		if (gridview.panelClicked != gridPanelClicked || gridview.panelPositionClicked != gridPositionClicked)
+		{
+			showPhoto( gridview.panelClicked, gridview.panelPositionClicked  );
+			enableGridViewMouseDrag(true);
+		
+			var posNormThumbClicked = gridview.getThumbPositionNormalized(gridview.panelClicked, gridview.panelPositionClicked);
+			setAnimation(state_grid_scroll_clicked.animation,  posNormThumbClicked);
+
+			clickAnimation(posNormThumbClicked);
+
+			gridPanelClicked = gridview.panelClicked;
+			gridPositionClicked = gridview.panelPositionClicked;
+
+		}
+
 	}
 }
 
@@ -315,12 +346,14 @@ function changeState(newState)
 		if (newState === state_stand_by)
 		{
 			bChangeState = true;
+			resetGridPanelPositionInfos();
 		}
 		else if (newState === state_interagir)
 		{
 			setView("interagir");
 			setAnimation(state_interagir.animation);
 			enableGridViewMouseDrag(false);
+			resetGridPanelPositionInfos();
 
 			bChangeState = true;
 		}
@@ -328,6 +361,7 @@ function changeState(newState)
 		{
 			setView("rechercher");
 			enableGridViewMouseDrag(false);
+			resetGridPanelPositionInfos();
 
 			bChangeState = true;
 		}
@@ -335,6 +369,7 @@ function changeState(newState)
 		{
 			gridview.showOverlayImage(false);
 			enableGridViewMouseDrag(true);
+			resetGridPanelPositionInfos();
 
 			bChangeState = true;
 		}
@@ -497,8 +532,6 @@ function animate(t)
 	var dt = time.update();
 	stateTime += dt;
 
-	// Keyboard
-	keyboardView.animate(dt);
 
 	// Handle time outs
 	if (state === state_interagir || state === state_rechercher || state === state_grid_scroll || state === state_grid_scroll_clicked || state === state_rechercher_fail/*|| state === state_rechercher_ok*/)
@@ -506,27 +539,33 @@ function animate(t)
 		if (stateTime >= state.timeout)
 			changeState(state_stand_by);
 	}
-	if (state === state_grid_scroll)
-	{
-		ipcRenderer.send('indexPupitre-setGridViewCamPos', this.gridview.cameraPositionNormalized);
-	}
 	
 	if (state === state_interagir)
 	{
 		ipcRenderer.send('indexPupitre-setInteragirMousePos', p5Sketch.mousePositionNormalized);
 	}
-
-	// send gridview infos to main (panel, position)
-	ipcRenderer.send(
-	'indexPupitre-setGridViewPanelPosition',
+	else
 	{
-		panel:				this.gridview.panelOver,
-		position:			this.gridview.positionOver,
-		cameraPosition : 	this.gridview.cameraPosition,
-		cameraSpeed : 		this.gridview.cameraSpeed,
-		thumbSize : 		this.gridview.thumbSize
-	 });
+	  // send gridview infos to main
+	  // can be distributed to any windows (tool (for animations that need those infos), photo for cam speed for example)
+	  ipcRenderer.send(
+	  'indexPupitre-setGridViewInfos',
+	  {
+		  panel						:	this.gridview.panelOver,
+		  position					:	this.gridview.positionOver,
+		  cameraPosition 				: 	this.gridview.cameraPosition,
+		  cameraPositionNormalized  	:	this.gridview.cameraPositionNormalized,
+		  cameraSpeed 				: 	this.gridview.cameraSpeed,
+		  thumbSize 					: 	this.gridview.thumbSize
+	   });
+	 }
 
+	// Updates
+	gridview.update(dt);
+	keyboardView.update(dt);
+
+	// render
+	gridview.render();
  
  	// Debug
  	renderDebug();

@@ -27,6 +27,12 @@ animationManual.prototype.setData = function(data)
 	}
 }
 
+//--------------------------------------------------------
+animationManual.prototype.setCamPosNormalized = function(pos)
+{
+	this.gridx = pos.x;
+	this.gridy = pos.y;
+}
 
 //--------------------------------------------------------
 animationManual.prototype.addControls = function()

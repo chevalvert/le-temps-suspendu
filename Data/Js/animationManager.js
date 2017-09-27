@@ -18,6 +18,7 @@ animationManager.prototype.setup = function()
    this.animations["plasma2"] 		= new animationPlasma();
    this.animations["rectRotate"] 	= new animationRectRotate();
    this.animations["manual"] 		= new animationManual();
+   this.animations["manualWaves"] 	= new animationManualWaves();
    this.animations["rechercherOK"] 	= new animationRechercherOK();
    this.animations["rechercherFail"]= new animationRechercherFail();
  
@@ -35,8 +36,10 @@ animationManager.prototype.setup = function()
    this.animationsGround["blank_ground"] 		= new animationBlank();
    this.animationsGround["blank_ground"].type = "floor";
 
-   this.animationsGround["manual_ground"] 		= new animationManual();
-   this.animationsGround["manual_ground"].type = "floor";
+   this.animationsGround["manual_ground"] 			= new animationManual();
+   this.animationsGround["manual_ground"].type 		= "floor";
+   this.animationsGround["manualWaves_ground"] 		= new animationManualWaves();
+   this.animationsGround["manualWaves_ground"].type = "floor";
 
    this.animationsGround["sine_ground"] 	= new animationSine();
    this.animationsGround["sine_ground"].type = "floor";

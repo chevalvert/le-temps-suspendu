@@ -105,7 +105,7 @@ function keyboardView()
 	}
 	
 	//--------------------------------------------------------
-	this.animate = function(dt)
+	this.update = function(dt)
 	{
 		if (this.bDoShake)
 		{

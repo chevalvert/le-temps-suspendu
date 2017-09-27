@@ -79,7 +79,7 @@ function gridview()
 
 	//--------------------------------------------------------
 	// Timer
-	this.timer = new timer();
+	// this.timer = new timer();
 
 	//--------------------------------------------------------
 	// 3D / 2D scene
@@ -267,7 +267,7 @@ function gridview()
 		var pThis = this;
 	
 		this.container = $(containerId);
-		this.timer.reset();
+		//this.timer.reset();
 		
 	 
 	 	// Mouse move
@@ -441,7 +441,7 @@ function gridview()
 	 
 		this.createGridImagesCache();
 
-		this.animate();
+		// this.animate();
 	}
 
 	//--------------------------------------------------------
@@ -467,8 +467,8 @@ function gridview()
 	//--------------------------------------------------------
 	this.animate = function()
 	{
-		this.render();
-		window.requestAnimationFrame( this.animate.bind(this) );
+//		this.render();
+//		window.requestAnimationFrame( this.animate.bind(this) );
 	}
 
 	//--------------------------------------------------------
@@ -498,13 +498,18 @@ function gridview()
 			this.cameraSpeedFactor = this.cameraSpeedFactorDrag / 2;
 		}
 	}
-	
+
 	//--------------------------------------------------------
 	this.render = function()
 	{
-
+		this.renderer.render( this.scene, this.cameraCurrent );
+	}
+	
+	//--------------------------------------------------------
+	this.update = function(dt)
+	{
 		// Timer
-		var dt = this.timer.update();
+		// var dt = this.timer.update();
 	
 		// Update camera position
 		this.cameraPosition.x += (this.cameraPositionTarget.x - this.cameraPosition.x) * this.cameraSpeedFactor;
@@ -610,9 +615,6 @@ function gridview()
 
 		for (j=0;j<this.imgNb;j++)
 			this.gridImagesList[j].update(dt);
-
-
-		this.renderer.render( this.scene, this.cameraCurrent );
 
 	}
 }

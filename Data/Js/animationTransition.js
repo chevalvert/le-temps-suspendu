@@ -93,21 +93,28 @@ animationTransition.prototype.setUniforms = function()
 }
 
 
+
 //--------------------------------------------------------
-animationTransition.prototype.setGridPos = function(gridx,gridy)
+animationTransition.prototype.onThumbClicked = function(posNorm)
 {
-	if (this.anim0 && this.anim0.id == "manual")
+	if (this.anim0)
+		this.anim0.onThumbClicked(posNorm);
+	if (this.anim1)
+		this.anim1.onThumbClicked(posNorm);
+}
+
+//--------------------------------------------------------
+animationTransition.prototype.setCamPosNormalized = function(pos)
+{
+	if (this.anim0)
 	{
-		this.anim0.gridx = gridx;
-		this.anim0.gridy = gridy;
+		this.anim0.setCamPosNormalized(pos);
 	}
 
-	if (this.anim1 && this.anim1.id == "manual")
+	if (this.anim1)
 	{
-		this.anim1.gridx = gridx;
-		this.anim1.gridy = gridy;
+		this.anim1.setCamPosNormalized(pos);
 	}
-
 }
 
 

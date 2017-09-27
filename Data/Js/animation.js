@@ -33,9 +33,10 @@ animation.prototype.properties = {}
 
 
 //--------------------------------------------------------
-animation.prototype.reset = function(){}
-animation.prototype.setData = function(data){}
-//animation.prototype.setUserGridPositionNormalized = function(x,y){}
+animation.prototype.reset 	= function(){} // called just once when animation is set
+animation.prototype.setData = function(data){} // called just once when animation is set
+animation.prototype.setCamPosNormalized = function(posNorm){} // called during render
+animation.prototype.onThumbClicked = function(posNorm){}
 
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()

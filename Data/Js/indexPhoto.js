@@ -127,7 +127,7 @@ ipcRenderer.on('photoOffsetCentery', function (event, value)
 });
 
 //--------------------------------------------------------
-ipcRenderer.on('setGridViewPanelPosition', function (event, value)
+ipcRenderer.on('setGridViewInfos', function (event, value)
 {
 	// init values
 	if (userPosCurrent.gridPanel == -1 && userPosPrevious.gridPanel == -1)

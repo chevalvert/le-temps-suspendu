@@ -165,7 +165,7 @@ function toolPupitre()
 		var animTransition = this.setAnimation("transition");
 		animTransition.setAnimation("sine2");
 		animTransition.setAnimation("plasma");
-		this.setAnimationGround("sine_ground");
+		this.setAnimationGround("blank_ground");
 
 	   window.requestAnimationFrame(this.update.bind(this));
 	}
@@ -183,9 +183,14 @@ function toolPupitre()
 	}
 	
 	// --------------------------------------------
-	this.setGridViewCamPos = function(value)
+	this.setGridViewCamPosNormalized = function(value)
 	{
-		var bUseTransition = this.properties.useAnimTransition;
+		if (this.animManager.animation)
+		{
+			this.animManager.animation.setCamPosNormalized(value);
+		}
+	
+/*		var bUseTransition = this.properties.useAnimTransition;
 		if (bUseTransition)
 		{
 			if (this.animManager.animation && this.animManager.animation.id == "transition")
@@ -201,13 +206,20 @@ function toolPupitre()
 				this.animManager.animation.gridy = value.y;
 			}
 		}
+*/
 	
 	}
 
 	// --------------------------------------------
 	this.setInteragirMousePos = function(value)
 	{
-		var bUseTransition = this.properties.useAnimTransition;
+		if (this.animManager.animation)
+		{
+			this.animManager.animation.setCamPosNormalized({x:value.x, y:1.0-value.y});
+		}
+	
+/*		var bUseTransition = this.properties.useAnimTransition;
+
 		if (bUseTransition)
 		{
 			if (this.animManager.animation && this.animManager.animation.id == "transition")
@@ -231,6 +243,8 @@ function toolPupitre()
 				this.animManager.animationGround.gridy = 1.0-value.y;
 			}
 		}
+*/
+
 	}
 
 	// --------------------------------------------
@@ -368,6 +382,14 @@ function toolPupitre()
 		if (this.animManager.animationGround)
 			this.animGroundView.setAnimation( this.animManager.animationGround );
 	}
+	
+	// --------------------------------------------
+	this.clickAnimation = function(posNorm)
+	{
+		if (this.animManager.animation)
+			this.animManager.animation.onThumbClicked(posNorm)
+	}
+
 
 	// --------------------------------------------
 	this.update = function()

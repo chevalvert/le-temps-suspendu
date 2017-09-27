@@ -289,6 +289,16 @@ function onConfigLoaded()
 		}
 	});
 
+
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-clickAnimation', (event, value) =>
+	{
+		if (toolWindow)
+		{
+			toolWindow.content().send('clickAnimation', value);
+		}
+	});
+
 	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setAnimationGround', (event, value) =>
 	{
@@ -299,22 +309,19 @@ function onConfigLoaded()
 	});
 
 	// --------------------------------------------------
-	ipcMain.on('indexPupitre-setGridViewCamPos', (event, value) =>
+	ipcMain.on('indexPupitre-setGridViewInfos', (event, value) =>
 	{
 		if (toolWindow)
 		{
-			toolWindow.content().send('setGridViewCamPos', value);
+			toolWindow.content().send('setGridViewInfos', value);
+		}
+
+		if (photoWindow)
+		{
+			photoWindow.content().send('setGridViewInfos', value);
 		}
 	});
 
-	// --------------------------------------------------
-	ipcMain.on('indexPupitre-setGridViewPanelPosition', (event, value) =>
-	{
-		if (photoWindow)
-		{
-			photoWindow.content().send('setGridViewPanelPosition', value);
-		}
-	});
 	
 	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setInteragirMousePos', (event, value) =>

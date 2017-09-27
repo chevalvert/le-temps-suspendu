@@ -32,4 +32,5 @@ Utils.extractAnimParams = function(k, params)
 	return null;
 }
 
-
+// --------------------------------------------
+// Utils.drawEllipse

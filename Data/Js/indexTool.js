@@ -112,20 +112,24 @@ function resizeTools()
 // Events
 ipcRenderer.on('setAnimation', function (event, value)
 {
-//	toolPupitre.setAnimation(value);
 	toolPupitre.setAnimationTransition(value);
 });
 
 ipcRenderer.on('setAnimationGround', function (event, value)
 {
-//	toolPupitre.setAnimationGround(value);
 	toolPupitre.setAnimationGroundTransition(value);
 });
 
-//--------------------------------------------------------
-ipcRenderer.on('setGridViewCamPos', function (event, value)
+ipcRenderer.on('clickAnimation', function (event, value)
 {
-	toolPupitre.setGridViewCamPos(value);
+	toolPupitre.clickAnimation(value);
+});
+
+
+//--------------------------------------------------------
+ipcRenderer.on('setGridViewInfos', function (event, value)
+{
+	toolPupitre.setGridViewCamPosNormalized(value.cameraPositionNormalized);
 });
 
 //--------------------------------------------------------
