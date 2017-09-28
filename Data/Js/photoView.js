@@ -303,7 +303,7 @@ function photoView()
 	//--------------------------------------------------------
 	this.setPhotoSize = function(v)
 	{
-		this.meshPhoto.scale.set( v, v, 0 );
+		this.meshPhoto.scale.set( v, v, 1 );
 	}
 
 	//--------------------------------------------------------

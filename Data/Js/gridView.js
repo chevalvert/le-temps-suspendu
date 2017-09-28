@@ -246,13 +246,14 @@ function gridview()
 				y: (this.cameraPositionTeleport.y - this.cameraPosition.y) / d
 			}
 
-			this.cameraPositionTarget.x = this.cameraPosition.x + 300.0 * this.cameraDeltaTeleport.x;
-			this.cameraPositionTarget.y = this.cameraPosition.y + 300.0 * this.cameraDeltaTeleport.y;
+			this.cameraPositionTarget.x = this.cameraPosition.x + 500.0 * this.cameraDeltaTeleport.x;
+			this.cameraPositionTarget.y = this.cameraPosition.y + 500.0 * this.cameraDeltaTeleport.y;
 
+			this.mask(true);
 
-			this.tweenTeleportFadeOut = new TWEEN.Tween(this).to({overlayOpacity : 1.0}, 500).onComplete( this.onTweenTeleportFadeOutComplete.bind(this) )
-			this.tweenTeleportFadeIn = new TWEEN.Tween(this).to({overlayOpacity : 0.0}, 500);
-			this.tweenTeleportFadeOut.chain(this.tweenTeleportFadeIn);
+			this.tweenTeleportFadeOut = new TWEEN.Tween(this).to({}, 500).onComplete( this.onTweenTeleportFadeOutComplete.bind(this) )
+//			this.tweenTeleportFadeIn = new TWEEN.Tween(this).to({}, 500);
+//			this.tweenTeleportFadeOut.chain(this.tweenTeleportFadeIn);
 			
 			this.tweenTeleportFadeOut.start();
 		
@@ -266,12 +267,12 @@ function gridview()
 	//--------------------------------------------------------
 	this.onTweenTeleportFadeOutComplete = function()
 	{
-		this.bTeleport = true;
+		this.bTeleport = true; // overrides bGotoThumb
 		this.overlayImageCache.setPosition( this.cameraPositionTeleport.x, this.cameraPositionTeleport.y   );
-		// this.setCameraPosition( this.cameraPositionTeleport );
+		this.mask(false);
 
-		this.cameraPosition.x = this.cameraPositionTeleport.x - 300.0 * this.cameraDeltaTeleport.x;
-		this.cameraPosition.y = this.cameraPositionTeleport.y - 300.0 * this.cameraDeltaTeleport.y;
+		this.cameraPosition.x = this.cameraPositionTeleport.x - 500.0 * this.cameraDeltaTeleport.x;
+		this.cameraPosition.y = this.cameraPositionTeleport.y - 500.0 * this.cameraDeltaTeleport.y;
 
 		this.cameraPositionTarget.x = this.cameraPositionTeleport.x;
 		this.cameraPositionTarget.y = this.cameraPositionTeleport.y;
@@ -608,7 +609,7 @@ function gridview()
 
 		
 		// Overlay (Mask)
-		// this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;
+		this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;
 
 		this.overlayMesh.position.set( this.cameraPosition.x,  this.cameraPosition.y, 5);
 		this.overlayMesh.material.opacity = this.overlayOpacity;
