@@ -48,6 +48,8 @@ var bAppStateDebug = true;
 //--------------------------------------------------------
 $(document).ready( function()
 {
+	Utils.enableLog( rqcv.getConsoleLog() );
+
 	// Init views
 	createViewGrid();
 	createViewInteragir();
@@ -71,6 +73,8 @@ $(document).ready( function()
 	// Start
 	ipcRenderer.send("indexPupitre-ready",0);
 	window.requestAnimationFrame( animate );
+
+
 
 });
 
@@ -238,12 +242,12 @@ function enterState(newState)
 		if (gridview.panelClicked != gridPanelClicked || gridview.panelPositionClicked != gridPositionClicked)
 		{
 			enableGridViewMouseDrag(true);
+			showPhoto( gridview.panelClicked, gridview.panelPositionClicked  );
 		
 			var posNormThumbClicked = gridview.getThumbPositionNormalized(gridview.panelClicked, gridview.panelPositionClicked);
 
 			if (gridPanelClicked == -1)
 			{
-				showPhoto( gridview.panelClicked, gridview.panelPositionClicked  );
 				setAnimation(state_grid_scroll_clicked.animation,  posNormThumbClicked);
 			}
 

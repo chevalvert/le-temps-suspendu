@@ -15,13 +15,13 @@ animationRechercherOK.prototype.speedWave 	= 80.0;
 animationRechercherOK.prototype.posPulse 	= {x:0, y:0};
 animationRechercherOK.prototype.gradPulse 	= null;
 animationRechercherOK.prototype.bDoPulse 	= true;
-animationRechercherOK.prototype.tweenPulseAppear = null;
 animationRechercherOK.prototype.alphaPulse 	= 0.0;
 animationRechercherOK.prototype.alphaPulse2 = 0.0;
 animationRechercherOK.prototype.bReset = false;
 animationRechercherOK.prototype.anglePulse2 = 0.0
 animationRechercherOK.prototype.nbPulsesTodo = 4; // number of pulses before exit
 animationRechercherOK.prototype.nbPulses = 0;
+animationRechercherOK.prototype.bPulseGradient = false;
 
 
 //--------------------------------------------------------
@@ -73,7 +73,6 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		this.alphaPulse2 = 0.0;
 		this.nbPulses = 0;
 		this.timer.reset();
-//		TWEEN.remove(this.tweenPulseAppear);
 
 		if (this.type == "floor")
 			this.bDoPulse = false;
@@ -94,6 +93,8 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 	this.drawingContext.fillStyle = this.gradWave;
 	this.drawingContext.fillRect(0, this.posWave.y,this.drawingCanvas.width, this.properties.dimWave );
 	
+	
+	// Pulse
 	if (this.bDoPulse && this.alphaPulse>0.0)
 	{
 		var w = this.container.width();
@@ -122,9 +123,14 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		}
 		this.alphaPulse2 = 0.5 * ( 1.0 + Math.cos( this.properties.freqPulse * this.anglePulse2 ) );
 	
-		this.gradPulse = this.drawingContext.createRadialGradient(pulsex,pulsey,0, pulsex,pulsey,r);
-		this.gradPulse.addColorStop(0,		"rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")");
-		this.gradPulse.addColorStop(1,		"rgba(0,0,0,"+this.alphaPulse*this.alphaPulse2+")");
+		var colorWhitePulseGradient = "rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")";
+		if (this.bPulseGradient)
+		{
+			this.gradPulse = this.drawingContext.createRadialGradient(pulsex,pulsey,0, pulsex,pulsey,r);
+			this.gradPulse.addColorStop(0,		"rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")");
+			this.gradPulse.addColorStop(1,		"rgba(0,0,0,"+this.alphaPulse*this.alphaPulse2+")");
+		}
+	
 
 		this.drawingContext.save();
 		
@@ -132,9 +138,11 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 
 		this.drawingContext.beginPath();
 		this.drawingContext.ellipse(pulsex,pulsey,r,r,0,0,2*Math.PI);
-		this.drawingContext.fillStyle = this.gradPulse;
+		if (this.bPulseGradient)
+			this.drawingContext.fillStyle = this.gradPulse;
+		else
+			this.drawingContext.fillStyle = colorWhitePulseGradient;
 		this.drawingContext.fill();
-
 
 		this.drawingContext.restore();
 
@@ -162,8 +170,6 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 			if (this.bDoPulse)
 			{
 				this.alphaPulse = 1.0;
-//				TWEEN.remove(this.tweenPulseAppear);
-//				this.tweenPulseAppear = new TWEEN.Tween(this).to({ alphaPulse: 1.0 }, 1000).start();
 
 			}
 		}

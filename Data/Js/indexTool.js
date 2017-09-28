@@ -8,6 +8,7 @@ var rqcv 		= remote.getGlobal("rqcv");
 //--------------------------------------------------------
 $(document).ready( function()
 {
+	Utils.enableLog( rqcv.getConsoleLog() );
 	initToolBar();
 	resizeViews();
 	initTools();

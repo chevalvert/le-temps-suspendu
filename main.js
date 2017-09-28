@@ -84,8 +84,10 @@ function openToolWindow()
 		var w = configuration.production ? 1 : configuration.tool.w;
 		var h = configuration.production ? 1 : configuration.tool.h;
 
-	
-	   toolWindow = windowManager.open('tool', 'Le temps suspendu : outils', getFile('indexTool.html'),{},
+
+	   // 
+// function(name, title, content, setupTemplate, setup, showDevTools){
+	   toolWindow = windowManager.open('tool', 'Le temps suspendu : outils', getFile('indexTool.html'),false,
 	   {
 		   'x' : externalDisplay ? externalDisplay.bounds.x : configuration.tool.x,
 		   'y' : externalDisplay ? externalDisplay.bounds.y : configuration.tool.y,
@@ -111,7 +113,7 @@ function onConfigLoaded()
 	windowManager.init();
 	
 	// Main window
-	mainWindow = windowManager.open('home', 'Le temps suspendu : pupitre', getFile('indexPupitre.html'), {},
+	mainWindow = windowManager.open('home', 'Le temps suspendu : pupitre', getFile('indexPupitre.html'), false,
 	{
 		'width' : configuration.pupitre.w,
 		'height' : configuration.pupitre.h,
@@ -122,7 +124,7 @@ function onConfigLoaded()
 	}, configuration.production ? false : configuration.pupitre.devtools);
 
 	// Photo  window
-	photoWindow = windowManager.open('photo', 'Le temps suspendu : photo', getFile('indexPhoto.html'), {},
+	photoWindow = windowManager.open('photo', 'Le temps suspendu : photo', getFile('indexPhoto.html'), false,
 	{
 		'width' : configuration.photo.w,
 		'height' : configuration.photo.h,
@@ -142,7 +144,7 @@ function onConfigLoaded()
 	global.rqcv.configuration = configuration;
 	global.rqcv.connection = connection;
 	global.rqcv.leds = leds;
-	
+	global.rqcv.getConsoleLog = function(){ return this.configuration.production ? false : this.configuration.consoleLog; }
 	
 	// --------------------------------------------------
 	// events from windows

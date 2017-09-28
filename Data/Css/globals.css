@@ -13,6 +13,13 @@
 }
 
 
+::selection
+{
+	background:transparent;
+}
+
+
+
 @font-face
 {
 	font-family: 	Friction-Regular;

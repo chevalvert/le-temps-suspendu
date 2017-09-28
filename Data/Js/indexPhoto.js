@@ -17,6 +17,7 @@ var gridThumbSize = 0;
 //--------------------------------------------------------
 $(document).ready( function()
 {
+	Utils.enableLog( rqcv.getConsoleLog() );
 	photoView.init("#photo");
 	ipcRenderer.send("indexPhoto-ready",0);
 

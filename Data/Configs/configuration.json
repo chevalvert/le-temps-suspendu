@@ -1,6 +1,7 @@
 {
 	"production" :	false,
 
+	"consoleLog": 	false,
 	"db_rq" :
 	{
   		"host"     	: "localhost",

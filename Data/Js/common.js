@@ -32,5 +32,11 @@ Utils.extractAnimParams = function(k, params)
 	return null;
 }
 
+Utils.enableLog = function(is)
+{
+	if (!is)
+		console.log = function(){}
+}
+
 // --------------------------------------------
 // Utils.drawEllipse
