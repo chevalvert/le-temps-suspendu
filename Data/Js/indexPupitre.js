@@ -634,8 +634,41 @@ function initMenu()
 	btnInteragirBack.click(onBtnInteragirBackClicked);
 	btnRechercherBack.click(onBtnRechercherBackClicked);
 	
+	if (rqcv.configuration.pupitre.menu.transition)
+	{
+	  btnInteragir.mouseover(onBtnMouseDown)
+	  btnInteragir.mouseout(onBtnMouseUp)
+	  btnInteragir.mousedown(onBtnMouseDown)
+	  btnInteragir.mouseup(onBtnMouseUp)
+
+	  btnRechercher.mouseover(onBtnMouseDown)
+	  btnRechercher.mouseout(onBtnMouseUp)
+	  btnRechercher.mousedown(onBtnMouseDown)
+	  btnRechercher.mouseup(onBtnMouseUp)
+
+	  btnInteragirBack.mouseover(onBtnMouseDown)
+	  btnInteragirBack.mouseout(onBtnMouseUp)
+	  btnInteragirBack.mousedown(onBtnMouseDown)
+	  btnInteragirBack.mouseup(onBtnMouseUp)
+
+	  btnRechercherBack.mouseover(onBtnMouseDown)
+	  btnRechercherBack.mouseout(onBtnMouseUp)
+	  btnRechercherBack.mousedown(onBtnMouseDown)
+	  btnRechercherBack.mouseup(onBtnMouseUp)
+	}
+		
 	
 	$(".menu-item").css("cursor", "pointer")
+}
+
+function onBtnMouseDown()
+{
+	$(this).addClass("mouse-down").removeClass("mouse-up");
+}
+
+function onBtnMouseUp()
+{
+	$(this).addClass("mouse-up").removeClass("mouse-down");
 }
 
 //--------------------------------------------------------

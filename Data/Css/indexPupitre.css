@@ -174,6 +174,7 @@ MENU LE TEMPS SUSPENDU
 
 */
 
+
 #menu
 {
 	font-family:		Friction-Mono;
@@ -191,6 +192,24 @@ MENU LE TEMPS SUSPENDU
 	height:				128px;
 	top:				0px;
 	display:			none;
+	transition:			0.25s;
+}
+
+/*
+#menu .menu-item:hover
+{
+	transform:			scale(0.9,0.9)
+}
+*/
+
+#menu .menu-item.mouse-down
+{
+	transform: scale(0.975, 0.975);
+}
+
+#menu .menu-item.mouse-up
+{
+	transform : scale(1.0, 1.0);
 }
 
 #menu .menu-item#interagir, #menu .menu-item#back-rechercher
