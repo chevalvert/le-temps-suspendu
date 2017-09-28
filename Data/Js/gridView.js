@@ -66,15 +66,22 @@ function gridview()
 	this.thumbPos 		= {};
 
 	
-	this.panelClicked 			= -1;		// "panel" in database
+	this.panelClicked 			= -1;	// "panel" in database
 	this.panelPositionClicked 	= -1;	// "position" in database
 	
 	this.overlayMesh 		= null;
 	this.overlayOpacity 	= this.overlayOpacityTarget = 0.0;
-
 	this.overlayImageCache 	= null;
 
 	this.bGotoThumb 		= false;
+
+
+	// Teleport
+	this.tweenTeleportFadeOut		= null;
+	this.tweenTeleportFadeIn		= null;
+	this.cameraPositionTeleport		= null;
+	this.cameraDeltaTeleport		= {x:0, y:0};
+	this.bTeleport					= false;
 
 
 	//--------------------------------------------------------
@@ -206,11 +213,69 @@ function gridview()
 	//--------------------------------------------------------
 	this.gotoPanelWithPosition = function(panel, position)
 	{
-//		var camPositionTarget = this.getThumbPosition(panel, position);
-		// var distance = Math.dist(camPositionTarget.x, camPositionTarget.y, this.cameraPosition.x, this.cameraPosition.y);
-		// this.mask(true);
-		// console.log("gotoPanelWithPosition(), distance="+distance);
 		this.gotoThumb(panel, position);
+	}
+
+	//--------------------------------------------------------
+	this.teleportPanelWithPosition = function(panel, position)
+	{
+		if (this.tweenTeleportFadeOut)
+		{
+			TWEEN.remove( this.tweenTeleportFadeIn );
+			this.tweenTeleportFadeOut = null;
+		}
+		if (this.tweenTeleportFadeIn)
+		{
+			TWEEN.remove( this.tweenTeleportFadeIn );
+			this.tweenTeleportFadeIn = null;
+		}
+
+		// Direction
+		this.cameraPositionTeleport = this.getThumbPosition(panel, position);
+		var d = Math.dist(this.cameraPositionTeleport.x,this.cameraPositionTeleport.y,this.cameraPosition.x,this.cameraPosition.y);
+
+		// console.log("teleport, distance="+d.toFixed(1));
+		// console.log("teleport, distance rel to grid width="+parseInt(d/this.imgWidth));
+
+
+		// Too far ?
+		if (d >= 2*this.imgWidth)
+		{
+			this.cameraDeltaTeleport = {
+				x: (this.cameraPositionTeleport.x - this.cameraPosition.x) / d,
+				y: (this.cameraPositionTeleport.y - this.cameraPosition.y) / d
+			}
+
+			this.cameraPositionTarget.x = this.cameraPosition.x + 300.0 * this.cameraDeltaTeleport.x;
+			this.cameraPositionTarget.y = this.cameraPosition.y + 300.0 * this.cameraDeltaTeleport.y;
+
+
+			this.tweenTeleportFadeOut = new TWEEN.Tween(this).to({overlayOpacity : 1.0}, 500).onComplete( this.onTweenTeleportFadeOutComplete.bind(this) )
+			this.tweenTeleportFadeIn = new TWEEN.Tween(this).to({overlayOpacity : 0.0}, 500);
+			this.tweenTeleportFadeOut.chain(this.tweenTeleportFadeIn);
+			
+			this.tweenTeleportFadeOut.start();
+		
+		}
+		else
+		{
+			this.gotoPanelWithPosition(panel,position);
+		}
+	}
+
+	//--------------------------------------------------------
+	this.onTweenTeleportFadeOutComplete = function()
+	{
+		this.bTeleport = true;
+		this.overlayImageCache.setPosition( this.cameraPositionTeleport.x, this.cameraPositionTeleport.y   );
+		// this.setCameraPosition( this.cameraPositionTeleport );
+
+		this.cameraPosition.x = this.cameraPositionTeleport.x - 300.0 * this.cameraDeltaTeleport.x;
+		this.cameraPosition.y = this.cameraPositionTeleport.y - 300.0 * this.cameraDeltaTeleport.y;
+
+		this.cameraPositionTarget.x = this.cameraPositionTeleport.x;
+		this.cameraPositionTarget.y = this.cameraPositionTeleport.y;
+
 	}
 
 	//--------------------------------------------------------
@@ -222,8 +287,16 @@ function gridview()
 		this.bGotoThumb = true;
 	}
 
+
 	//--------------------------------------------------------
-	this.setCameraPosition = function(posNorm, offsetNorm)
+	this.setCameraPosition = function(pos)
+	{
+		this.cameraPosition.x = this.cameraPositionTarget.x = pos.x;
+		this.cameraPosition.y = this.cameraPositionTarget.y = pos.y;
+	}
+
+	//--------------------------------------------------------
+	this.setCameraPositionNorm = function(posNorm, offsetNorm)
 	{
 		this.cameraPosition.x = this.cameraPositionTarget.x = posNorm.x * this.gridWidth;
 		this.cameraPosition.y = this.cameraPositionTarget.y = posNorm.y * this.gridHeight;
@@ -535,20 +608,21 @@ function gridview()
 
 		
 		// Overlay (Mask)
-		this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;
+		// this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;
 
-		this.overlayMesh.position.set( this.cameraPosition.x,  this.cameraPosition.y, 1);
+		this.overlayMesh.position.set( this.cameraPosition.x,  this.cameraPosition.y, 5);
 		this.overlayMesh.material.opacity = this.overlayOpacity;
 
 		// Overlay (Thumb)
 		this.overlayImageCache.update(dt);
-		if (this.bGotoThumb)
+		if (this.bGotoThumb || this.bTeleport)
 		{
 			if (
-				Math.abs( this.cameraPositionTarget.x - this.cameraPosition.x ) < 1.0 &&
-				Math.abs( this.cameraPositionTarget.y - this.cameraPosition.y ) < 1.0
+				(Math.abs( this.cameraPositionTarget.x - this.cameraPosition.x ) < 1.0 &&
+				Math.abs( this.cameraPositionTarget.y - this.cameraPosition.y ) < 1.0) || this.bTeleport
 				)
 				{
+					this.bTeleport = false;
 					this.bGotoThumb = false;
 					this.showOverlayImage(true);
 				}

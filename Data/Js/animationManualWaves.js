@@ -63,12 +63,7 @@ animationManualWaves.prototype.render = function(renderer_, bSample)
 
 	var scalex = 128.0 / 120.0;
 	var scaley = 128.0 / 180.0;
-
 	var r = this.properties.radius;
-
-//	this.gradEllipse = this.drawingContext.createRadialGradient(this.posEllipse.x,this.posEllipse.y,0, pulsex,pulsey, 30);
-//	this.gradEllipse.addColorStop(0,		"rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")");
-//	this.gradEllipse.addColorStop(1,		"rgba(0,0,0,"+this.alphaPulse*this.alphaPulse2+")");
 
 
 	this.drawingContext.fillStyle = "#000000";
@@ -98,7 +93,6 @@ animationManualWaves.prototype.render = function(renderer_, bSample)
 		this.sampleAndSendValues(renderer_);
 }
 
-
 //--------------------------------------------------------
 function animationWave(x,y,w,rstart, speed,ageMax)
 {
@@ -113,14 +107,12 @@ function animationWave(x,y,w,rstart, speed,ageMax)
 
 	this.update = function(dt)
 	{
-//	console.log("dt="+dt+",age="+this.age + " / " + this.ageMax);
 		this.age += dt;
 		if (this.age >= this.ageMax)
 			this.dead = true;
 		this.alpha = 1.0-Math.min(1.0, this.age / this.ageMax);
 
 		this.radius += this.speed*dt;
-		// console.log("r="+this.radius.toFixed(1)+";age="+this.age.toFixed(1)+";alpha="+this.alpha.toFixed(1));
 	}
 
 	this.draw = function(ctx)

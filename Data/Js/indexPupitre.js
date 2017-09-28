@@ -9,6 +9,8 @@ var TWEEN 		= require('@tweenjs/tween.js');
 //--------------------------------------------------------
 // State machine
 // timeout en secondes
+//
+// state_rechercher_ok timeout is triggered by its animation
 
 var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "sine", 		animationGround : "blank_ground"};
 var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	timeout : 5};
@@ -176,6 +178,12 @@ function enableGridViewMouseDrag(is)
 function gotoPanelWithPosition(panel, position)
 {
 	gridview.gotoPanelWithPosition( panel, position );
+}
+
+//--------------------------------------------------------
+function teleportPanelWithPosition(panel, position)
+{
+	gridview.teleportPanelWithPosition( panel, position );
 }
 
 //--------------------------------------------------------
@@ -392,7 +400,7 @@ function changeState(newState)
 			
 			var camPos = {x : p5Sketch.mousePositionNormalized.x, y : 1.0 - p5Sketch.mousePositionNormalized.y};
 			var camPosOffset = {x:0.05 * Math.random(), y:0.05 * Math.random()}
-			gridview.setCameraPosition( camPos, camPosOffset);
+			gridview.setCameraPositionNorm( camPos, camPosOffset);
 		}
 	}
 
@@ -410,7 +418,8 @@ function changeState(newState)
 		else if (newState === state_rechercher_ok)
 		{
 			setView("grid");
-			gotoPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+			//gotoPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+			teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
 			enableGridViewMouseDrag(false);
 			setAnimation(state_rechercher_ok.animation, gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position));
 			setAnimationGround(state_rechercher_ok.animationGround);
@@ -535,10 +544,10 @@ function animate(t)
 	// Timer update
 	var dt = time.update();
 	stateTime += dt;
-
+	TWEEN.update();
 
 	// Handle time outs
-	if (state === state_interagir || state === state_rechercher || state === state_grid_scroll || state === state_grid_scroll_clicked || state === state_rechercher_fail/*|| state === state_rechercher_ok*/)
+	if (state === state_interagir || state === state_rechercher || state === state_grid_scroll || state === state_grid_scroll_clicked || state === state_rechercher_fail /*|| state === state_rechercher_ok*/)
 	{
 		if (stateTime >= state.timeout)
 			changeState(state_stand_by);
@@ -684,7 +693,7 @@ function onCodeEntered(code)
 {
    var query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
 
-   console.log(query)
+   // console.log(query)
 
    rqcv.connection.query(query, function (error, results, fields)
    {
@@ -800,7 +809,6 @@ ipcRenderer.on('animationRechercherOK_done', function(event, value)
 	if (state === state_rechercher_ok)
 	{
 		changeState(state_stand_by);
-		// Do something here
 	}
 });
 
