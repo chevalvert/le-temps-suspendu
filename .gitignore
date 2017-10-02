@@ -2,6 +2,8 @@
 Data/Db/
 Data/Img/4096_cliclac_8_8
 Data/Img/4096_cliclac_8_8_
+Data/Img/4096_cliclac_256
+Data/Img/4096_cliclac_512
 Data/Img/
 Tools/sketch_crop_images/exports
 *node_modules

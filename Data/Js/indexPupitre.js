@@ -608,6 +608,7 @@ function renderDebug()
 			 strDebug += "<br />(thumbI,thumbJ) = (" + this.gridview.thumbI + "," + this.gridview.thumbJ + ")";
 			 strDebug += "<br />(thumbPos.x,thumbPos.y) = (" + this.gridview.thumbPos.x.toFixed(1) + "," + this.gridview.thumbPos.y.toFixed(1) + ")";
 			 strDebug += "<br />camSpeed = " + this.gridview.cameraSpeed.toFixed(1);
+			 strDebug += "<br />camPos = (" + this.gridview.cameraPositionTarget.x.toFixed(1)+"," + this.gridview.cameraPositionTarget.y.toFixed(1) + ")";
 		 }
 		 if (state === state_grid_scroll_clicked)
 		 {

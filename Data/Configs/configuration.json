@@ -1,7 +1,7 @@
 {
 	"production" :	false,
 
-	"consoleLog": 	false,
+	"consoleLog": 	true,
 	"db_rq" :
 	{
   		"host"     	: "localhost",
@@ -36,6 +36,7 @@
 		"h"			: 1024,
 		"gridview"	:
 		{
+			"useImagesLowRes" : true,
 			"camera" :
 			{
 				"position" : {"x" : 0.5, "y" : 0.5}

@@ -41,10 +41,12 @@ function gridview()
 	this.imgWidth 		= 4096;
 	this.imgHeight 		= this.imgWidth;
 	this.imgSub			= 8 ; // number of subdivision for an image / panel
+	this.imgLowRes		= 512;
 	this.imgNbColumns 	= 9;
 	this.imgNbRows 		= 12;
 	this.imgNb 			= this.imgNbColumns * this.imgNbRows;
 	this.imgFolder		= "Data/Img/"+this.imgWidth+"_cliclac_"+this.imgSub+"_"+this.imgSub+"/";
+	this.imgFolderLowRes= "Data/Img/"+this.imgWidth+"_cliclac_"+this.imgLowRes+"/";
 	
 	this.gridWidth 		= this.imgWidth * this.imgNbColumns;
 	this.gridHeight 	= this.imgHeight * this.imgNbRows;
@@ -123,6 +125,7 @@ function gridview()
 
 		var cw2 = this.container.width()/2;
 		var ch2 = this.container.height()/2;
+		
 
 		this.cameraPositionTarget.x = Math.min( Math.max(cw2 - this.cameraDragOffset, this.cameraPositionTarget.x), this.gridWidth - cw2 + this.cameraDragOffset);
 		this.cameraPositionTarget.y = Math.min( Math.max(ch2 - this.cameraDragOffset, this.cameraPositionTarget.y), this.gridHeight - ch2 + this.cameraDragOffset);
@@ -450,7 +453,8 @@ function gridview()
 
 		// Scene, Camera & stuff
 		this.scene = new THREE.Scene();
-		this.scene.background = new THREE.Color( 0x222222 );
+//		this.scene.background = new THREE.Color( 0x222222 );
+		this.scene.background = new THREE.Color( 0x000000 );
 
 
 		var width = this.container.width();
@@ -524,13 +528,14 @@ function gridview()
 		var i,j;
 		var id = 0;
 		var gridImagesCacheObj;
+		var bUseLowRes = rqcv.configuration.pupitre.gridview.useImagesLowRes;
 		var pThis = this;
 		for (j=0;j<this.imgNbRows;j++)
 		{
 			for (i=0;i<this.imgNbColumns;i++)
 			{
-				gridImagesCacheObj = new gridImagesCache(id,i*this.imgWidth,j*this.imgHeight, this.imgWidth, this.imgHeight, this.imgSub);
-				gridImagesCacheObj.setFolderImages(this.imgFolder)
+				gridImagesCacheObj = new gridImagesCache(id,i*this.imgWidth,j*this.imgHeight, this.imgWidth, this.imgHeight, this.imgSub, bUseLowRes);
+				gridImagesCacheObj.setFolderImages(this.imgFolder, this.imgFolderLowRes)
 				gridImagesCacheObj.create(pThis.scene)
 
 				this.gridImagesList[id++] = gridImagesCacheObj;
