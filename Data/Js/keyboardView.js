@@ -50,7 +50,7 @@ function keyboardView()
 			var nbKeys = element.length;
 			var ligne = "<div class=\"ligne\">";
 			for (var i = 0; i<nbKeys; i++){
-				ligne+="<div class=\"key\" id=\""+element[i]+"\">"+element[i]+"</div>"
+				ligne+="<div class=\"key\" id=\""+element[i]+"\"><div class=\"key-inner\">"+element[i]+"</div></div>"
 			}
 			ligne+="</div>";
 			if (keysIndex < pThis.keys.length-1)
@@ -97,6 +97,27 @@ function keyboardView()
 			activity();
 		
 		});
+		
+		if (rqcv.configuration.pupitre.keyboard.transition)
+		{
+		   this.container.find(".key-inner")
+		   .mouseover(function(){
+			   $(this).addClass("mouse-down")
+			   $(this).removeClass("mouse-up")
+		   })
+		   .mouseout(function(){
+			   $(this).addClass("mouse-up")
+			   $(this).removeClass("mouse-down")
+		   })
+		   .mousedown(function(){
+			   $(this).addClass("mouse-down")
+			   $(this).removeClass("mouse-up")
+		   })
+		   .mouseup(function(){
+			   $(this).addClass("mouse-up")
+			   $(this).removeClass("mouse-down")
+		   })
+		}
 		
 		
 		

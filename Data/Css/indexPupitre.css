@@ -150,7 +150,6 @@ VIEWS : rechercher + interagir
 	font-size:			66px;
 	border-right:		1px solid #FFF;
 	background-color:	#000;
-	
 }
 
 #view-keyboard .ligne .key:first-child
@@ -162,6 +161,23 @@ VIEWS : rechercher + interagir
 {
 	border-right:		0;
 }
+
+
+#view-keyboard .ligne .key-inner
+{
+	transition:			0.25s;
+}
+
+#view-keyboard .ligne .key-inner.mouse-down
+{
+	transform:		scale(0.9, 0.9);
+}
+
+#view-keyboard .ligne .key-inner.mouse-up
+{
+	transform:		scale(1.0,1.0);
+}
+
 
 #view-keyboard .ligne #effacer
 {
@@ -204,7 +220,7 @@ MENU LE TEMPS SUSPENDU
 
 #menu .menu-item.mouse-down
 {
-	transform: scale(0.975, 0.975);
+	transform: scale(0.9, 0.9);
 }
 
 #menu .menu-item.mouse-up
