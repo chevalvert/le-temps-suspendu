@@ -22,7 +22,7 @@
 	"tool" :
 	{
 		"enable"	: true,
-		"devtools"	: true,
+		"devtools"	: false,
 		"x"			: 0,
 		"y"			: 0,
 		"w"			: 1000,
@@ -37,7 +37,7 @@
 		"bot"		:
 		{
 			"enable": true,
-			"delayChange": 1
+			"delayChange": 3
 		},
 		"gridview"	:
 		{
@@ -59,7 +59,7 @@
 	
 	"photo" :
 	{
-		"devtools"	: true,
+		"devtools"	: false,
 		"x"			: 800,
 		"y"			: 600,
 		"w"			: 1024,

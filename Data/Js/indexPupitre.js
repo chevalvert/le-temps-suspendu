@@ -68,6 +68,7 @@ $(document).ready( function()
 	// State
 	if (rqcv.isBotEnabled())
 	{
+		state_grid_bot.delayChange = rqcv.configuration.pupitre.bot.delayChange;
 		changeState(state_grid_bot);
 	}
 	else

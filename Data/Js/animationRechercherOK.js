@@ -19,7 +19,7 @@ animationRechercherOK.prototype.alphaPulse 	= 0.0;
 animationRechercherOK.prototype.alphaPulse2 = 0.0;
 animationRechercherOK.prototype.bReset = false;
 animationRechercherOK.prototype.anglePulse2 = 0.0
-animationRechercherOK.prototype.nbPulsesTodo = 4; // number of pulses before exit
+// animationRechercherOK.prototype.nbPulsesTodo = 1; // number of pulses before exit
 animationRechercherOK.prototype.nbPulses = 0;
 animationRechercherOK.prototype.bPulseGradient = false;
 
@@ -33,6 +33,7 @@ animationRechercherOK.prototype.loadProperties = function()
 	this.properties.dimWave = 50.0;
 	this.properties.radiusPulse = .5;
 	this.properties.freqPulse = 4;
+	this.properties.nbPulses = 1;
 
 	this.readPropertiesFile();
 }
@@ -43,6 +44,8 @@ animationRechercherOK.prototype.addControls = function()
  	this.gui.add(this.properties, 'speedWave', 10.0, 100.0);
  	this.gui.add(this.properties, 'dimWave', 50.0, 200.0);
  	this.gui.add(this.properties, 'radiusPulse', 0.1, 1.0);
+	this.gui.add(this.properties, 'freqPulse', 1, 8).step(1);
+	this.gui.add(this.properties, 'nbPulses',  1, 8).step(1);
 }
 
 //--------------------------------------------------------
@@ -113,7 +116,7 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		{
 			this.anglePulse2 -= 2.0*Math.PI;
 			this.nbPulses += this.properties.freqPulse;
-			if (this.nbPulses == this.nbPulsesTodo * this.properties.freqPulse)
+			if (this.nbPulses == this.properties.nbPulses * this.properties.freqPulse)
 			{
 				this.anglePulse2 = 0;
 
