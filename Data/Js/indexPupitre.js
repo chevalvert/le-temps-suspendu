@@ -12,9 +12,9 @@ var TWEEN 		= require('@tweenjs/tween.js');
 //
 // state_rechercher_ok timeout is triggered by its animation
 
-var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "sine", 		animationGround : "blank_ground"};
+var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "timeline", 	animationGround : "blank_ground"};
 var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	timeout : 5};
-var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	timeout : 20};
+var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	timeout : 5};
 var state_interagir 			= {id : 3, name: "interagir", 			animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 100};
 var state_rechercher 			= {id : 4, name: "rechercher", 			timeout : 15};
 var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, code : -1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
@@ -450,13 +450,6 @@ function changeState(newState)
 		}
 		else if (newState === state_rechercher_ok)
 		{
-/*			setView("grid");
-			teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
-			enableGridViewMouseDrag(false);
-			setAnimation(state_rechercher_ok.animation, gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position));
-			setAnimationGround(state_rechercher_ok.animationGround);
-*/
-		
 			bChangeState = true;
 		}
 		else if (newState === state_rechercher_fail)
@@ -643,11 +636,12 @@ function renderDebug()
 	 if (state)
 	 {
 		 var strDebug = state.name+" ( "+stateTime.toFixed(1) + "s )";
+		 strDebug += "<br />animation ceil  = " + (state ? state.animation : "-");
+		 strDebug += "<br />animation ground = " + (state ? state.animationGround : "-" );
 		 if (state === state_grid_scroll || state === state_grid_scroll_clicked  || state === state_stand_by)
 		 {
 			 strDebug += "<br />panel = " + (this.gridview.panelOver > -1 ?  this.gridview.panelOver : "-");
 			 strDebug += "<br />position = " + (this.gridview.positionOver > -1 ?  this.gridview.positionOver : "-");
-			 // strDebug += "<br />img="+this.gridview.getPathImageSubOver();
 			 strDebug += "<br />(imgI,imgJ) = (" + this.gridview.imgI + "," + this.gridview.imgJ + ")";
 			 strDebug += "<br />(thumbI,thumbJ) = (" + this.gridview.thumbI + "," + this.gridview.thumbJ + ")";
 			 strDebug += "<br />(thumbPos.x,thumbPos.y) = (" + this.gridview.thumbPos.x.toFixed(1) + "," + this.gridview.thumbPos.y.toFixed(1) + ")";

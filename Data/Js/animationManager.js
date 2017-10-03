@@ -21,6 +21,7 @@ animationManager.prototype.setup = function()
    this.animations["manualWaves"] 	= new animationManualWaves();
    this.animations["rechercherOK"] 	= new animationRechercherOK();
    this.animations["rechercherFail"]= new animationRechercherFail();
+   this.animations["movingLines"]	= new animationMovingLines();
  
    this.animations["timeline"] 		= new animationMix();
    this.animations["timeline"].setAnimationManager(this);

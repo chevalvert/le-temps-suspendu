@@ -17,7 +17,7 @@ animationMix.prototype.timeTransition		= 0.0;
 animationMix.prototype.durationTransition	= 1.0;
 
 
-animationMix.prototype.sequence 			= ["sine", "plasma", "sine2", "rectRotate", "plasma2"];
+animationMix.prototype.sequence 			= ["sine", "plasma", "sine2", "plasma2"];
 animationMix.prototype.animationManager		= null;
 animationMix.prototype.animations			= null;
 //--------------------------------------------------------
@@ -100,9 +100,6 @@ animationMix.prototype.onTimelineEvent = function(event)
 	this.animNamePrev = this.animNameCurrent;
 	this.animNameCurrent = event.animName;
 
-//	console.log("onTimelineEvent, current="+this.animNameCurrent+", prev="+this.animNamePrev);
-
-
 	this.properties.blendFactor = 0.0;
 
 	this.setAnim0( this.animations[this.animNamePrev] );
@@ -123,7 +120,7 @@ animationMix.prototype.onTimelineEnd = function(event)
 //--------------------------------------------------------
 animationMix.prototype.render = function(renderer_, bSample)
 {
-	var dt = this.timer.update(); // NOT GOOD 
+	var dt = this.timer.update();
 
 	if (this.timeline)
 		this.timeline.update(dt);

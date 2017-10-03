@@ -163,8 +163,8 @@ function toolPupitre()
 
 		// Set animations
 		var animTransition = this.setAnimation("transition");
-		animTransition.setAnimation("sine2");
-		animTransition.setAnimation("plasma");
+		animTransition.setAnimation("timeline");
+//		animTransition.setAnimation("mix");
 		this.setAnimationGround("blank_ground");
 
 //	   window.requestAnimationFrame(this.update.bind(this));
@@ -189,25 +189,6 @@ function toolPupitre()
 		{
 			this.animManager.animation.setCamPosNormalized(value);
 		}
-	
-/*		var bUseTransition = this.properties.useAnimTransition;
-		if (bUseTransition)
-		{
-			if (this.animManager.animation && this.animManager.animation.id == "transition")
-			{
-			 this.animManager.animation.setGridPos(value.x,value.y);
-			}
-		}
-		else
-		{
-			if (this.animManager.animation && this.animManager.animation.id == "manual")
-			{
-				this.animManager.animation.gridx = value.x;
-				this.animManager.animation.gridy = value.y;
-			}
-		}
-*/
-	
 	}
 
 	// --------------------------------------------
@@ -217,39 +198,13 @@ function toolPupitre()
 		{
 			this.animManager.animation.setCamPosNormalized({x:value.x, y:1.0-value.y});
 		}
-	
-/*		var bUseTransition = this.properties.useAnimTransition;
-
-		if (bUseTransition)
-		{
-			if (this.animManager.animation && this.animManager.animation.id == "transition")
-			{
-			 this.animManager.animation.setGridPos(value.x,1.0-value.y);
-			}
-		}
-		else
-		{
-			// Ceil
-			if (this.animManager.animation && this.animManager.animation.id == "manual")
-			{
-				this.animManager.animation.gridx = value.x;
-				this.animManager.animation.gridy = 1.0-value.y;
-			}
-
-			// Floor
-			if (this.animManager.animationGround && this.animManager.animationGround.id == "manual_ground")
-			{
-				this.animManager.animationGround.gridx = value.x;
-				this.animManager.animationGround.gridy = 1.0-value.y;
-			}
-		}
-*/
-
 	}
 
 	// --------------------------------------------
 	this.setAnimationTransition = function(params)
 	{
+		
+
 		var bUseTransition = this.properties.useAnimTransition;
 	
 		if (bUseTransition)
@@ -286,6 +241,7 @@ function toolPupitre()
 
 		var id = Utils.extractAnimParams("id", params)
 		var data = Utils.extractAnimParams("data", params)
+
 
 		// Animation
 		with(this.animManager)

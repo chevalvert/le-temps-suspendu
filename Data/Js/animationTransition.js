@@ -171,7 +171,7 @@ animationTransition.prototype.onTransitionComplete = function(obj)
 //--------------------------------------------------------
 animationTransition.prototype.render = function(renderer_, bSample)
 {
-//	 console.log("this.setAnim0="+this.anim0+";this.anim1="+this.anim1);
+//	 console.log("this.setAnim0="+this.anim0.id+";this.anim1="+this.anim1.id);
 	
 	if (this.anim0 && this.blendFactor < 1)
 		this.anim0.render(renderer_, false);
