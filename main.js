@@ -145,6 +145,7 @@ function onConfigLoaded()
 	global.rqcv.connection = connection;
 	global.rqcv.leds = leds;
 	global.rqcv.getConsoleLog = function(){ return this.configuration.production ? false : this.configuration.consoleLog; }
+	global.rqcv.isBotEnabled = function(){return this.configuration.pupitre.bot.enable; }
 	
 	// --------------------------------------------------
 	// events from windows

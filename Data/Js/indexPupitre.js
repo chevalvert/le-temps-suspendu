@@ -17,8 +17,10 @@ var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWa
 var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	timeout : 20};
 var state_interagir 			= {id : 3, name: "interagir", 			animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 100};
 var state_rechercher 			= {id : 4, name: "rechercher", 			timeout : 15};
-var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
+var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, code : -1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
 var state_rechercher_fail 		= {id : 6, name: "rechercher_fail", 	animation : "rechercherFail", animationGround : "rechercherFail_ground", timeout : 10};
+// debug mode only -> enable in configuration.json
+var state_grid_bot 				= {id : 7, name: "grid_bot", 			animation : "sine", delayChange : 1, bQuery:false};
 
 // Initial state
 var state 						= null;
@@ -48,6 +50,7 @@ var bAppStateDebug = true;
 //--------------------------------------------------------
 $(document).ready( function()
 {
+	// Log
 	Utils.enableLog( rqcv.getConsoleLog() );
 
 	// Init views
@@ -63,7 +66,13 @@ $(document).ready( function()
 	time.reset();
 
 	// State
-	changeState(state_stand_by);
+	if (rqcv.isBotEnabled())
+	{
+		changeState(state_grid_bot);
+	}
+	else
+		changeState(state_stand_by);
+	
 	
 	// Mouse
 	if (rqcv.configuration.production)
@@ -224,11 +233,11 @@ function resetGridPanelPositionInfos()
 //--------------------------------------------------------
 function enterState(newState)
 {
-	if (newState === state_stand_by)
+	if (newState === state_stand_by || newState === state_grid_bot)
 	{
 		setView("grid");
-		setAnimation(state_stand_by.animation);
-		setAnimationGround(state_stand_by.animationGround);
+		setAnimation(newState.animation);
+		setAnimationGround(newState.animationGround);
 		enableGridViewMouseDrag(true);
 		showPhotoList();
 		gridview.showOverlayImage(false);
@@ -257,7 +266,14 @@ function enterState(newState)
 			gridPositionClicked = gridview.panelPositionClicked;
 
 		}
-
+	}
+	else if (newState === state_rechercher_ok)
+	{
+		setView("grid");
+		teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+		enableGridViewMouseDrag(false);
+		setAnimation(state_rechercher_ok.animation, gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position));
+		setAnimationGround(state_rechercher_ok.animationGround);
 	}
 }
 
@@ -271,9 +287,21 @@ function changeState(newState)
 	// ----------------------------------
 	if (state == null)
 	{
-		if (newState === state_stand_by)
+		if (newState === state_stand_by || newState === state_grid_bot)
 		{
 			// Notify
+			bChangeState = true;
+		}
+	}
+
+	// ----------------------------------
+	// ----- state_grid_bot
+	// ----------------------------------
+	else
+	if (state === state_grid_bot)
+	{
+		if (newState === state_rechercher_ok)
+		{
 			bChangeState = true;
 		}
 	}
@@ -421,12 +449,12 @@ function changeState(newState)
 		}
 		else if (newState === state_rechercher_ok)
 		{
-			setView("grid");
-			//gotoPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+/*			setView("grid");
 			teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
 			enableGridViewMouseDrag(false);
 			setAnimation(state_rechercher_ok.animation, gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position));
 			setAnimationGround(state_rechercher_ok.animationGround);
+*/
 		
 			bChangeState = true;
 		}
@@ -455,13 +483,15 @@ function changeState(newState)
 		if (newState === state_stand_by)
 		{
 			bChangeState = true;
+
+			if (rqcv.isBotEnabled())
+			{
+				newState = state_grid_bot;
+				state_grid_bot.bQuery = false;
+			}
+
 		}
-/*		else if (newState === state_grid_scroll)
-		{
-			bChangeState = true;
-			gridview.showOverlayImage(false);
-		}
-*/		else if (newState === state_rechercher)
+		else if (newState === state_rechercher)
 		{
 			setView("rechercher");
 			enableGridViewMouseDrag(true);
@@ -556,6 +586,19 @@ function animate(t)
 		if (stateTime >= state.timeout)
 			changeState(state_stand_by);
 	}
+
+	if (state === state_grid_bot)
+	{
+		if (stateTime >= state.delayChange)
+		{
+			if (state.bQuery == false)
+			{
+				state.bQuery = true;
+				selectRandomCode(); // Call onCodeEntered to change state to rechercher_ok
+			}
+		}
+	}
+
 	
 	if (state === state_interagir)
 	{
@@ -618,6 +661,11 @@ function renderDebug()
 		 if (state === state_interagir)
 		 {
 			 strDebug += "<br />(mouseX, mouseY) = ("+p5Sketch.mousePositionNormalized.x.toFixed(2)+","+p5Sketch.mousePositionNormalized.y.toFixed(2)+")";
+		 }
+		 if (state === state_rechercher_ok)
+		 {
+			 strDebug += "<br />code = "+state_rechercher_ok.code;
+			 strDebug += "<br />(panel, position) = ("+state_rechercher_ok.panel+","+state_rechercher_ok.position+")";
 		 }
 		 
 		 $("#view-debug").html ( strDebug );
@@ -733,6 +781,11 @@ function onCodeEntered(code)
 
    // console.log(query)
 
+	state_rechercher_ok.code 		= code;
+	state_rechercher_ok.panel 		= "";
+	state_rechercher_ok.position 	= "";
+
+
    rqcv.connection.query(query, function (error, results, fields)
    {
 		if (error == null)
@@ -752,6 +805,30 @@ function onCodeEntered(code)
 		}
    });
 }
+
+
+//--------------------------------------------------------
+function selectRandomCode()
+{
+   var query = "SELECT code FROM "+ rqcv.configuration.db_rq.table +" WHERE `code` <> \"NULL\" ORDER BY RAND() LIMIT 1";
+
+	console.log(query)
+
+   rqcv.connection.query(query, function (error, results, fields)
+   {
+		var code = null;
+
+		if (error == null)
+		{
+			if (results.length == 1)
+			{
+				console.log("code = " + results[0].code)
+				onCodeEntered(results[0].code);
+			}
+		 }
+   });
+}
+
 
 //--------------------------------------------------------
 function createViewKeyboard()
