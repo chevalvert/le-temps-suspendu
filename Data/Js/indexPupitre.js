@@ -13,8 +13,8 @@ var TWEEN 		= require('@tweenjs/tween.js');
 // state_rechercher_ok timeout is triggered by its animation
 
 var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "timeline", 	animationGround : "blank_ground"};
-var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	timeout : 5};
-var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	timeout : 5};
+var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 5};
+var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 5};
 var state_interagir 			= {id : 3, name: "interagir", 			animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 100};
 var state_rechercher 			= {id : 4, name: "rechercher", 			timeout : 15};
 var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, code : -1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
@@ -332,6 +332,7 @@ function changeState(newState)
 		else if (newState === state_grid_scroll)
 		{
 			setAnimation(state_grid_scroll.animation);
+			setAnimationGround(state_grid_scroll.animationGround);
 			enableGridViewMouseDrag(true);
 
 			bChangeState = true;
@@ -358,6 +359,7 @@ function changeState(newState)
 		{
 			setView("interagir");
 			setAnimation(state_interagir.animation);
+			setAnimationGround(state_interagir.animationGround);
 			enableGridViewMouseDrag(false);
 
 			bChangeState = true;
@@ -397,6 +399,7 @@ function changeState(newState)
 		{
 			setView("interagir");
 			setAnimation(state_interagir.animation);
+			setAnimationGround(state_interagir.animationGround);
 			enableGridViewMouseDrag(false);
 			resetGridPanelPositionInfos();
 
@@ -496,6 +499,7 @@ function changeState(newState)
 		{
 			setView("interagir");
 			setAnimation(state_interagir.animation);
+			setAnimationGround(state_interagir.animationGround);
 			enableGridViewMouseDrag(true);
 
 			bChangeState = true;

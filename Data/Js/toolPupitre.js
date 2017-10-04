@@ -161,13 +161,12 @@ function toolPupitre()
 		// Apply our own style :)
 		this.applyStyleControls();
 
-		// Set animations
+		// Set animations (ceil + ground)
 		var animTransition = this.setAnimation("transition");
 		animTransition.setAnimation("timeline");
-//		animTransition.setAnimation("mix");
-		this.setAnimationGround("blank_ground");
 
-//	   window.requestAnimationFrame(this.update.bind(this));
+		var animTransitionGround = this.setAnimationGround("transition_ground");
+		animTransitionGround.setAnimation("blank_ground");
 	}
 
 	
@@ -203,8 +202,6 @@ function toolPupitre()
 	// --------------------------------------------
 	this.setAnimationTransition = function(params)
 	{
-		
-
 		var bUseTransition = this.properties.useAnimTransition;
 	
 		if (bUseTransition)
@@ -273,12 +270,12 @@ function toolPupitre()
 	// --------------------------------------------
 	this.setAnimationGroundTransition = function(params)
 	{
-		this.setAnimationGround(params);
+//		this.setAnimationGround(params);
 	
 		// TODO : not working ... ? !
 		
 	
-/*		var bUseTransition = this.properties.useAnimTransition;
+		var bUseTransition = this.properties.useAnimTransition;
 	
 		if (bUseTransition)
 		{
@@ -302,9 +299,8 @@ function toolPupitre()
 		}
 		else
 		{
+			this.setAnimationGround(params);
 		}
-	*/
-	
 	}
 
 
@@ -337,6 +333,8 @@ function toolPupitre()
 
 		if (this.animManager.animationGround)
 			this.animGroundView.setAnimation( this.animManager.animationGround );
+
+		return this.animManager.animationGround;
 	}
 	
 	// --------------------------------------------

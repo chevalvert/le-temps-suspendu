@@ -17,6 +17,9 @@ animationTransition.prototype.animations			= null;
 animationTransition.prototype.setAnimationManager	= function(animManager)
 {
 	this.animationManager 	= animManager;
+	if (this.type == "floor")
+		this.animations			= this.animationManager.animationsGround;
+	else
 	this.animations			= this.animationManager.animations;
 }
 

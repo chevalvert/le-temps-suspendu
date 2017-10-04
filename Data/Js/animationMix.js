@@ -17,7 +17,7 @@ animationMix.prototype.timeTransition		= 0.0;
 animationMix.prototype.durationTransition	= 1.0;
 
 
-animationMix.prototype.sequence 			= ["sine", "plasma", "sine2", "plasma2"];
+animationMix.prototype.sequence 			= ["sine", "plasma", "movingLines", "sine2", "plasma2"];
 animationMix.prototype.animationManager		= null;
 animationMix.prototype.animations			= null;
 //--------------------------------------------------------
@@ -42,12 +42,16 @@ animationMix.prototype.createTimeline = function()
 animationMix.prototype.setAnim0 = function(anim)
 {
 	this.anim0 = anim;
+	if (this.anim0)
+		this.anim0.reset();
 }
 
 //--------------------------------------------------------
 animationMix.prototype.setAnim1 = function(anim)
 {
 	this.anim1 = anim;
+	if (this.anim1)
+		this.anim1.reset();
 }
 
 //--------------------------------------------------------
