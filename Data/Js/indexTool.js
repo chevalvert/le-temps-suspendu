@@ -85,7 +85,7 @@ function initTools()
 {
 	console.log("initTools()");
 	toolPupitre.init("#tool-pupitre");
-//	tool3D.init("#tool-3d");
+	tool3D.init("#tool-3d", rqcv.isTool3DEnabled());
 }
 
 //--------------------------------------------------------
@@ -96,7 +96,7 @@ function initSaveButton()
 	.click( function()
 	{
 		toolPupitre.saveProperties();
-//		tool3D.saveProperties();
+		tool3D.saveProperties();
 	} )
 }
 
@@ -105,7 +105,7 @@ function initSaveButton()
 //--------------------------------------------------------
 function resizeTools()
 {
-//	tool3D.resize();
+	tool3D.resize();
 	toolPupitre.resize();
 }
 

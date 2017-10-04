@@ -4,6 +4,7 @@ function animationMovingLines(){}
 //--------------------------------------------------------
 animationMovingLines.prototype = Object.create(animationCanvas.prototype);
 animationMovingLines.prototype.lines = null;
+animationMovingLines.prototype.hLimit = 0;
 
 //--------------------------------------------------------
 animationMovingLines.prototype.reset = function()
@@ -51,6 +52,7 @@ animationMovingLines.prototype.loadProperties = function()
 	this.properties = {}
 	this.properties.speedMin = 40.0;
 	this.properties.speedMax = 140.0;
+	this.properties.rotation = 0.0;
 
 	this.readPropertiesFile();
 }
@@ -60,6 +62,7 @@ animationMovingLines.prototype.addControls = function()
 {
 	var sliderSpeedMin = this.gui.add(this.properties, 'speedMin', 	10, 60);
 	var sliderSpeedMax = this.gui.add(this.properties, 'speedMax', 	100, 200);
+	this.gui.add(this.properties, 'rotation', 	0, 360);
 	
 	var pThis = this;
 	sliderSpeedMin.onChange(function(value){
@@ -75,8 +78,16 @@ animationMovingLines.prototype.addControls = function()
 //--------------------------------------------------------
 animationMovingLines.prototype.render = function(renderer_, bSample)
 {
+	if (this.properties.rotation > 0 )
+		this.hLimit = 30;
+
 	this.drawingContext.fillStyle = "#000000";
 	this.drawingContext.fillRect( 0, 0, this.drawingCanvas.width, this.drawingCanvas.height );
+
+	this.drawingContext.save();
+	this.drawingContext.translate(this.drawingCanvas.width/2, this.drawingCanvas.height/2);
+	this.drawingContext.rotate(this.properties.rotation * Math.PI / 180);
+	this.drawingContext.translate(-this.drawingCanvas.width/2, -this.drawingCanvas.height/2);
 
 
 	if (this.lines)
@@ -93,6 +104,9 @@ animationMovingLines.prototype.render = function(renderer_, bSample)
 			this.lines[i].draw(this.drawingContext);
 		}
 	}
+
+	this.drawingContext.restore();
+
 
 	this.texture.needsUpdate = true;
 
@@ -114,11 +128,11 @@ function movingLine(parent, x,y,w,h,dir)
 	this.update = function(dt)
 	{
 		this.pos.y += this.dir * this.speed*dt;
-		if (this.dir == -1 && this.pos.y < -this.dim.h)
+		if (this.dir == -1 && this.pos.y < -(this.dim.h+this.anim.hLimit))
 		{
 			this.pos.y = this.anim.drawingCanvas.height;
 		}
-		if (this.dir == 1 && this.pos.y > this.anim.drawingCanvas.height)
+		if (this.dir == 1 && this.pos.y > (this.anim.drawingCanvas.height+this.anim.hLimit))
 		{
 			this.pos.y = -this.dim.h;
 		}

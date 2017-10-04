@@ -3,6 +3,8 @@ function tool3D()
 
 	// --------------------------------------------
 	this.id = "tool3D";
+	
+	this.bEnable = true;
 
 	this.camera = null;
 	this.scene = null;
@@ -36,116 +38,124 @@ function tool3D()
 	this.velocity = new THREE.Vector3();
 
 	// --------------------------------------------
-	this.init = function(containerId)
+	this.init = function(containerId, bEnable)
 	{
 		this.container = $(containerId);
+		this.bEnable = bEnable;
 
-		this.camera = new THREE.PerspectiveCamera( 45, this.container.width()/ this.container.height(), 1, 2000 );
-
-
-		this.scene = new THREE.Scene();
-		this.scene.background = new THREE.Color( 0x222222 );
-		this.scene.add( new THREE.AxisHelper( 2 ) );
-
-		var gridHelper = new THREE.GridHelper( 30, 40,0x444444,0x444444 );
-		this.scene.add( gridHelper );
-
-
-		// https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
-//		this.controls = new THREE.PointerLockControls( this.camera );
-//		this.scene.add( this.controls.getObject() );
-
-		var onKeyDown = function ( event )
+		if (bEnable)
 		{
-			switch ( event.keyCode ) {
-				case 38: // up
-				case 87: // w
-					this.moveForward = true;
-					break;
-				case 37: // left
-				case 65: // a
-					this.moveLeft = true;
-					break;
-				case 40: // down
-				case 83: // s
-					this.moveBackward = true;
-					break;
-				case 39: // right
-				case 68: // d
-					this.moveRight = true;
-					break;
-			}
-			
-//			console.log(this.moveForward);
-		};
-		var onKeyUp = function ( event )
-		{
-			switch( event.keyCode ) {
-				case 38: // up
-				case 87: // w
-					this.moveForward = false;
-					break;
-				case 37: // left
-				case 65: // a
-					this.moveLeft = false;
-					break;
-				case 40: // down
-				case 83: // s
-					this.moveBackward = false;
-					break;
-				case 39: // right
-				case 68: // d
-					this.moveRight = false;
-					break;
-			}
-		};
-//		document.addEventListener( 'keydown', onKeyDown.bind(this), false );
-//		document.addEventListener( 'keyup', onKeyUp.bind(this), false );
+			this.camera = new THREE.PerspectiveCamera( 45, this.container.width()/ this.container.height(), 1, 2000 );
+
+			this.scene = new THREE.Scene();
+			this.scene.background = new THREE.Color( 0x222222 );
+			this.scene.add( new THREE.AxisHelper( 2 ) );
+
+			var gridHelper = new THREE.GridHelper( 30, 40,0x444444,0x444444 );
+			this.scene.add( gridHelper );
 
 
-		var manager = new THREE.LoadingManager();
-		manager.onProgress = function ( item, loaded, total )
-		{
-//			console.log( item, loaded, total );
-		};
+			// https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
+	//		this.controls = new THREE.PointerLockControls( this.camera );
+	//		this.scene.add( this.controls.getObject() );
 
-		var onProgress = function ( xhr )
-		{
-			if ( xhr.lengthComputable )
+			var onKeyDown = function ( event )
 			{
-				var percentComplete = xhr.loaded / xhr.total * 100;
-//				console.log( Math.round(percentComplete, 2) + '% downloaded' );
-			}
-		};
+				switch ( event.keyCode ) {
+					case 38: // up
+					case 87: // w
+						this.moveForward = true;
+						break;
+					case 37: // left
+					case 65: // a
+						this.moveLeft = true;
+						break;
+					case 40: // down
+					case 83: // s
+						this.moveBackward = true;
+						break;
+					case 39: // right
+					case 68: // d
+						this.moveRight = true;
+						break;
+				}
+				
+	//			console.log(this.moveForward);
+			};
+			var onKeyUp = function ( event )
+			{
+				switch( event.keyCode ) {
+					case 38: // up
+					case 87: // w
+						this.moveForward = false;
+						break;
+					case 37: // left
+					case 65: // a
+						this.moveLeft = false;
+						break;
+					case 40: // down
+					case 83: // s
+						this.moveBackward = false;
+						break;
+					case 39: // right
+					case 68: // d
+						this.moveRight = false;
+						break;
+				}
+			};
+	//		document.addEventListener( 'keydown', onKeyDown.bind(this), false );
+	//		document.addEventListener( 'keyup', onKeyUp.bind(this), false );
 
-		var onError = function ( xhr )
+
+			var manager = new THREE.LoadingManager();
+			manager.onProgress = function ( item, loaded, total )
+			{
+	//			console.log( item, loaded, total );
+			};
+
+			var onProgress = function ( xhr )
+			{
+				if ( xhr.lengthComputable )
+				{
+					var percentComplete = xhr.loaded / xhr.total * 100;
+	//				console.log( Math.round(percentComplete, 2) + '% downloaded' );
+				}
+			};
+
+			var onError = function ( xhr )
+			{
+			};
+
+			var loader = new THREE.OBJLoader( manager );
+
+			loader.load( this.objModelNames[1], this.onLedsLoaded.bind(this), this.onProgress, this.onError);
+			loader.load( this.objModelNames[0], this.onArchitectureLoaded.bind(this), this.onProgress, this.onError);
+
+			this.renderer = new THREE.WebGLRenderer();
+			this.renderer.setPixelRatio( window.devicePixelRatio );
+			this.renderer.setSize( this.container.width(), this.container.height() );
+
+			this.container.append( this.renderer.domElement );
+
+
+			this.container.mousemove(function(event)
+			{
+				tool3D.mouseX = event.pageX;
+				tool3D.mouseY = event.pageY;
+			});
+
+		}
+		else
 		{
-		};
-
-		var loader = new THREE.OBJLoader( manager );
-
-      	loader.load( this.objModelNames[1], this.onLedsLoaded.bind(this), this.onProgress, this.onError);
-      	loader.load( this.objModelNames[0], this.onArchitectureLoaded.bind(this), this.onProgress, this.onError);
-
-		this.renderer = new THREE.WebGLRenderer();
-		this.renderer.setPixelRatio( window.devicePixelRatio );
-		this.renderer.setSize( this.container.width(), this.container.height() );
-
-		this.container.append( this.renderer.domElement );
-
-
-		this.container.mousemove(function(event)
-		{
-			tool3D.mouseX = event.pageX;
-			tool3D.mouseY = event.pageY;
-		});
+		 this.container.html("<div class=\"disable\">Disabled (see configuration.json)</div>");
+		}
 
 	}
 
 	// --------------------------------------------
 	this.resize = function()
 	{
-		if (this.container)
+		if (this.container && this.bEnable)
 		{
 			this.camera.aspect = this.container.width() / this.container.height();
 			this.camera.updateProjectionMatrix();
@@ -271,7 +281,7 @@ function tool3D()
 	// --------------------------------------------
 	this.setLedCeilValues = function(values)
 	{
-		if (this.objLoaded == false) return;
+		if (this.objLoaded == false || this.bEnable == false) return;
 	
 		var v = 0.0;
 		for (var i=0; i<this.objLeds.length; i++)
@@ -288,7 +298,7 @@ function tool3D()
 	// --------------------------------------------
 	this.setLedFloorValues = function(values)
 	{
-		if (this.objLoaded == false) return;
+		if (this.objLoaded == false || this.bEnable == false) return;
 	
 		var v = 0.0;
 		for (var i=0; i<this.objLedsFloor.length; i++)

@@ -183,16 +183,19 @@ animation.prototype.sampleAndSendValues = function(renderer_)
 	this.ipcRenderer.send(this.ipcLedsKey, this.readValues);
  
 	// Set in the tool3D
-/*	if (this.type == "ceil")
+	if (rqcv.isTool3DEnabled())
 	{
-		tool3D.setLedCeilValues(this.readValues);
+	  if (this.type == "ceil")
+	  {
+		  tool3D.setLedCeilValues(this.readValues);
+	  }
+	  else
+	  if (this.type == "floor")
+	  {
+		  tool3D.setLedFloorValues(this.readValues);
+	  }
 	}
-	else
-	if (this.type == "floor")
-	{
-		tool3D.setLedFloorValues(this.readValues);
-	}
-*/}
+}
 
 
 //--------------------------------------------------------
