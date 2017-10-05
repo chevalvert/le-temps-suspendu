@@ -50,7 +50,7 @@ animationManualWaves.prototype.onThumbClicked = function(posNorm)
 //--------------------------------------------------------
 animationManualWaves.prototype.generateWave = function(x,y)
 {
-	console.log("animationManualWaves.prototype.generateWave x="+x.toFixed(1)+",y="+y.toFixed(1));
+	// console.log("animationManualWaves.prototype.generateWave x="+x.toFixed(1)+",y="+y.toFixed(1));
 
 	this.waves.push( new animationWave(x * this.container.width(), y * this.container.height(), this.properties.widthWave, this.properties.radius, this.properties.speedWave,this.properties.ageMaxWave) );
 }

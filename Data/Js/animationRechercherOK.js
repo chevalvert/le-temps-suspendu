@@ -4,24 +4,27 @@ function animationRechercherOK(){}
 //--------------------------------------------------------
 animationRechercherOK.prototype = Object.create(animationCanvas.prototype);
 animationRechercherOK.prototype.state_wave_to = {id:1};
-animationRechercherOK.prototype.state_wave_back = {id:2};
-animationRechercherOK.prototype.state_pulse_photo = {id:3};
+animationRechercherOK.prototype.state_do_pulse = {id:2};
+animationRechercherOK.prototype.state_wave_stop = {id:3};
 
 animationRechercherOK.prototype.state 		= null;
-//animationRechercherOK.prototype.dimWave 	= {h:50};
-animationRechercherOK.prototype.gradWave 	= null;
-animationRechercherOK.prototype.posWave 	= {y:0};
+animationRechercherOK.prototype.hWave 		= 0;
+animationRechercherOK.prototype.dirWave 	= 1;
+animationRechercherOK.prototype.posWave 	= null;
 animationRechercherOK.prototype.speedWave 	= 80.0;
-animationRechercherOK.prototype.posPulse 	= {x:0, y:0};
+animationRechercherOK.prototype.alphaWave 	= 1.0;
+animationRechercherOK.prototype.alphaWaveTarget = 1.0;
+
+
+animationRechercherOK.prototype.posPulse 	= null;
 animationRechercherOK.prototype.gradPulse 	= null;
-animationRechercherOK.prototype.bDoPulse 	= true;
 animationRechercherOK.prototype.alphaPulse 	= 0.0;
 animationRechercherOK.prototype.alphaPulse2 = 0.0;
-animationRechercherOK.prototype.bReset = false;
 animationRechercherOK.prototype.anglePulse2 = 0.0
-// animationRechercherOK.prototype.nbPulsesTodo = 1; // number of pulses before exit
 animationRechercherOK.prototype.nbPulses = 0;
 animationRechercherOK.prototype.bPulseGradient = false;
+
+animationRechercherOK.prototype.bReset = false;
 
 
 //--------------------------------------------------------
@@ -30,7 +33,6 @@ animationRechercherOK.prototype.loadProperties = function()
 	this.properties = {}
 	
 	this.properties.speedWave = 80.0;
-	this.properties.dimWave = 50.0;
 	this.properties.radiusPulse = .5;
 	this.properties.freqPulse = 4;
 	this.properties.nbPulses = 1;
@@ -41,8 +43,7 @@ animationRechercherOK.prototype.loadProperties = function()
 //--------------------------------------------------------
 animationRechercherOK.prototype.addControls = function()
 {
- 	this.gui.add(this.properties, 'speedWave', 10.0, 100.0);
- 	this.gui.add(this.properties, 'dimWave', 50.0, 200.0);
+ 	this.gui.add(this.properties, 'speedWave', 10.0, 200.0);
  	this.gui.add(this.properties, 'radiusPulse', 0.1, 1.0);
 	this.gui.add(this.properties, 'freqPulse', 1, 8).step(1);
 	this.gui.add(this.properties, 'nbPulses',  1, 8).step(1);
@@ -57,11 +58,41 @@ animationRechercherOK.prototype.reset = function()
 //--------------------------------------------------------
 animationRechercherOK.prototype.setData = function(thumbPosNormalized)
 {
-	if (this.type=="ceil" && thumbPosNormalized != null)
+	console.log("animationRechercherOK.prototype.setData");
+	console.log(thumbPosNormalized);
+
+
+	if (thumbPosNormalized != null)
 	{
-		this.posPulse.x = thumbPosNormalized.x * this.container.width();
-		this.posPulse.y = (1.0-thumbPosNormalized.y) * this.container.height(); // Y-axis reversed relative to gridview
+		this.posPulse = {
+			x : thumbPosNormalized.x * this.container.width(),
+		    y : (1.0-thumbPosNormalized.y) * this.container.height()
+		} // Y-axis reversed relative to gridview
+	
+		console.log(this.posPulse);
 	}
+}
+
+//--------------------------------------------------------
+// Called when photo was just shown on screen
+// For animation ground
+animationRechercherOK.prototype.triggerForPhoto = function()
+{
+	// console.log("animationRechercherOK.prototype.triggerForPhoto");
+	if (this.type == "ceil")
+	{
+		this.state = this.state_wave_to;
+		this.timer.reset();
+	}
+}
+
+//--------------------------------------------------------
+animationRechercherOK.prototype.showPulse = function()
+{
+	this.state = this.state_do_pulse;
+	this.alphaWaveTarget = 0.0;
+	this.alphaPulse = 1.0;
+	this.timer.reset();
 }
 
 //--------------------------------------------------------
@@ -69,37 +100,82 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 {
 	if (this.bReset)
 	{
-		this.state = this.state_wave_to;
-		this.posWave.y = this.drawingCanvas.height;
+		this.state 		= this.state_wave_stop;
+		this.hWave 		= this.drawingCanvas.height;
+		this.posWave 	= {x:0, y:-this.hWave};
+		this.dirWave	= 1;
+		this.alphaWave	= this.alphaWaveTarget = 1;
+		
 		this.anglePulse2 = 0.0;
 		this.alphaPulse = 0.0;
 		this.alphaPulse2 = 0.0;
 		this.nbPulses = 0;
+
 		this.timer.reset();
 
 		if (this.type == "floor")
-			this.bDoPulse = false;
+		{
+			this.state 		= this.state_wave_to;
+			this.dirWave 	= -1;
+			this.posWave.y 	= this.drawingCanvas.height;
+		}
 
 		this.bReset = false;
 	}
 
 	var dt = this.timer.update();
 
+	// Background
 	this.drawingContext.fillStyle = "#000000";
 	this.drawingContext.fillRect( 0, 0, this.drawingCanvas.width, this.drawingCanvas.height );
 
-	this.gradWave = this.drawingContext.createLinearGradient(0,this.posWave.y,0,this.posWave.y+this.properties.dimWave);
-	this.gradWave.addColorStop(0,	"black");
-	this.gradWave.addColorStop(0.5,	"white");
-	this.gradWave.addColorStop(1,	"black");
 
-	this.drawingContext.fillStyle = this.gradWave;
-	this.drawingContext.fillRect(0, this.posWave.y,this.drawingCanvas.width, this.properties.dimWave );
+	// Wave
+	this.alphaWave += (this.alphaWaveTarget - this.alphaWave) * 0.99 * dt;
+	this.drawingContext.fillStyle = "rgba(255,255,255,"+this.alphaWave+")";
+	this.drawingContext.fillRect(0, this.posWave.y,this.drawingCanvas.width, this.hWave );
 	
+	// Propagation
+	if (this.state === this.state_wave_to)
+	{
+		this.posWave.y = this.posWave.y + this.dirWave * this.properties.speedWave * dt;
+		
+		// for ceil
+		if (this.dirWave == 1)
+		{
+			if (this.posWave.y >= 0.0)
+			{
+				// force stop
+				this.posWave.y = 0.0;
+				this.state = this.state_wave_stop;
+
+				// Emit event => show pulse
+				ipcRenderer.send('animationRechercherOK_showPulse', {});
+
+			}
+		}
+		
+		// for ground
+		else if (this.dirWave == -1)
+		{
+			if (this.posWave.y <= 0)
+			{
+				// force stop
+				this.posWave.y = 0;
+				this.state = this.state_wave_stop;
+
+				// ceil : Emit event => show photo => trigger wave_to for ground
+				ipcRenderer.send('animationRechercherOK_setPhoto', {});
+
+			}
+		}
+
+	}
 	
 	// Pulse
-	if (this.bDoPulse && this.alphaPulse>0.0)
+	else if (this.state === this.state_do_pulse)
 	{
+	
 		var w = this.container.width();
 		var h = this.container.height();
 	
@@ -121,12 +197,14 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 				this.anglePulse2 = 0;
 
 				// Exit now
-				ipcRenderer.send('animationRechercherOK_done', {});
+				if (this.type == "ceil")
+					ipcRenderer.send('animationRechercherOK_done', {});
 			}
 		}
 		this.alphaPulse2 = 0.5 * ( 1.0 + Math.cos( this.properties.freqPulse * this.anglePulse2 ) );
 	
-		var colorWhitePulseGradient = "rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")";
+
+
 		if (this.bPulseGradient)
 		{
 			this.gradPulse = this.drawingContext.createRadialGradient(pulsex,pulsey,0, pulsex,pulsey,r);
@@ -136,49 +214,22 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 	
 
 		this.drawingContext.save();
-		
 		this.drawingContext.scale(scalex, scaley);
-
 		this.drawingContext.beginPath();
 		this.drawingContext.ellipse(pulsex,pulsey,r,r,0,0,2*Math.PI);
-		if (this.bPulseGradient)
-			this.drawingContext.fillStyle = this.gradPulse;
-		else
-			this.drawingContext.fillStyle = colorWhitePulseGradient;
+		this.drawingContext.fillStyle = this.bPulseGradient ? this.gradPulse : "rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")";
 		this.drawingContext.fill();
-
 		this.drawingContext.restore();
 
 	}
+	
+	
 
-
-	if (this.state === this.state_wave_to)
+	// Stop
+	else if (this.state === this.state_wave_stop)
 	{
-		this.posWave.y = this.posWave.y - this.properties.speedWave * dt;
-		if (this.posWave.y <= -0.5*this.properties.dimWave)
-		{
-			// HIT
-			this.state = this.state_wave_back;
-
-			// Emit event => show photo
-			ipcRenderer.send('animationRechercherOK_setPhoto', {});
-		}
-
-	}
-	else if (this.state === this.state_wave_back)
-	{
-		this.posWave.y = this.posWave.y + this.properties.speedWave * dt;
-		if (this.posWave.y > this.drawingCanvas.height)
-		{
-			if (this.bDoPulse)
-			{
-				this.alphaPulse = 1.0;
-
-			}
-		}
 	}
 
-//	this.drawingContext.fillRect(0, 50,this.drawingCanvas.width, this.dimWave.h );
 
 	this.renderOffscreen(renderer_);
 	this.texture.needsUpdate = true;

@@ -220,6 +220,7 @@ function gridview()
 	}
 
 	//--------------------------------------------------------
+	// return : true if teleportation
 	this.teleportPanelWithPosition = function(panel, position)
 	{
 		if (this.tweenTeleportFadeOut)
@@ -255,16 +256,17 @@ function gridview()
 			this.mask(true);
 
 			this.tweenTeleportFadeOut = new TWEEN.Tween(this).to({}, 500).onComplete( this.onTweenTeleportFadeOutComplete.bind(this) )
-//			this.tweenTeleportFadeIn = new TWEEN.Tween(this).to({}, 500);
-//			this.tweenTeleportFadeOut.chain(this.tweenTeleportFadeIn);
-			
 			this.tweenTeleportFadeOut.start();
-		
+			
+			return true;
 		}
 		else
 		{
 			this.gotoPanelWithPosition(panel,position);
 		}
+
+
+		return false;
 	}
 
 	//--------------------------------------------------------

@@ -270,11 +270,6 @@ function toolPupitre()
 	// --------------------------------------------
 	this.setAnimationGroundTransition = function(params)
 	{
-//		this.setAnimationGround(params);
-	
-		// TODO : not working ... ? !
-		
-	
 		var bUseTransition = this.properties.useAnimTransition;
 	
 		if (bUseTransition)
@@ -335,6 +330,23 @@ function toolPupitre()
 			this.animGroundView.setAnimation( this.animManager.animationGround );
 
 		return this.animManager.animationGround;
+	}
+
+	// --------------------------------------------
+	this.triggerAnimationCeilForPhoto = function()
+	{
+		if (this.animManager.animation)
+			this.animManager.animation.triggerForPhoto();
+	}
+
+	// --------------------------------------------
+	this.showPulse = function()
+	{
+		if (this.animManager.animation)
+			this.animManager.animation.showPulse();
+
+		if (this.animManager.animationGround)
+			this.animManager.animationGround.showPulse();
 	}
 	
 	// --------------------------------------------

@@ -36,6 +36,8 @@ function photoView()
 	this.listPhotosIndexAdd = 0;
 	this.listBlockSlide = false;
 	
+	this.bBlockAddPhotoToList = false;
+	
 
 	//--------------------------------------------------------
 	this.loadListPhotoTexture = function()
@@ -74,6 +76,8 @@ function photoView()
 	this.init = function(name)
 	{
 		this.container = $(name);
+		
+//		$(name).draggable();
 		
 		this.resizeContainer();
 
@@ -281,6 +285,8 @@ function photoView()
 	//--------------------------------------------------------
 	this.addPhotoToListLoaded = function(texture)
 	{
+		if (this.bBlockAddPhotoToList) return;
+	
 		// Release previous texture
 		if (this.listPhotosTexture[this.listPhotosIndexAdd])
 		{

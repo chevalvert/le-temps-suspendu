@@ -24,7 +24,7 @@
 		"enable"	: true,
 		"devtools"	: true,
 		"x"			: 0,
-		"y"			: 0,
+		"y"			: 600,
 		"w"			: 1000,
 		"h"			: 500,
 		"tool3D" :
@@ -35,12 +35,12 @@
 	
 	"pupitre" :
 	{
-		"devtools"	: true,
+		"devtools"	: false,
 		"w"			: 1280,
 		"h"			: 1024,
 		"bot"		:
 		{
-			"enable": false,
+			"enable": true,
 			"delayChange": 3
 		},
 		"gridview"	:
@@ -63,7 +63,7 @@
 	
 	"photo" :
 	{
-		"devtools"	: false,
+		"devtools"	: true,
 		"x"			: 800,
 		"y"			: 600,
 		"w"			: 1024,

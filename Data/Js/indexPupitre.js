@@ -197,7 +197,7 @@ function gotoPanelWithPosition(panel, position)
 //--------------------------------------------------------
 function teleportPanelWithPosition(panel, position)
 {
-	gridview.teleportPanelWithPosition( panel, position );
+	return gridview.teleportPanelWithPosition( panel, position );
 }
 
 //--------------------------------------------------------
@@ -224,6 +224,7 @@ function showPhotoList()
 {
 	ipcRenderer.send('indexPupitre-showPhotoList', {}); // TODO : parameters ?
 }
+
 
 //--------------------------------------------------------
 function resetGridPanelPositionInfos()
@@ -271,10 +272,13 @@ function enterState(newState)
 	else if (newState === state_rechercher_ok)
 	{
 		setView("grid");
-		teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+		var bTeleport = teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
 		enableGridViewMouseDrag(false);
-		setAnimation(state_rechercher_ok.animation, gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position));
-		setAnimationGround(state_rechercher_ok.animationGround);
+		
+		var thumbPosNormalized = gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position);
+		
+		setAnimation(state_rechercher_ok.animation, thumbPosNormalized);
+		setAnimationGround(state_rechercher_ok.animationGround, thumbPosNormalized);
 	}
 }
 

@@ -116,14 +116,28 @@ ipcRenderer.on('setAnimation', function (event, value)
 	toolPupitre.setAnimationTransition(value);
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('setAnimationGround', function (event, value)
 {
 	toolPupitre.setAnimationGroundTransition(value);
 });
 
+//--------------------------------------------------------
 ipcRenderer.on('clickAnimation', function (event, value)
 {
 	toolPupitre.clickAnimation(value);
+});
+
+//--------------------------------------------------------
+ipcRenderer.on('showPhoto', function (event, value)
+{
+	toolPupitre.triggerAnimationCeilForPhoto();
+});
+
+//--------------------------------------------------------
+ipcRenderer.on('animationRechercherOK_showPulse', function (event, value)
+{
+	toolPupitre.showPulse();
 });
 
 

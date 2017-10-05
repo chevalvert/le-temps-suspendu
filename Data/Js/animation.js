@@ -37,6 +37,8 @@ animation.prototype.reset 	= function(){} // called just once when animation is 
 animation.prototype.setData = function(data){} // called just once when animation is set
 animation.prototype.setCamPosNormalized = function(posNorm){} // called during render
 animation.prototype.onThumbClicked = function(posNorm){}
+animation.prototype.triggerForPhoto = function(){} // called when recherche is OK and photo show
+animation.prototype.showPulse = function(){} // called when recherche is OK and pulse must be shown
 
 //--------------------------------------------------------
 animation.prototype.resetLedValues = function()

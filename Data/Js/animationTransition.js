@@ -23,6 +23,7 @@ animationTransition.prototype.setAnimationManager	= function(animManager)
 	this.animations			= this.animationManager.animations;
 }
 
+
 //--------------------------------------------------------
 animationTransition.prototype.setAnim0 = function(id, data)
 {
@@ -52,6 +53,25 @@ animationTransition.prototype.setAnim1 = function(id, data)
 		this.anim1 = null;
 	}
 }
+
+//--------------------------------------------------------
+animationTransition.prototype.triggerForPhoto = function()
+{
+	if(this.anim0)
+		this.anim0.triggerForPhoto();
+	if(this.anim1)
+		this.anim1.triggerForPhoto();
+}
+
+//--------------------------------------------------------
+animationTransition.prototype.showPulse = function()
+{
+	if(this.anim0)
+		this.anim0.showPulse();
+	if(this.anim1)
+		this.anim1.showPulse();
+}
+
 
 //--------------------------------------------------------
 animationTransition.prototype.loadProperties = function()

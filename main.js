@@ -85,8 +85,7 @@ function openToolWindow()
 		var h = configuration.production ? 1 : configuration.tool.h;
 
 
-	   // 
-// function(name, title, content, setupTemplate, setup, showDevTools){
+	   // function(name, title, content, setupTemplate, setup, showDevTools){
 	   toolWindow = windowManager.open('tool', 'Le temps suspendu : outils', getFile('indexTool.html'),false,
 	   {
 		   'x' : externalDisplay ? externalDisplay.bounds.x : configuration.tool.x,
@@ -244,6 +243,13 @@ function onConfigLoaded()
 		if (valid(mainWindow))
 			mainWindow.content().send('animationRechercherOK_setPhoto', value)
 	});
+
+	// --------------------------------------------------
+	ipcMain.on('animationRechercherOK_showPulse', (event, value) =>
+	{
+		if (valid(toolWindow))
+			toolWindow.content().send('animationRechercherOK_showPulse', value);
+	});
 	
 	// --------------------------------------------------
 	ipcMain.on('animationRechercherOK_done', (event, value) =>
@@ -340,6 +346,12 @@ function onConfigLoaded()
 		{
 			photoWindow.content().send('showPhoto', value);
 		}
+
+		if (valid(toolWindow))
+		{
+			toolWindow.content().send('showPhoto',value);
+		}
+		
 	});
 
 	// --------------------------------------------------
