@@ -1,5 +1,10 @@
 {
-	"production" :	true,
+	"production" :	false,
+	"stats"		 :
+	{
+		"enable" : true,
+		"table"  : "stats"
+	},
 
 	"consoleLog": 	true,
 	"db_rq" :
@@ -11,7 +16,11 @@
   		"database" 	: "LeTempsSuspendu",
 		"table"		: "export_final",
 		"folder_figure"		: "Data/Db/files/figure-thumbs/",
-		"folder_web"		: "Data/Db/files/thumbs/"
+		"folder_web"		: "Data/Db/files/thumbs/",
+		"special_codes" 	:
+		[
+			{"code" : "BABAR", "panel" : 82, "position" : 1028}
+		]
 	},
 	
 	"artnet" :

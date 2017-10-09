@@ -26,6 +26,8 @@ var state_grid_bot 				= {id : 7, name: "grid_bot", 			animation : "sine", delay
 var state 						= null;
 var stateTime 					= 0.0;
 
+// Stats
+var stats 						= new stats();
 
 var gridPanelClicked			= -1;
 var gridPositionClicked			= -1;
@@ -269,6 +271,9 @@ function enterState(newState)
 
 			gridPanelClicked = gridview.panelClicked;
 			gridPositionClicked = gridview.panelPositionClicked;
+
+			stats.save( {panel : gridview.panelClicked, position : gridview.panelPositionClicked}, stats.actionOnClick );
+
 
 		}
 	}
@@ -803,11 +808,34 @@ function createViewInteragir()
 	label.css({"top" : 0.5 * ($(window).height()-hLabel) - 26, "left" : 0.5 * ($(window).width()-wLabel)});
 }
 
+//--------------------------------------------------------
+function checkSpecialCode(code)
+{
+	var special_codes = rqcv.configuration.db_rq.special_codes;
+	for (var i=0 ; i<special_codes.length; i++)
+	{
+		if (special_codes[i].code == code)
+			return special_codes[i];
+	}
+	return null;
+}
 
 //--------------------------------------------------------
 function onCodeEntered(code)
 {
-   var query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
+	var query = "";
+	var specialCode = checkSpecialCode(code);
+
+	if (specialCode != null)
+	{
+		query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+specialCode.panel+" AND position="+specialCode.position;
+	}
+	else
+	{
+		query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
+	}
+
+
 
    // console.log(query)
 
@@ -827,6 +855,7 @@ function onCodeEntered(code)
 				state_rechercher_ok.position 	= results[0].position;
 			
 				changeState(state_rechercher_ok);
+				stats.save( results[0], stats.actionOnCodeEntered);
 			}
 			else
 			{
