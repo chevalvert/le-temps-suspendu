@@ -17,10 +17,21 @@ function stats()
 			{
 				// data is object with panel + position fields
 				var query = "INSERT INTO "+ rqcv.configuration.stats.table +" (idPhoto,action,done) VALUES ((SELECT id FROM "+rqcv.configuration.db_rq.table+" WHERE panel="+data.panel+" AND position="+data.position+"),"+action+",NOW())";
-//				rqcv.connection.query(query, function (error, results, fields){});
-				console.log(query)
-
+				rqcv.connection.query(query, function (error, results, fields){});
 			}
 		}
 	}
 }
+
+
+/*
+
+CREATE TABLE `stats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idPhoto` int(11) NOT NULL,
+  `action` tinyint(4) NOT NULL,
+  `done` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+)
+
+*/
