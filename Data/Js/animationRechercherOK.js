@@ -4,8 +4,9 @@ function animationRechercherOK(){}
 //--------------------------------------------------------
 animationRechercherOK.prototype = Object.create(animationCanvas.prototype);
 animationRechercherOK.prototype.state_wave_to = {id:1};
-animationRechercherOK.prototype.state_do_pulse = {id:2};
-animationRechercherOK.prototype.state_wave_stop = {id:3};
+animationRechercherOK.prototype.state_wait_do_pulse = {id:2, timeout : 1};
+animationRechercherOK.prototype.state_do_pulse = {id:3};
+animationRechercherOK.prototype.state_wave_stop = {id:4};
 
 animationRechercherOK.prototype.state 		= null;
 animationRechercherOK.prototype.hWave 		= 0;
@@ -24,8 +25,11 @@ animationRechercherOK.prototype.anglePulse2 = 0.0
 animationRechercherOK.prototype.nbPulses = 0;
 animationRechercherOK.prototype.bPulseGradient = false;
 
+animationRechercherOK.prototype.panel = -1;
+
 animationRechercherOK.prototype.bReset = false;
 
+animationRechercherOK.prototype.timeWaitDoPulse = 0;
 
 //--------------------------------------------------------
 animationRechercherOK.prototype.loadProperties = function()
@@ -44,7 +48,7 @@ animationRechercherOK.prototype.loadProperties = function()
 animationRechercherOK.prototype.addControls = function()
 {
  	this.gui.add(this.properties, 'speedWave', 10.0, 200.0);
- 	this.gui.add(this.properties, 'radiusPulse', 0.1, 1.0);
+ 	this.gui.add(this.properties, 'radiusPulse', 0.0, 0.1);
 	this.gui.add(this.properties, 'freqPulse', 1, 8).step(1);
 	this.gui.add(this.properties, 'nbPulses',  1, 8).step(1);
 }
@@ -58,18 +62,41 @@ animationRechercherOK.prototype.reset = function()
 //--------------------------------------------------------
 animationRechercherOK.prototype.setData = function(thumbPosNormalized)
 {
-	console.log("animationRechercherOK.prototype.setData");
-	console.log(thumbPosNormalized);
+	// console.log("animationRechercherOK.prototype.setData");
+	// console.log(thumbPosNormalized);
 
 
 	if (thumbPosNormalized != null)
 	{
+		this.panel = thumbPosNormalized.panel;
+
+/*		var nbx = parseInt(this.container.width() / 8);
+		var nby = parseInt(this.container.height() / 11);
+	
+		var xx = parseInt( thumbPosNormalized.x * 8 )
+		var yy = parseInt( (1.0 - thumbPosNormalized.y) * 11 )
+
 		this.posPulse = {
+			x : (xx+0.5)*nbx,
+			y : (yy+0.5)*nby,
+		}
+
+		this.properties.radiusPulse = 1 / 8 * 0.5;
+*/
+
+	
+/*		this.posPulse =
+		{
 			x : thumbPosNormalized.x * this.container.width(),
 		    y : (1.0-thumbPosNormalized.y) * this.container.height()
 		} // Y-axis reversed relative to gridview
+*/
+
+
+		
+
 	
-		console.log(this.posPulse);
+		// console.log(this.posPulse);
 	}
 }
 
@@ -89,11 +116,33 @@ animationRechercherOK.prototype.triggerForPhoto = function()
 //--------------------------------------------------------
 animationRechercherOK.prototype.showPulse = function()
 {
-	this.state = this.state_do_pulse;
+	if (this.type == "ceil")
+		this.state = this.state_do_pulse;
 	this.alphaWaveTarget = 0.0;
 	this.alphaPulse = 1.0;
 	this.timer.reset();
 }
+
+
+//--------------------------------------------------------
+animationRechercherOK.prototype.drawPanel = function(canvas, panel, alpha)
+{
+	var nbPanelsColumns = this.nbColumns / 2;
+	var nbPanelsRows = this.nbRows;
+
+	var panelI = parseInt(panel % nbPanelsColumns);
+	var panelJ = parseInt(panel / nbPanelsColumns);
+
+	var stepx = parseInt(canvas.width / nbPanelsColumns);
+	var stepy = parseInt(canvas.height / nbPanelsRows);
+
+	var x = panelI * stepx;
+	var y = canvas.height - panelJ * stepy - stepy;
+
+	this.drawingContext.fillStyle = "rgba(255,255,255,"+alpha+")";
+	this.drawingContext.fillRect( x, y, stepx, stepy );
+}
+
 
 //--------------------------------------------------------
 animationRechercherOK.prototype.render = function(renderer_, bSample)
@@ -147,10 +196,9 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 			{
 				// force stop
 				this.posWave.y = 0.0;
-				this.state = this.state_wave_stop;
-
-				// Emit event => show pulse
-				ipcRenderer.send('animationRechercherOK_showPulse', {});
+				// this.state = this.state_wave_stop;
+				this.timeWaitDoPulse = 0.0;
+				this.state = this.state_wait_do_pulse;
 
 			}
 		}
@@ -171,21 +219,33 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		}
 
 	}
+
+	// Pulse
+	else if (this.state === this.state_wait_do_pulse)
+	{
+		this.timeWaitDoPulse += dt;
+		if (this.timeWaitDoPulse >= this.state.timeout)
+		{
+			this.state = this.state_wave_stop;
+			// Emit event => show pulse
+			ipcRenderer.send('animationRechercherOK_showPulse', {});
+		}
+	}
 	
 	// Pulse
 	else if (this.state === this.state_do_pulse)
 	{
 	
-		var w = this.container.width();
-		var h = this.container.height();
+//		var w = this.container.width();
+//		var h = this.container.height();
 	
 		// Coords + size in view space
-		var r = this.properties.radiusPulse * w;
-		var pulsex = this.posPulse.x;
-		var pulsey = this.posPulse.y;
+//		var r = this.properties.radiusPulse * w;
+//		var pulsex = this.posPulse.x;
+//		var pulsey = this.posPulse.y;
 
-		var scalex = 128.0 / 120.0;
-		var scaley = 128.0 / 180.0;
+//		var scalex = 128.0 / 120.0;
+//		var scaley = 128.0 / 180.0;
 		
 		this.anglePulse2 += 0.5*Math.PI*dt;
 		if (this.anglePulse2 >= 2.0*Math.PI)
@@ -204,7 +264,7 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		this.alphaPulse2 = 0.5 * ( 1.0 + Math.cos( this.properties.freqPulse * this.anglePulse2 ) );
 	
 
-
+/*
 		if (this.bPulseGradient)
 		{
 			this.gradPulse = this.drawingContext.createRadialGradient(pulsex,pulsey,0, pulsex,pulsey,r);
@@ -220,6 +280,9 @@ animationRechercherOK.prototype.render = function(renderer_, bSample)
 		this.drawingContext.fillStyle = this.bPulseGradient ? this.gradPulse : "rgba(255,255,255,"+this.alphaPulse*this.alphaPulse2+")";
 		this.drawingContext.fill();
 		this.drawingContext.restore();
+*/
+
+		this.drawPanel(this.drawingCanvas, this.panel, this.alphaPulse*this.alphaPulse2);
 
 	}
 	

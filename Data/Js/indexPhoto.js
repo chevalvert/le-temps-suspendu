@@ -48,8 +48,8 @@ function showPhoto(panel, position)
 		{
 		   var pathFile = getPathPhoto( results[0].filename )
 		   photoView.setPhoto( pathFile );
+		   photoView.setPhotoOpacity(1.0, true);
 
-		   console.log("showing '" + pathFile + "'");
 		}
    });
 }
@@ -88,12 +88,26 @@ function showPhotoList(info)
 	photoView.setPhotoList(info);
 }
 
+//--------------------------------------------------------
+ipcRenderer.on('preloadPhoto', function (event, value)
+{
+	preloadPhoto(value.panel, value.position);
+});
+
 
 //--------------------------------------------------------
 ipcRenderer.on('showPhoto', function (event, value)
 {
 	showPhoto(value.panel, value.position);
 });
+
+
+//--------------------------------------------------------
+ipcRenderer.on('hidePhoto', function (event, value)
+{
+	photoView.setPhotoOpacity(0.0, true);
+});
+
 
 //--------------------------------------------------------
 ipcRenderer.on('showPhotoList', function (event, value)
@@ -125,6 +139,13 @@ ipcRenderer.on('photoOffsetCenterx', function (event, value)
 ipcRenderer.on('photoOffsetCentery', function (event, value)
 {
 	photoView.setPhotoPositionY( value )
+});
+
+
+//--------------------------------------------------------
+ipcRenderer.on('setGridCameraSpeed', function (event, value)
+{
+	photoView.setCameraSpeed( value.cameraSpeed );
 });
 
 //--------------------------------------------------------

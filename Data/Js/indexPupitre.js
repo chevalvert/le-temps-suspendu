@@ -12,9 +12,9 @@ var TWEEN 		= require('@tweenjs/tween.js');
 //
 // state_rechercher_ok timeout is triggered by its animation
 
-var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "timeline", 	animationGround : "blank_ground"};
-var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 5};
-var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 5};
+var state_stand_by 				= {id : 0, name: "stand_by", 			animation : "timeline", 	animationGround : "plasma_ground"};
+var state_grid_scroll 			= {id : 1, name: "grid_scroll", 		animation : "manualWaves", 	animationGround : "blank_ground", timeout : 5};
+var state_grid_scroll_clicked 	= {id : 2, name: "grid_scroll_clicked", animation : "manualWaves", 	animationGround : "blank_ground", timeout : 5};
 var state_interagir 			= {id : 3, name: "interagir", 			animation : "manualWaves", 	animationGround : "manualWaves_ground", timeout : 100};
 var state_rechercher 			= {id : 4, name: "rechercher", 			timeout : 15};
 var state_rechercher_ok 		= {id : 5, name: "rechercher_ok", 		timeout : 10, panel:-1, position:-1, code : -1, animation : "rechercherOK", animationGround : "rechercherOK_ground"}; // state ended by animation exit event
@@ -83,9 +83,6 @@ $(document).ready( function()
 	// Start
 	ipcRenderer.send("indexPupitre-ready",0);
 	window.requestAnimationFrame( animate );
-
-
-
 });
 
 
@@ -140,7 +137,7 @@ function setView(which)
 	{
 		views.clearQueue().stop().animate({left : -1280}, options);
 		enableViewsMouseEvents(false);
-		gridview.mask(false);
+		gridview.mask(false,0.025);
 		gridview.showOverlayImage(false);
 
 	 
@@ -220,6 +217,12 @@ function showPhoto(panel, position)
 }
 
 //--------------------------------------------------------
+function hidePhoto()
+{
+	ipcRenderer.send('indexPupitre-hidePhoto', {});
+}
+
+//--------------------------------------------------------
 function showPhotoList()
 {
 	ipcRenderer.send('indexPupitre-showPhotoList', {}); // TODO : parameters ?
@@ -272,13 +275,16 @@ function enterState(newState)
 	else if (newState === state_rechercher_ok)
 	{
 		setView("grid");
-		var bTeleport = teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
+		teleportPanelWithPosition( state_rechercher_ok.panel, state_rechercher_ok.position );
 		enableGridViewMouseDrag(false);
 		
 		var thumbPosNormalized = gridview.getThumbPositionNormalized(state_rechercher_ok.panel, state_rechercher_ok.position);
+		thumbPosNormalized.panel = state_rechercher_ok.panel; // JS RULEZ ! :-D
 		
 		setAnimation(state_rechercher_ok.animation, thumbPosNormalized);
 		setAnimationGround(state_rechercher_ok.animationGround, thumbPosNormalized);
+
+		hidePhoto();
 	}
 }
 
@@ -441,9 +447,9 @@ function changeState(newState)
 			var camPos = {x : p5Sketch.mousePositionNormalized.x, y : 1.0 - p5Sketch.mousePositionNormalized.y};
 			var camPosOffset = {x:0.05 * Math.random(), y:0.05 * Math.random()}
 			gridview.setCameraPositionNorm( camPos, camPosOffset);
+//			gridview.mask(false, 0.01);
 		}
 	}
-
 
 	// ----------------------------------
 	// ----- state_rechercher
@@ -605,6 +611,24 @@ function animate(t)
 	if (state === state_interagir)
 	{
 		ipcRenderer.send('indexPupitre-setInteragirMousePos', p5Sketch.mousePositionNormalized);
+	
+		// "Fake" camera speed !
+		var camPos = {
+			x : p5Sketch.mousePositionNormalized.x * this.gridview.gridWidth,
+			y : p5Sketch.mousePositionNormalized.y * this.gridview.gridHeight
+			}
+
+		var camPosPrev = {
+			x : p5Sketch.mousePositionNormalizedPrev.x * this.gridview.gridWidth,
+			y : p5Sketch.mousePositionNormalizedPrev.y * this.gridview.gridHeight
+			}
+
+
+		var cameraSpeed = Math.dist(camPos.x,camPos.y,camPosPrev.x,camPosPrev.y);
+		cameraSpeed /= dt;
+
+
+	  ipcRenderer.send('indexPupitre-setGridCemeraSpeed',{cameraSpeed : cameraSpeed});
 	}
 	else
 	{
@@ -654,7 +678,8 @@ function renderDebug()
 			 strDebug += "<br />(thumbI,thumbJ) = (" + this.gridview.thumbI + "," + this.gridview.thumbJ + ")";
 			 strDebug += "<br />(thumbPos.x,thumbPos.y) = (" + this.gridview.thumbPos.x.toFixed(1) + "," + this.gridview.thumbPos.y.toFixed(1) + ")";
 			 strDebug += "<br />camSpeed = " + this.gridview.cameraSpeed.toFixed(1);
-			 strDebug += "<br />camPos = (" + this.gridview.cameraPositionTarget.x.toFixed(1)+"," + this.gridview.cameraPositionTarget.y.toFixed(1) + ")";
+			 strDebug += "<br />camPos = (" + this.gridview.cameraPosition.x.toFixed(1)+"," + this.gridview.cameraPosition.y.toFixed(1) + ")";
+			 strDebug += "<br />camPosNorm = (" + this.gridview.cameraPositionNormalized.x.toFixed(1)+"," + this.gridview.cameraPositionNormalized.y.toFixed(1) + ")";
 		 }
 		 if (state === state_grid_scroll_clicked)
 		 {
@@ -664,6 +689,7 @@ function renderDebug()
 		 if (state === state_interagir)
 		 {
 			 strDebug += "<br />(mouseX, mouseY) = ("+p5Sketch.mousePositionNormalized.x.toFixed(2)+","+p5Sketch.mousePositionNormalized.y.toFixed(2)+")";
+			 strDebug += "<br />camPos = (" + this.gridview.cameraPosition.x.toFixed(1)+"," + this.gridview.cameraPosition.y.toFixed(1) + ")";
 		 }
 		 if (state === state_rechercher_ok)
 		 {
@@ -714,7 +740,8 @@ function initMenu()
 	}
 		
 	
-	$(".menu-item").css("cursor", "pointer")
+	if (rqcv.configuration.production == false)
+		$(".menu-item").css("cursor", "pointer")
 }
 
 function onBtnMouseDown()

@@ -17,6 +17,10 @@ animationCanvas.prototype.createMaterial = function()
 	this.drawingContext = this.drawingCanvas.getContext( '2d' );
 
 	this.texture = new THREE.Texture( this.drawingCanvas ); // should be power of two
+	
+	this.texture.minFilter = THREE.NearestFilter;
+	this.texture.magFilter = THREE.NearestFilter;
+
 	this.materialRTT = new THREE.MeshBasicMaterial({map:this.texture});
 }
 

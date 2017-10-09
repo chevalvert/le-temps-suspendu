@@ -73,6 +73,7 @@ function gridview()
 	
 	this.overlayMesh 		= null;
 	this.overlayOpacity 	= this.overlayOpacityTarget = 0.0;
+	this.overlayOpacitySpeed= 0.3;
 	this.overlayImageCache 	= null;
 
 	this.bGotoThumb 		= false;
@@ -104,6 +105,12 @@ function gridview()
 
 	var pThis = this;
 
+
+	//--------------------------------------------------------
+	this.setMaskSpeed = function(v)
+	{
+		this.overlayOpacitySpeed = v;
+	}
 
 	//--------------------------------------------------------
 	this.enableMouseDrag = function(is)
@@ -335,10 +342,15 @@ function gridview()
 	}
 
 	//--------------------------------------------------------
-	this.mask = function(is)
+	this.mask = function(is, speed)
 	{
 		this.overlayOpacityTarget = is ? 1.0 : 0.0;
+		if (speed != undefined)
+			 this.setMaskSpeed(speed);
+		else
+			this.setMaskSpeed(0.3);
 	}
+
 
 	//--------------------------------------------------------
 	this.init = function(containerId)
@@ -616,7 +628,7 @@ function gridview()
 
 		
 		// Overlay (Mask)
-		this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * 0.3;
+		this.overlayOpacity += (this.overlayOpacityTarget - this.overlayOpacity) * this.overlayOpacitySpeed;
 
 		this.overlayMesh.position.set( this.cameraPosition.x,  this.cameraPosition.y, 5);
 		this.overlayMesh.material.opacity = this.overlayOpacity;

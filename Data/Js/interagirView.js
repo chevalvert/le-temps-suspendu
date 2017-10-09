@@ -67,6 +67,7 @@ function sketchInteragir( sketch )
   sketch.ledValueMax = 255;
 
   sketch.mousePositionNormalized = {x:0.0, y:0.0}
+  sketch.mousePositionNormalizedPrev = {x:0.0, y:0.0}
 
 
   //--------------------------------------------------------
@@ -183,6 +184,9 @@ function sketchInteragir( sketch )
 	sketch.fill(255);
 	for (var i=0; i<sketch.leds.length; i++)
 		sketch.leds[i].draw();
+
+	sketch.mousePositionNormalizedPrev.x = sketch.mousePositionNormalized.x;
+	sketch.mousePositionNormalizedPrev.y = sketch.mousePositionNormalized.y;
 	
 	if (sketch.bDebug)
 	{
@@ -198,8 +202,6 @@ function sketchInteragir( sketch )
   		}
 	}
 	
-	sketch.mousePositionNormalized.x = sketch.mouseX / sketch.width;
-	sketch.mousePositionNormalized.y = sketch.mouseY / sketch.height;
   };
  
   //--------------------------------------------------------
@@ -215,6 +217,11 @@ function sketchInteragir( sketch )
 		$("#view-interagir #view-label").fadeOut("fast");
 	
 	}
+
+
+	sketch.mousePositionNormalized.x = sketch.mouseX / sketch.width;
+	sketch.mousePositionNormalized.y = sketch.mouseY / sketch.height;
+
 	
 	// State activity
 	activity();

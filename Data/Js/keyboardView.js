@@ -9,7 +9,8 @@ function keyboardView()
 	this.bUserKey = false;
 	this.bDoShake = false;
 	this.timeShake = false;
-	this.position = null;
+//	this.position = null;
+	this.positionOriginal = null;
 
 	this.cbCodeEntered = null;
 
@@ -34,7 +35,14 @@ function keyboardView()
 	{
 		this.bDoShake = true;
 		this.timeShake = 0.0;
-		this.position = $("#view-recherche").offset();
+
+		var posOffset = $("#view-recherche").offset();
+//		this.position = {top:posOffset.top, left:posOffset.left}
+		if (this.positionOriginal == null)
+			this.positionOriginal = {top:posOffset.top, left:posOffset.left}
+
+		
+		$("#view-recherche").offset({top : this.positionOriginal.top, left : this.positionOriginal.left});
 	}
 	
 	//--------------------------------------------------------
@@ -67,7 +75,7 @@ function keyboardView()
 		});
 
 		this.container.find(".key")
-		.css("cursor", "pointer")
+//		.css("cursor", "pointer")
 		.click(function()
 		{
 			if ( $("#code").val() == pThis.valDefault)
@@ -119,8 +127,6 @@ function keyboardView()
 		   })
 		}
 		
-		
-		
 		this.reset();
 
 	}
@@ -131,12 +137,16 @@ function keyboardView()
 		if (this.bDoShake)
 		{
 			this.timeShake += dt;
-			if (this.timeShake >= 0.5){
-				this.bDoShake = false;
-			}
-			var top = this.position.top + Math.random()*20;
-			var left = this.position.left + Math.random()*20;
+			var top = this.positionOriginal.top + Math.random()*20;
+			var left = this.positionOriginal.left + Math.random()*20;
 			
+			if (this.timeShake >= 0.5)
+			{
+				this.bDoShake = false;
+				top = this.positionOriginal.top;
+				left = this.positionOriginal.left;
+			}
+
 			$("#view-recherche").offset({top : top, left : left});
 		}
 	}

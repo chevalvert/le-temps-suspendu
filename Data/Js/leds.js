@@ -12,7 +12,6 @@ leds.prototype.init = function(configuration)
 	//--------------------------------------------------------
 	// Values sent to hardware
 	this.values 				= new Array(512); 	// between 0.0 and 255.0
-//	this.valuesApplied 			= new Array(512);	// between valueAppliedMin and valueAppliedMax
 	this.valueAppliedMin 		= 0.0;				// éclairage minimum ceil
 	this.valueAppliedMax 		= 255.0;			// éclairage maximum ceil
 	
@@ -20,18 +19,11 @@ leds.prototype.init = function(configuration)
 	this.valueAppliedMaxFloor 	= 255.0;			// éclairage maximum floor
 
 	this.valuesNbCeil			= 18*12;
+	this.syncAnimRAF 			= configuration.artnet.syncAnimRAF;
 
 	//--------------------------------------------------------
 	this.apply = function()
 	{
-		// map values ceil
-/*		for (var i=0;i<this.values.length;i++)
-			this.valuesApplied[i] = this.mapValue( this.values[i] );
-
-		// send
-		this.artnet.set(this.valuesApplied);
-*/
-
 		this.artnet.set(this.values);
 	}
 
@@ -40,17 +32,8 @@ leds.prototype.init = function(configuration)
 	{
 		// OK
 		if (min >= max)
-			return v * 255.0;
-
-		return v * (this.max - this.min) + this.min;
-
-		// Just in case
-/*
-		if (this.valueAppliedMin >= this.valueAppliedMax)
-			return v * 255.0;
-		// Lerp
-		return v * (this.valueAppliedMax - this.valueAppliedMin) + this.valueAppliedMin;
-*/
+			return v;
+		return v * (max - min) + min;
 	}
 
 	//--------------------------------------------------------
@@ -72,8 +55,11 @@ leds.prototype.init = function(configuration)
 	this.updateCeil = function(valuesCeil)
 	{
 		for(var i=0; i<valuesCeil.length;i++)
-			this.values[ this.map[i] ] = this.mapValue( valuesCeil[i], this.valueAppliedMin, this.valueAppliedMax);
-		this.apply();
+			this.values[ this.map[i] ] = this.mapValue( 255 * valuesCeil[i], this.valueAppliedMin, this.valueAppliedMax);
+		if (!this.syncAnimRAF)
+		{
+			this.apply();
+		}
 	}
 
 	//--------------------------------------------------------
@@ -81,9 +67,24 @@ leds.prototype.init = function(configuration)
 	{
 		var offset = this.valuesNbCeil;
 		for(var i=0; i<valuesFloor.length;i++)
-			this.values[ this.map[offset+i] ] = this.mapValue( valuesFloor[i], this.valueAppliedMinFloor, this.valueAppliedMaxFloor ) ;
-		this.apply();
+			this.values[ this.map[offset+i] ] = this.mapValue( 255 * valuesFloor[i], this.valueAppliedMinFloor, this.valueAppliedMaxFloor ) ;
+
+		if (!this.syncAnimRAF)
+		{
+			this.apply();
+		}
 	}
+
+	//--------------------------------------------------------
+	this.update = function()
+	{
+		if (this.syncAnimRAF)
+		{
+			this.apply();
+		}
+	}
+	
+
 	
 	//--------------------------------------------------------
 	this.close = function()

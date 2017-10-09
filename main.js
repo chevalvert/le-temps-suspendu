@@ -146,9 +146,18 @@ function onConfigLoaded()
 	global.rqcv.getConsoleLog = function(){ return configuration.production ? false : configuration.consoleLog; }
 	global.rqcv.isBotEnabled = function(){return configuration.pupitre.bot.enable; }
 	global.rqcv.isTool3DEnabled = function(){return configuration.tool.tool3D.enable && !configuration.production; }
-	
+
+
 	// --------------------------------------------------
 	// events from windows
+	ipcMain.on('indexTool-animate', (event, value) =>
+	{
+		if (leds)
+			leds.update();
+	})
+
+	
+	// --------------------------------------------------
 	ipcMain.on('toolPupitre-appStateDebug', (event, value) =>
 	{
 		if (valid(mainWindow))
@@ -315,6 +324,17 @@ function onConfigLoaded()
 		}
 	});
 
+
+
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-setGridCemeraSpeed', (event, value) =>
+	{
+		if (valid(photoWindow))
+		{
+			photoWindow.content().send('setGridCameraSpeed', value);
+		}
+	});
+
 	// --------------------------------------------------
 	ipcMain.on('indexPupitre-setGridViewInfos', (event, value) =>
 	{
@@ -352,6 +372,15 @@ function onConfigLoaded()
 			toolWindow.content().send('showPhoto',value);
 		}
 		
+	});
+
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-hidePhoto', (event, value) =>
+	{
+		if (valid(photoWindow))
+		{
+			photoWindow.content().send('hidePhoto', value);
+		}
 	});
 
 	// --------------------------------------------------

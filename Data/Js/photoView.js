@@ -10,6 +10,7 @@ function photoView()
 	this.meshPhoto = null;
 	this.sizePhoto = 1;
 	this.loaderPhoto = new THREE.TextureLoader();
+	this.preloaderPhoto = new THREE.TextureLoader();
 	
 	this.state_show_photo 		= {id : 1, pathFile : ""};
 	this.state_show_photo_list 	= {id : 2, timeChangePhoto:0.0, intervalChangePhoto: 0.05};
@@ -24,11 +25,15 @@ function photoView()
 	// Photos texture for state_show_photo
 	this.photoTexture = null;
 	this.photoTextureLoaded = false;
+	this.photoOpacity = this.photoOpacityTarget = 1.0;
+
+	this.photoTexturePreload = null;
+	this.photoTexturePreloading = false;
 	
 	// List of photos for state_show_photo_list
 	this.listPhotosFolder = __dirname + "/Data/Db/files/figure-thumbs/";
-	this.listPhotos = new Array(20);
-	this.listPhotosTexture = new Array( this.listPhotos.length );
+	this.listPhotos = null;
+	this.listPhotosTexture = null;
 	this.loaderListPhotos = new THREE.TextureLoader();
 	this.listPhotosLoadIndex = 0;
 	this.listPhotosLoaded = false;
@@ -37,7 +42,6 @@ function photoView()
 	this.listBlockSlide = false;
 	
 	this.bBlockAddPhotoToList = false;
-	
 
 	//--------------------------------------------------------
 	this.loadListPhotoTexture = function()
@@ -77,8 +81,9 @@ function photoView()
 	{
 		this.container = $(name);
 		
-//		$(name).draggable();
-		
+		this.listPhotos = new Array( rqcv.configuration.photo.flip.nbPhotos );
+		this.listPhotosTexture = new Array( this.listPhotos.length );
+	 
 		this.resizeContainer();
 
 		var width = this.container.width();
@@ -117,7 +122,7 @@ function photoView()
 
 		// Photo plane
 		var geometry = new THREE.PlaneGeometry(this.sizePhoto,this.sizePhoto,1,1);
-		this.materialPhoto = new THREE.MeshBasicMaterial({color:0xffffff});
+		this.materialPhoto = new THREE.MeshBasicMaterial({color:0xffffff, transparent:true});
 		this.meshPhoto = new THREE.Mesh( geometry, this.materialPhoto );
 		
 		this.scene.add( this.meshPhoto );
@@ -218,6 +223,25 @@ function photoView()
 
 
 	//--------------------------------------------------------
+	/*this.preloaderPhoto = function( pathFile )
+	{
+		this.photoTexturePreloading = true;
+	
+		var pThis = this;
+		this.preloaderPhoto.load
+		(
+			pathFile,
+			function(texture)
+			{
+				pThis.photoTexturePreload = texture;
+				pThis.photoTextureLoaded = true;
+			}
+		);
+	}*/
+	
+
+
+	//--------------------------------------------------------
 	this.loadPhoto = function( pathFile )
 	{
 		var pThis = this;
@@ -307,6 +331,19 @@ function photoView()
 	}
 
 	//--------------------------------------------------------
+	this.setPhotoOpacity = function(v, bDirect)
+	{
+		if (bDirect)
+		{
+			this.photoOpacity = this.photoOpacityTarget = v;
+		}
+		else
+		{
+			this.photoOpacityTarget = v;
+		}
+	}
+
+	//--------------------------------------------------------
 	this.setPhotoSize = function(v)
 	{
 		this.meshPhoto.scale.set( v, v, 1 );
@@ -334,7 +371,8 @@ function photoView()
 		}
 		else
 		{
-			this.state_show_photo_list.intervalChangePhoto = 30.0 / speed;
+			this.state_show_photo_list.intervalChangePhoto = Math.max(0.05, 30.0 / speed);
+			
 			this.listBlockSlide = false;
 		}
 
@@ -351,17 +389,21 @@ function photoView()
 	this.render = function()
 	{
 		var dt = this.timer.update();
-		
-		
+
+		this.photoOpacity += (this.photoOpacityTarget - this.photoOpacity) * 0.3;
+		// console.log(this.photoOpacity);
+	 
 		if (this.state === this.state_show_photo)
 		{
 			if (this.photoTextureLoaded)
 			{
+
 				this.photoTextureLoaded = false;
 				this.materialPhoto.map = this.photoTexture;
+				this.materialPhoto.opacity = this.photoOpacity;
 				this.materialPhoto.needsUpdate = true;
-				
 			}
+		
 		}
 		else
 		if (this.state === this.state_show_photo_list)
@@ -375,9 +417,13 @@ function photoView()
 				   this.listPhotosIndexShow = (this.listPhotosIndexShow+1)%this.listPhotos.length;
 
 				   this.materialPhoto.map = this.listPhotosTexture[ this.listPhotosIndexShow ];
-				   this.materialPhoto.needsUpdate = true;
 			   }
+
+				this.materialPhoto.opacity = this.photoOpacity;
+				this.materialPhoto.needsUpdate = true;
+
 		   }
+
 		}
 	
 		this.camera.position.set(0,0,10);

@@ -1,5 +1,5 @@
 {
-	"production" :	false,
+	"production" :	true,
 
 	"consoleLog": 	true,
 	"db_rq" :
@@ -16,7 +16,8 @@
 	
 	"artnet" :
 	{
-		"host"		: "192.168.1.112"
+		"host"			: "192.168.1.112",
+		"syncAnimRAF"	: true
 	},
 	
 	"tool" :
@@ -29,18 +30,18 @@
 		"h"			: 500,
 		"tool3D" :
 		{
-			"enable" : false
+			"enable" : true
 		}
 	},
 	
 	"pupitre" :
 	{
-		"devtools"	: false,
+		"devtools"	: true,
 		"w"			: 1280,
 		"h"			: 1024,
 		"bot"		:
 		{
-			"enable": true,
+			"enable": false,
 			"delayChange": 3
 		},
 		"gridview"	:
@@ -67,18 +68,22 @@
 		"x"			: 800,
 		"y"			: 600,
 		"w"			: 1024,
-		"h"			: 768
+		"h"			: 768,
+		"flip"		:
+		{
+			"nbPhotos" : 20
+		}
 	},
 	
 	"animations" :
 	{
 		"ceil" :
 		{
-			"wRTT" : 38
+			"wRTT" : 36
 		},
 		"floor" :
 		{
-			"wRTT" : 38
+			"wRTT" : 36
 		}
 	}
 }

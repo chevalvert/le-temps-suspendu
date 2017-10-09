@@ -37,7 +37,7 @@ animationManualWaves.prototype.addControls = function()
 	this.gui.add(this.properties, 'radius', 	10, 60);
 	this.gui.add(this.properties, 'widthWave', 	1, 30);
 	this.gui.add(this.properties, 'speedWave', 	5, 60);
-	this.gui.add(this.properties, 'ageMaxWave', 0.1, 5);
+	this.gui.add(this.properties, 'ageMaxWave', 0.1, 8);
 }
 
 

@@ -154,6 +154,9 @@ function toolPupitre()
 		sliderPhotoOffsetCenterY.	setValue( this.properties.photoOffsetCenterY );
 		sliderLedsLuminosityMin.	setValue( this.properties.ledsLuminosityMin );
 		sliderLedsLuminosityMax.	setValue( this.properties.ledsLuminosityMax );
+		sliderLedsLuminosityMinFloor.	setValue( this.properties.ledsLuminosityMinFloor );
+		sliderLedsLuminosityMaxFloor.	setValue( this.properties.ledsLuminosityMaxFloor );
+
 		sliderLedsValueMin.			setValue( this.properties.ledsValueMin );
 		sliderLedsValueMax.			setValue( this.properties.ledsValueMax );
 		
@@ -167,6 +170,7 @@ function toolPupitre()
 
 		var animTransitionGround = this.setAnimationGround("transition_ground");
 		animTransitionGround.setAnimation("blank_ground");
+
 	}
 
 	

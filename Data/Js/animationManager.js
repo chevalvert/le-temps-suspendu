@@ -22,6 +22,7 @@ animationManager.prototype.setup = function()
    this.animations["rechercherOK"] 	= new animationRechercherOK();
    this.animations["rechercherFail"]= new animationRechercherFail();
    this.animations["movingLines"]	= new animationMovingLines();
+   this.animations["panelDebug"]	= new animationPanelDebug();
  
    this.animations["timeline"] 		= new animationMix();
    this.animations["timeline"].setAnimationManager(this);
@@ -44,6 +45,9 @@ animationManager.prototype.setup = function()
 
    this.animationsGround["sine_ground"] 	= new animationSine();
    this.animationsGround["sine_ground"].type = "floor";
+
+   this.animationsGround["plasma_ground"] 	= new animationPlasma();
+   this.animationsGround["plasma_ground"].type = "floor";
 
    this.animationsGround["rechercherOK_ground"] 	= new animationRechercherOK();
    this.animationsGround["rechercherOK_ground"].type = "floor";

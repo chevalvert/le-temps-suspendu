@@ -32,6 +32,8 @@ function animate()
 {
 	TWEEN.update();
 	window.requestAnimationFrame( animate );
+	
+	ipcRenderer.send("indexTool-animate", {});
 }
 
 //--------------------------------------------------------
@@ -99,8 +101,6 @@ function initSaveButton()
 		tool3D.saveProperties();
 	} )
 }
-
-
 
 //--------------------------------------------------------
 function resizeTools()
