@@ -75,7 +75,7 @@ function getExternalDisplay()
 // --------------------------------------------------
 function openToolWindow()
 {
-
+	console.log("openToolWindow()");
    // Tool window
    if (configuration.tool.enable && toolWindow == null)
    {
@@ -93,6 +93,9 @@ function openToolWindow()
 		   'width' : w,
 		   'height' : h,
 		   }, configuration.production ? false : configuration.tool.devtools);
+	
+	
+	   console.log(" - creating window");
    }
 }
 
@@ -118,9 +121,10 @@ function onConfigLoaded()
 		'height' : configuration.pupitre.h,
 		'x' : 0,
 		'y' : 0,
-		'fullscreen' : configuration.production ? true : false,
 		'frame' : false
 	}, configuration.production ? false : configuration.pupitre.devtools);
+	
+	
 
 	// Photo  window
 	photoWindow = windowManager.open('photo', 'Le temps suspendu : photo', getFile('indexPhoto.html'), false,
@@ -129,9 +133,27 @@ function onConfigLoaded()
 		'height' : configuration.photo.h,
 		'x' : externalDisplay ? externalDisplay.bounds.x : configuration.photo.x,
 		'y' : externalDisplay ? externalDisplay.bounds.y : configuration.photo.y,
-		'fullscreen' : configuration.production ? true : false,
 		'frame' : false
 	}, configuration.production ? false : configuration.photo.devtools);
+
+
+
+	mainWindow.content().on('dom-ready', () =>
+	{
+	 if (configuration.production)
+	 {
+    	 mainWindow.object.setSimpleFullScreen(true);
+  	}
+	
+	});
+
+	photoWindow.content().on('dom-ready', () =>
+	{
+	 if (configuration.production)
+	 {
+	     photoWindow.object.setSimpleFullScreen(true);
+  	}
+  });
 
 
 	// Artnet
