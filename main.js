@@ -1,5 +1,8 @@
 // --------------------------------------------------
 // if inspector in window devtools does not work -> https://github.com/electron/electron/issues/8876#issuecomment-296445185
+//
+// npm install robotjs
+// npm rebuild --runtime=electron --target=1.8.1 --disturl=https://atom.io/download/atom-shell --abi=8.2.1
 
 // --------------------------------------------------
 const {app, BrowserWindow, ipcMain} 		= require('electron');
@@ -8,6 +11,7 @@ const windowManager 						= require('electron-window-manager');
 var mysql 									= require('mysql');
 var fs 										= require('fs'); // file system
 var leds									= require(__dirname+'/Data/Js/leds.js')
+var robot 									= require('robotjs');
 
 // --------------------------------------------------
 // Configuration
@@ -143,7 +147,11 @@ function onConfigLoaded()
 	 if (configuration.production)
 	 {
     	 mainWindow.object.setSimpleFullScreen(true);
-  	}
+		 
+		robot.moveMouse(configuration.pupitre.w/2,configuration.pupitre.h/2);
+	  	robot.mouseClick();
+	  	robot.mouseClick();
+	}
 	
 	});
 
