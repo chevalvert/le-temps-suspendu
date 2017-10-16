@@ -6,5 +6,6 @@ Data/Img/4096_cliclac_256
 Data/Img/4096_cliclac_512
 Data/Img/
 Tools/sketch_crop_images/exports
+Tools/automator_relaunch_LTS.app
 *node_modules
 .DS_Store
