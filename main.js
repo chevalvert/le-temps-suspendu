@@ -421,7 +421,12 @@ function onConfigLoaded()
 			photoWindow.content().send('showPhotoList', value);
 		}
 	});
-
+	
+	// --------------------------------------------------
+	ipcMain.on('indexPupitre-quitApp', (event, value) =>
+	{
+		app.quit();
+	});
 	
 	// --------------------------------------------------
 	ipcMain.on('toolPupitre-ledsLuminosityMin', (event, value) =>

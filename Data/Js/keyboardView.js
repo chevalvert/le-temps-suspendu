@@ -5,14 +5,20 @@ function keyboardView()
 	this.container = null;
 	this.valEffacer = "effacer";
 	this.valDefault = "RECHERCHER";
+	this.valClose = "CLOSE";
 	this.nbCharsMax = 5;
 	this.bUserKey = false;
 	this.bDoShake = false;
 	this.timeShake = false;
-//	this.position = null;
 	this.positionOriginal = null;
 
 	this.cbCodeEntered = null;
+
+
+	this.cbCodeCloseEntered = null;
+	this.bCodeClose = false;
+	this.bCodeCloseHoldKey = false;
+	this.timeCloseHoldKey = 0.0;
 
 	//--------------------------------------------------------
 	this.keys =
@@ -37,7 +43,6 @@ function keyboardView()
 		this.timeShake = 0.0;
 
 		var posOffset = $("#view-recherche").offset();
-//		this.position = {top:posOffset.top, left:posOffset.left}
 		if (this.positionOriginal == null)
 			this.positionOriginal = {top:posOffset.top, left:posOffset.left}
 
@@ -75,9 +80,28 @@ function keyboardView()
 		});
 
 		this.container.find(".key")
-//		.css("cursor", "pointer")
+		.mousedown(function()
+		{
+			var k = $(this).attr("id");
+
+			if (pThis.bCodeClose && k == "#")
+			{
+				pThis.bCodeCloseHoldKey = true;
+			}
+		})
+
+		.mouseup(function()
+		{
+			if (pThis.bCodeCloseHoldKey)
+			{
+				pThis.bCodeCloseHoldKey = false;
+			}
+		})
+
 		.click(function()
 		{
+			pThis.bCodeClose = false;
+		
 			if ( $("#code").val() == pThis.valDefault)
 				$("#code").val("");
 				
@@ -97,8 +121,17 @@ function keyboardView()
 
 				if ($("#code").val().length == pThis.nbCharsMax)
 				{
-					if (typeof pThis.cbCodeEntered === "function")
-						pThis.cbCodeEntered( $("#code").val() );
+					if ( $("#code").val() == pThis.valClose && (typeof pThis.cbCodeCloseEntered === "function") )
+					{
+						pThis.bCodeClose = true;
+						pThis.timeCloseHold = 0.0;
+					}
+					else
+					{
+						if (typeof pThis.cbCodeEntered === "function")
+							pThis.cbCodeEntered( $("#code").val() );
+					}
+				
 				}
 			}
 
@@ -134,6 +167,17 @@ function keyboardView()
 	//--------------------------------------------------------
 	this.update = function(dt)
 	{
+		if (this.bCodeCloseHoldKey)
+		{
+			activity();
+			this.timeCloseHoldKey += dt;
+			if (this.timeCloseHoldKey >= 2.0)
+			{
+				this.cbCodeCloseEntered();
+				this.bCodeCloseHoldKey = false;
+			}
+		}
+	
 		if (this.bDoShake)
 		{
 			this.timeShake += dt;

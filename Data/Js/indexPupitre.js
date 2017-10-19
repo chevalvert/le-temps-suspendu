@@ -823,25 +823,21 @@ function checkSpecialCode(code)
 //--------------------------------------------------------
 function onCodeEntered(code)
 {
-	var query = "";
-	var specialCode = checkSpecialCode(code);
+   var query = "";
+   var specialCode = checkSpecialCode(code);
 
-	if (specialCode != null)
-	{
-		query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+specialCode.panel+" AND position="+specialCode.position;
-	}
-	else
-	{
-		query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
-	}
+   if (specialCode != null)
+   {
+	   query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE panel="+specialCode.panel+" AND position="+specialCode.position;
+   }
+   else
+   {
+	   query = "SELECT * FROM "+ rqcv.configuration.db_rq.table +" WHERE code='"+code+"'";
+   }
 
-
-
-   // console.log(query)
-
-	state_rechercher_ok.code 		= code;
-	state_rechercher_ok.panel 		= "";
-	state_rechercher_ok.position 	= "";
+   state_rechercher_ok.code 		= code;
+   state_rechercher_ok.panel 		= "";
+   state_rechercher_ok.position 	= "";
 
 
    rqcv.connection.query(query, function (error, results, fields)
@@ -863,6 +859,13 @@ function onCodeEntered(code)
 			}
 		}
    });
+	
+}
+
+//--------------------------------------------------------
+function onCodeCloseEntered()
+{
+	ipcRenderer.send("indexPupitre-quitApp", 0);
 }
 
 
@@ -870,8 +873,6 @@ function onCodeEntered(code)
 function selectRandomCode()
 {
    var query = "SELECT code FROM "+ rqcv.configuration.db_rq.table +" WHERE `code` <> \"NULL\" ORDER BY RAND() LIMIT 1";
-
-	console.log(query)
 
    rqcv.connection.query(query, function (error, results, fields)
    {
@@ -881,7 +882,7 @@ function selectRandomCode()
 		{
 			if (results.length == 1)
 			{
-				console.log("code = " + results[0].code)
+				// console.log("code = " + results[0].code)
 				onCodeEntered(results[0].code);
 			}
 		 }
@@ -894,6 +895,7 @@ function createViewKeyboard()
 {
 	keyboardView.init("#view-keyboard");
 	keyboardView.cbCodeEntered = onCodeEntered.bind(this);
+	keyboardView.cbCodeCloseEntered = onCodeCloseEntered.bind(this);
 }
 
 //--------------------------------------------------------
