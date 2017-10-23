@@ -13,7 +13,7 @@
 * [project installation](#project-installation)
 * [project usage](#project-usage)
 * [application configuration](#application-configuration)
-* [fenêtre outil](#fenetre-outil)
+* [la fenêtre outil](#la-fenêtre-outil)
 ---
 
 ## setup
