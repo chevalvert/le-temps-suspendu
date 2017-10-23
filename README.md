@@ -163,7 +163,7 @@ L'affichage est activée si la propriété `tool.tool3D.enable` est positionné 
 
 ![onglet simulaition](Doc/171020_LeTempsSuspendu_doc_appli_02_toolSimulation.png)
 
-Toutes les propriétés des différents interfaces sont sauvegardés avec le bouton `save`, les fichiers sont au format JSON et se trouvent dans le dossier 'Data/Configs' de l'application.
+Toutes les propriétés des différents interfaces sont sauvegardés avec le bouton `save`, les fichiers sont au format JSON et se trouvent dans le dossier `Data/Configs` de l'application.
 
 
 
