@@ -91,22 +91,22 @@ Le fichier `Data/Configs/configuration.json` permet de configurer certaines prop
 	- `syncAnimRAF` : expérimental, laisser la valeur à false.
 
 - `tool` : 
-	- `devtools` : valeur false en mode production. Permets d'activiter d'afficher les outils développeurs dans la fenêtre. 
+	- `devtools` : valeur false en mode production. Permet d'activiter d'afficher les outils développeurs dans la fenêtre. 
 	- `x`, `y`, `w`, `h` : position et dimension de la fenêtre lorsque le mode «production» est désactivé.
 	- `tool3D` : permet d'activer ou non une vue pour tester les animations LEDs avec un modèle 3D de la voute.
 
 - `pupitre` : 
-	- `devtools` : valeur false en mode production. Permets d'activiter d'afficher les outils développeurs dans la fenêtre. 
+	- `devtools` : valeur false en mode production. Permet d'activiter d'afficher les outils développeurs dans la fenêtre. 
 	- `x`, `y`, `w`, `h` : position et dimension de la fenêtre lorsque le mode «production» est désactivé.
 	- `bot` : permet de passer le pupitre en mode «bot», la grille de photos défile de manière autonome sur une série de `delayChange` exprimée en seconde(s). Ce mode est principalement un «stress test» qui a été utilisée pendant la phase de développement de l'application pour voir sa tenue en termes de performance et de gestion de la mémoire graphique. 
 	- `gridview` : 
-		- `useImagesLowRes` : lors d'un déplacement rapide sur la grille de photos, l'application utilise des versions basses résolution des images avant d'affiner la qualité lorsque la navigation se satbilise sur un endroit. Si cette propriété est désactivée, la navigation laisse apparaître la structure graphique qui sous-tend cette grille. 
+		- `useImagesLowRes` : lors d'un déplacement rapide sur la grille de photos, l'application utilise des versions basses résolution des images avant d'affiner la qualité lorsque la navigation se stabilise sur un endroit. Si cette propriété est désactivée, la navigation laisse apparaître la structure graphique qui sous-tend cette grille. 
 		- `camera` : permet de positionner la camera au démarrage de l'application en coordonnées normalisées. {x : 0.5, y : 0.5} correspond au centre de la grille. 
 		- `keyboard` : `transition` positionné à `true` permet de déclencher une animation sur les touches du clavier lorsque l'utilisateur appuie sur celles-ci.
 		- `menu` : idem, mais ne fonctionne pas bien actuellement (laissé sa valeur à `false`)
 
 - `photo` : 
-	- `devtools` : valeur false en mode production. Permets d'activiter d'afficher les outils développeurs dans la fenêtre. 
+	- `devtools` : valeur false en mode production. Permet d'activiter d'afficher les outils développeurs dans la fenêtre. 
 	- `x`, `y`, `w`, `h` : position et dimension de la fenêtre lorsque le mode «production» est désactivé.
 	- `flip` : paramètre le nombre de photos utilisées pour l'effet de «flip» sur la fenêtre. 
 	- `animations` : ne pas éditer cette partie, configuration de la taille des buffers de rendu pour des animations qui pilotent les LEDs. 
@@ -159,7 +159,7 @@ Chacune des animations possèdent des propriétés propres, qui sont sauvegardé
 
 
 ### Onglet simulation
-L'affichage est activée si la propriété 'tool.tool3D.enable' est positionné à true. Cette vue est pratique pour développer des animations et apprécier celles-ci dans une vue 3D de la structure des LEDs.
+L'affichage est activée si la propriété `tool.tool3D.enable` est positionné à true. Cette vue est pratique pour développer des animations et apprécier celles-ci dans une vue 3D de la structure des LEDs.
 
 ![onglet simulaition](Doc/171020_LeTempsSuspendu_doc_appli_02_toolSimulation.png)
 
